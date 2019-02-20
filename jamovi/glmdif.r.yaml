@@ -1,0 +1,167 @@
+---
+name:  glmDIF
+title: Differential Item Functioning
+jrs:   '1.1'
+
+items:
+    - name: debug
+      title: debug
+      type: Preformatted
+
+    - name:  DESCtable
+      title: Procedure Notes
+      type:  Table
+      rows: 0
+      clearWith: 
+          - item
+          - group
+          - matchVar
+          - anchor
+          - focal
+          - groupType
+          - type
+          - criterion
+          - alpha
+          - nIter
+          - purify
+          - pAdjustMethod
+          - designAnalysis
+           
+      columns: 
+        - name: bob
+          title: ""
+          type: text
+
+    - name:  DIFtable
+      title: Differential Item Functioning Analysis
+      type: Table
+      rows:  (item)
+      clearWith: 
+          - item
+          - group
+          - matchVar
+          - anchor
+          - focal
+          - groupType
+          - type
+          - criterion
+          - alpha
+          - nIter
+          - purify
+          - pAdjustMethod
+          - onlyDIF
+      columns:
+        - name: item
+          title: Item
+          type: text
+
+        - name: p
+          title: P-value
+          type: number
+          format: zto,pvalue
+
+        - name: effSize
+          title: Naeglekirke R^2
+          type: number
+          format: zto,pvalue
+
+        - name: difType
+          title: Type
+          type: text
+
+        - name: ZT
+          title: Zumbo-Thomas
+          type: text
+          visible: (difFlagScale:zt)
+
+        - name: JG
+          title: Jodoin-Gierl
+          type: text
+          visible: (difFlagScale:jg)
+
+    - name: gcTable
+      title: Design Analysis
+      type: Table
+      rows: 0
+      visible: (designAnalysis)
+      clearWith: 
+          - item
+          - group
+          - matchVar
+          - anchor
+          - focal
+          - groupType
+          - type
+          - criterion
+          - alpha
+          - nIter
+          - purify
+          - pAdjustMethod
+      columns:
+        - name: item
+          title: Item
+          type: text
+        - name: hypTrueEff
+          title: True Effect
+          type: text
+        - name: typeS
+          title: Type-S
+          type: number
+          format: zto,pvalue
+        - name: typeM
+          title: Type-M
+          type: number
+          format: pvalue
+        - name: power
+          title: Power
+          type: number
+          format: (zto)
+          visible: (power)
+
+ #   - name: LRTplot
+ #     title: LRT Plot
+ #     type: Image
+ #     width:  450
+ #     height: 450
+ #     renderFun: .plotLRT
+ #     visible: (createPlotLRT)
+ #     requiresData: TRUE
+ #     clearWith:
+ #         - createPlotLRT
+ #         - item
+ #         - group
+ #         - matchVar
+ #         - anchor
+ #         - focal
+ #         - groupType
+ #         - type
+ #         - criterion
+ #         - alpha
+ #         - nIter
+ #         - purify
+
+    - name: ICCplots
+      title: Item Characteristic Curves
+      type: Array
+      items: (plotVarsICC)
+      template:
+          type: Image
+          width:  550
+          height: 450
+          renderFun: .plotICC
+          visible: (plotVarsICC)
+          requiresData: TRUE
+          clearWith:
+              - item
+              - group
+              - matchVar
+              - anchor
+              - focal
+              - groupType
+              - type
+              - criterion
+              - alpha
+              - nIter
+              - purify
+
+...

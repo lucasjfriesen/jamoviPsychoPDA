@@ -1,0 +1,131 @@
+title: Differential Item Functioning
+name: glmDIF
+jus: '2.0'
+stage: 0
+compilerMode: tame
+events:
+  update: './glmDIF.events::update'
+children:
+  - type: CollapseBox
+    label: Variables
+    margin: large
+    collapsed: false
+    children:
+      - type: VariableSupplier
+        label: Data variables
+        persistentItems: false
+        stretchFactor: 1
+        children:
+          - type: TargetLayoutBox
+            label: Item Variable(s)
+            children:
+              - type: VariablesListBox
+                name: item
+                isTarget: true
+                events:
+                  change: './glmDIF.events::onChange_item'
+          - type: TargetLayoutBox
+            label: Grouping Variable
+            children:
+              - type: VariablesListBox
+                name: group
+                maxItemCount: 1
+                isTarget: true
+          - type: TargetLayoutBox
+            label: Matching Variable
+            children:
+              - type: VariablesListBox
+                name: matchVar
+                maxItemCount: 1
+                isTarget: true
+          - type: TargetLayoutBox
+            label: Anchor Items
+            children:
+              - type: VariablesListBox
+                name: anchor
+                isTarget: true
+  - type: CollapseBox
+    label: DIF Analysis
+    margin: large
+    collapsed: true
+    children:
+      - type: LayoutBox
+        margin: large
+        children:
+          - type: LayoutBox
+            children:
+              - type: ComboBox
+                name: difFlagScale
+              - type: ComboBox
+                name: type
+              - type: ComboBox
+                name: criterion
+              - type: TextBox
+                name: alpha
+                format: number
+              - type: ComboBox
+                name: pAdjustMethod
+              - type: Label
+                label: ________________
+                children:
+                  - type: ComboBox
+                    name: groupType
+                  - type: TextBox
+                    name: focal
+                    format: string
+              - type: Label
+                label: ________________
+                children:
+                  - type: CheckBox
+                    name: purify
+                    enable: (anchor) # Why doesn't this work? It works if I change to (matchVar)
+                  - type: TextBox
+                    name: nIter
+                    format: number
+                    enable: (purify)
+  - type: CollapseBox
+    label: Design Analysis
+    margin: large
+    collapsed: true
+    children:
+      - type: LayoutBox
+        style: inline
+        children:
+          - type: Label
+            label: N.B. | Computationally Instensive
+            margin: large
+            children:
+              - type: CheckBox
+                name: designAnalysis
+              - type: CheckBox
+                name: designAnalysisSigOnly
+                enable: (designAnalysis)
+              - type: CheckBox
+                name: power
+                enable: (designAnalysis)
+              - type: TextBox
+                name: sims
+                enable: (designAnalysis)
+                format: number
+              - type: TextBox
+                name: D
+                enable: (designAnalysis)
+                format: number
+  - type: CollapseBox
+    label: Item Characteristic Curves
+    margin: large
+    collapsed: true
+    children:
+#      - type: CheckBox
+#        name: createPlotLRT
+      - type: VariableSupplier
+        name: plotVarsICCSupplier
+        populate: manual
+        persistentItems: false
+        stretchFactor: 1
+        children:
+          - type: TargetLayoutBox
+            children:
+              - type: VariablesListBox
+                name: plotVarsICC
+                isTarget: true
