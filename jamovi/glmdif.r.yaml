@@ -4,9 +4,9 @@ title: Differential Item Functioning
 jrs:   '1.1'
 
 items:
-    - name: debug
-      title: debug
-      type: Preformatted
+   # - name: debug
+   #   title: debug
+   #   type: Preformatted
 
     - name:  DESCtable
       title: Procedure Notes
@@ -104,10 +104,6 @@ items:
         - name: hypTrueEff
           title: True Effect
           type: text
-        - name: typeS
-          title: Type-S
-          type: number
-          format: zto,pvalue
         - name: typeM
           title: Type-M
           type: number
@@ -117,28 +113,6 @@ items:
           type: number
           format: (zto)
           visible: (power)
-
- #   - name: LRTplot
- #     title: LRT Plot
- #     type: Image
- #     width:  450
- #     height: 450
- #     renderFun: .plotLRT
- #     visible: (createPlotLRT)
- #     requiresData: TRUE
- #     clearWith:
- #         - createPlotLRT
- #         - item
- #         - group
- #         - matchVar
- #         - anchor
- #         - focal
- #         - groupType
- #         - type
- #         - criterion
- #         - alpha
- #         - nIter
- #         - purify
 
     - name: ICCplots
       title: Item Characteristic Curves

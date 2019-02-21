@@ -175,9 +175,5 @@ options:
 
     - name: plotVarsICC
       type: Variables
-
-#    - name: createPlotLRT
-#      title: Likelihood Ratio Test (LRT)
-#      type: Bool
-#      default: FALSE     
+   
 ...

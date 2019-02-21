@@ -78,7 +78,7 @@ children:
                 children:
                   - type: CheckBox
                     name: purify
-                    enable: (anchor) # Why doesn't this work? It works if I change to (matchVar)
+                    enable: (anchor)
                   - type: TextBox
                     name: nIter
                     format: number
@@ -116,8 +116,6 @@ children:
     margin: large
     collapsed: true
     children:
-#      - type: CheckBox
-#        name: createPlotLRT
       - type: VariableSupplier
         name: plotVarsICCSupplier
         populate: manual

@@ -26,17 +26,21 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         
         # Data frame containing all items selected for analysis
         Data <-
-          data.frame(sapply(data[, colnames(data) %in% self$options$item], jmvcore::toNumeric))
+          data.frame(jmvcore::toNumeric(data[, self$options$item]))
         colnames(Data) <- self$options$item
         for (i in 1:length(self$options$item)){
           if (!all(unique(Data[,i]) %in% c(0,1, NA))){
             stop(paste("One or more rows contains an invalid value in column: ", colnames(Data)[i]), ". (Item responses must be one of c(0,1,NA))",
                    call. = FALSE)
           }
-          # if (length(unique(Data[,i] != 2))){
-          #   stop(paste("One or more columns contains only a single value: ", colnames(Data)[i]), ". (Both of c(0,1) must be present for each group for each item)",
-          #          call. = FALSE)
-          # }
+        }
+        
+        if (is.null(self$options$anchor)) {
+          anchor <- NULL
+        } else {
+          anchor <-
+          data.frame(jmvcore::toNumeric(data[, self$options$anchor]))
+          colnames(anchor) <- self$options$anchor
         }
         
         # Vector containing grouping data
@@ -61,15 +65,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           focalName <- unlist(strsplit(focalName, split = "*"))
         }
         
-        anchor <-
-          data.frame(sapply(data[, colnames(data) %in% self$options$anchor], jmvcore::toNumeric))
-        if (length(anchor) == 0) {
-          anchor <- NULL
-        } else {
-          colnames(anchor) <- self$options$anchor
-          anchor <- unlist(anchor)
-        }
-        
         groupType <- self$options$groupType
         
         type <- self$options$type
@@ -85,141 +80,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         pAdjustMethod <- self$options$pAdjustMethod
         if (pAdjustMethod == "None") {
           pAdjustMethod <- NULL
-        }
-        # Bootstrap GC ----
-        # Print the output of a bootstrap
-        
-        print.bootSE <- function(x,
-                                 digits = getOption("digits"),
-                                 index = 1L:ncol(boot.out$t),
-                                 ...)
-        {
-          boot.out <- x
-          sim <- boot.out$sim
-          cl <- boot.out$call
-          t <- matrix(boot.out$t[, index], nrow = nrow(boot.out$t))
-          allNA <- apply(t, 2L, function(t)
-            all(is.na(t)))
-          ind1 <- index[allNA]
-          index <- index[!allNA]
-          t <- matrix(t[,!allNA], nrow = nrow(t))
-          rn <- paste("t", index, "*", sep = "")
-          if (length(index) == 0L)
-            op <- NULL
-          else if (is.null(t0 <- boot.out$t0)) {
-            if (is.null(boot.out$call$weights))
-              op <- cbind(apply(t, 2L, mean, na.rm = TRUE),
-                          sqrt(apply(t, 2L, function(t.st)
-                            var(t.st[!is.na(t.st)]))))
-            else {
-              op <- NULL
-              for (i in index)
-                op <-
-                  rbind(op, imp.moments(boot.out, index = i)$rat)
-              op[, 2L] <- sqrt(op[, 2])
-            }
-            dimnames(op) <- list(rn, c("mean", "std. error"))
-            return(op)
-          }
-          else {
-            t0 <- boot.out$t0[index]
-            if (is.null(boot.out$call$weights)) {
-              op <- cbind(t0, apply(t, 2L, mean, na.rm = TRUE) - t0,
-                          sqrt(apply(t, 2L, function(t.st)
-                            var(t.st[!is.na(t.st)]))))
-              dimnames(op) <-
-                list(rn, c("original", " bias  ", " std. error"))
-              return(op)
-            }
-            else {
-              op <- NULL
-              for (i in index)
-                op <-
-                  rbind(op, imp.moments(boot.out, index = i)$rat)
-              op <- cbind(t0, op[, 1L] - t0, sqrt(op[, 2L]),
-                          apply(t, 2L, mean, na.rm = TRUE))
-              dimnames(op) <- list(rn, c("original", " bias  ",
-                                         " std. error", " mean(t*)"))
-              return(op)
-            }
-          }
-          
-        }
-        
-        NagR2 <- function(DATA, ind) {
-          ITEM <- (DATA[, 1])
-          SCORE <- (DATA[, 2])
-          GROUP <- (DATA[, 3])
-          n <- nrow(DATA)
-          
-          m0 <- switch(
-            self$options$type,
-            both = glm(ITEM[ind] ~ SCORE * GROUP,
-                       family = "binomial"),
-            udif = glm(ITEM[ind] ~ SCORE +
-                         GROUP, family = "binomial"),
-            nudif = glm(ITEM[ind] ~ SCORE *
-                          GROUP, family = "binomial")
-          )
-          
-          m1 <-
-            switch(
-              self$options$type,
-              both = glm(ITEM[ind] ~ SCORE, family = "binomial"),
-              udif = glm(ITEM[ind] ~ SCORE, family = "binomial"),
-              nudif = glm(ITEM[ind] ~
-                            SCORE + GROUP, family = "binomial")
-            )
-          
-          R2cox0 <-  1 - exp((m0$deviance - m0$null.deviance) / n)
-          R2nag0 <-  R2cox0 / (1 - exp((-m0$null.deviance) / n))
-          
-          R2cox1 <-  1 - exp((m1$deviance - m1$null.deviance) / n)
-          R2nag1 <-  R2cox1 / (1 - exp((-m1$null.deviance) / n))
-          
-          deltaNagR2 <- R2nag0 - R2nag1
-          return(deltaNagR2)
-        }
-        
-        empDist <- function(DATA, hypTrueEff) {
-          alpha <- self$options$alpha
-          empRes <- matrix(0, nrow = 1, ncol = 3)
-          # Get bootstrapped distribution
-          myBoot <- boot(DATA, NagR2, R = 1000)
-          # se of emp. dist.
-          se <- print.bootSE(myBoot)[[3]]
-          # Density values for use below
-          D <- density(myBoot$t, n = 1024)
-          # calculate 2.5% and 97.5% quantiles. This will be needed to find the "reject region."
-          # length 2 vector of quantiles matching bottom alpha/2 and upper alpha/2 in the emp. dist.
-          quant <- quantile(D$x, c(alpha / 2, 1 - (alpha / 2)))
-          # points in the probability distribution matching the Lower and Upper quantiles
-          p.lo <- quant[[1]]
-          p.hi <- quant[[2]]
-          # Here there be monsters
-
-          ## shifts distribution by the difference between the observed effect size and the empirical effect size
-          D.shifted <- myBoot$t + (hypTrueEff-myBoot$t0)
-          ## Calculate shifted distribution. 
-          D.shifted <- density(D.shifted, n = 1024)$x
-          ##returns the fraction of elements of D.shift that fall into the reject regions of the unshifted distribution.
-          rejects = sum((D.shifted < p.lo | D.shifted > p.hi) == T)
-          ##calculates the proportion of rejects among all bootstrapped samples.
-          ##This is the power of the test.
-          powerR <- rejects / length(rejects)
-          empRes[1, 3] <- powerR
-          # Type-S error rate
-          typeSError <- p.lo / powerR
-          empRes[1, 1] <- typeSError
-          # typeM error rate
-          estimate <-
-            hypTrueEff + se * sample(D$x, replace = T, size = self$options$sims)
-          significant <-
-            estimate < se * qUpper  | estimate > se * qUpper
-          typeMError <-
-            mean(abs(estimate)[significant]) / hypTrueEff
-          empRes[1, 2] <- typeMError
-          return(empRes)
         }
         
         # DIF ----
@@ -251,20 +111,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 "Only one reference group may be provided, and it must be a value from the provided grouping variable. You have input: ", self$options$focal
                 
               ))
-              # res <-
-              #   difGenLogistic(
-              #     Data = Data,
-              #     group = group,
-              #     focalName = focalName,
-              #     anchor = anchor,
-              #     match = match,
-              #     type = type,
-              #     criterion = criterion,
-              #     alpha = alpha,
-              #     purify = purify,
-              #     nrIter = nrIter,
-              #     pAdjustMethod = pAdjustMethod
-              #   )
             } else {
               # If there is one or no focal group selected, use regular Logistic Regression
               res <-
@@ -285,6 +131,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               return(res)
             }
           }
+        
         difLogistic <-
           function (Data,
                     group,
@@ -300,31 +147,12 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     nrIter = 10,
                     pAdjustMethod = NULL)
           {
-            # if (memberType != "group" & memberType != "cont")
-            #   stop("'memberType' must be either 'group' or 'cont'",
-            #        call. = FALSE)
             if (purify & match[1] != "score")
               stop("purification not allowed when matching variable is not 'score'",
                    call. = FALSE)
             internalLog <- function() {
-              # if (length(group) == 1) {
-              #   if (is.numeric(group)) {
-              #     gr <- Data[, group]
-              #     DATA <- Data[, (1:NCOL(Data)) != group]
-              #     colnames(DATA) <- colnames(Data)[(1:NCOL(Data)) !=
-              #                                        group]
-              #   }
-              #   else {
-              #     gr <- Data[, colnames(Data) == group]
-              #     DATA <- Data[, colnames(Data) != group]
-              #     colnames(DATA) <- colnames(Data)[colnames(Data) !=
-              #                                        group]
-              #   }
-              # }
-              # else {
                 gr <- group
                 DATA <- Data
-              # }
               if (memberType == "group") {
                 Group <- rep(0, NROW(DATA))
                 Group[gr == focalName] <- 1
@@ -339,21 +167,9 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                                   alpha, 1),
                   nudif = qchisq(1 - alpha, 1)
                 )
-              if (!is.null(anchor)) {
-                dif.anchor <- anchor
-                if (is.numeric(anchor))
-                  ANCHOR <- anchor
-                else {
-                  ANCHOR <- NULL
-                  for (i in 1:length(anchor))
-                    ANCHOR[i] <- (1:NCOL(DATA))[colnames(DATA) ==
-                                                  anchor[i]]
-                }
-              }
-              else {
-                ANCHOR <- 1:NCOL(DATA)
-                dif.anchor <- NULL
-              }
+              ANCHOR <- names(anchor)
+              # self$results$debug$setContent(ANCHOR)
+              dif.anchor <- self$options$anchor
               DDF <- ifelse(type == "both", 2, 1)
               
               # Purification == FALSE ----
@@ -367,7 +183,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                   match = match,
                   type = type,
                   criterion = criterion,
-                  anchor = ANCHOR,
+                  anchor = anchor,
                   all.cov = all.cov
                 )
                 STATS <- PROV$stat
@@ -428,17 +244,17 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                       legend = FALSE
                     ))
                   )
-                if (!is.null(anchor) & match[1] == "score") {
-                  RES$Logistik[ANCHOR] <- NA
-                  RES$logitPar[ANCHOR,] <- NA
-                  RES$parM0[ANCHOR,] <- NA
-                  RES$deltaR2[ANCHOR] <- NA
-                  for (i in 1:length(RES$DIFitems)) {
-                    if (sum(RES$DIFitems[i] == ANCHOR) == 1)
-                      RES$DIFitems[i] <- NA
-                  }
-                  RES$DIFitems <- RES$DIFitems[!is.na(RES$DIFitems)]
-                }
+                # if (!is.null(anchor) & match[1] == "score") {
+                #   RES$Logistik[ANCHOR] <- NA
+                #   RES$logitPar[ANCHOR,] <- NA
+                #   RES$parM0[ANCHOR,] <- NA
+                #   RES$deltaR2[ANCHOR] <- NA
+                #   for (i in 1:length(RES$DIFitems)) {
+                #     if (sum(RES$DIFitems[i] == ANCHOR) == 1){
+                #       RES$DIFitems[i] <- NA}
+                #   }
+                #   RES$DIFitems <- RES$DIFitems[!is.na(RES$DIFitems)]
+                # }
               }
               # Purification == TRUE ----
               else {
@@ -605,7 +421,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     member,
                     memberType = "group",
                     match = "score",
-                    anchor = 1:NCOL(data),
+                    anchor = NULL,
                     type = "both",
                     criterion = "LRT",
                     all.cov = TRUE)
@@ -645,13 +461,13 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             for (item in 1:ncol(data)) {
               private$.checkpoint()
               if (match[1] == "score") {
-                data2 <- rbind(data[, anchor])
-                if (sum(anchor == item) == 0)
-                  data2 <- cbind(data2, data[, item])
-                SCORES <- rowSums(data2, na.rm = TRUE)
+                data2 <- cbind(data, anchor)
+                SCORES <- rowSums(sapply(data2, as.numeric), na.rm = TRUE)
+
               }
-              else
-                SCORES <- match
+              else {
+                SCORES <- match}
+              
               ITEM <- data[, item]
               m0 <- switch(
                 type,
@@ -766,490 +582,139 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               )
             return(res)
           }
-        # GenLogistic ----
-        # difGenLogistic <-
-        #   function (Data,
-        #             group,
-        #             focalName,
-        #             anchor = NULL,
-        #             match = "score",
-        #             type = "both",
-        #             criterion = "LRT",
-        #             alpha = 0.05,
-        #             purify = FALSE,
-        #             nrIter = 10,
-        #             pAdjustMethod = NULL)
-        #   {
-        #     if (purify & match[1] != "score")
-        #       stop("purification not allowed when matching variable is not 'score'",
-        #            call. = FALSE)
-        #     internalGenLog <- function() {
-        #       if (length(focalName) == 1)
-        #         RES <-
-        #           difLogistic(
-        #             Data,
-        #             group,
-        #             focalName = focalName,
-        #             memberType = "group",
-        #             match = match,
-        #             type = type,
-        #             alpha = alpha,
-        #             pAdjustMethod = pAdjustMethod,
-        #             purify = purify,
-        #             nrIter = nrIter,
-        #             focalName = focalName,
-        #             ZT = as.character(symnum(
-        #               deltaR2,
-        #               c(0, 0.13, 0.26, 1),
-        #               symbols = c("A", "B", "C"),
-        #               legend = FALSE
-        #             )),
-        #             JG = as.character(symnum(
-        #               deltaR2,
-        #               c(0, 0.035, 0.07, 1),
-        #               symbols = c("A", "B", "C"),
-        #               legend = FALSE
-        #             ))
-        #           )
-        #       else {
-        #         if (length(group) == 1) {
-        #           if (is.numeric(group)) {
-        #             gr <- Data[, group]
-        #             DATA <- Data[, (1:NCOL(Data)) != group]
-        #             colnames(DATA) <-
-        #               colnames(Data)[(1:NCOL(Data)) !=
-        #                                group]
-        #           }
-        #           else {
-        #             gr <- Data[, colnames(Data) == group]
-        #             DATA <- Data[, colnames(Data) != group]
-        #             colnames(DATA) <-
-        #               colnames(Data)[colnames(Data) !=
-        #                                group]
-        #           }
-        #         }
-        #         else {
-        #           gr <- group
-        #           DATA <- Data
-        #         }
-        #         Group <- rep(0, NROW(DATA))
-        #         DF <- length(focalName)
-        #         DDF <- ifelse(type == "both", 2 * DF, DF)
-        #         for (i in 1:DF)
-        #           Group[gr == focalName[i]] <- i
-        #         Q <- switch(
-        #           type,
-        #           both = qchisq(1 - alpha, 2 * DF),
-        #           udif = qchisq(1 - alpha, DF),
-        #           nudif = qchisq(1 -
-        #                            alpha, DF)
-        #         )
-        #         if (!is.null(anchor)) {
-        #           dif.anchor <- anchor
-        #           if (is.numeric(anchor))
-        #             ANCHOR <- anchor
-        #           else {
-        #             ANCHOR <- NULL
-        #             for (i in 1:length(anchor))
-        #               ANCHOR[i] <- (1:NCOL(DATA))[colnames(DATA) ==
-        #                                             anchor[i]]
-        #           }
-        #         }
-        #         else {
-        #           ANCHOR <- 1:NCOL(DATA)
-        #           dif.anchor <- NULL
-        #         }
-        #         if (!purify |
-        #             match[1] != "score" | !is.null(anchor)) {
-        #           PROV <- genLogistik(
-        #             DATA,
-        #             Group,
-        #             match = match,
-        #             type = type,
-        #             criterion = criterion,
-        #             anchor = ANCHOR
-        #           )
-        #
-        #
-        #
-        #           STATS <- PROV$stat
-        #           PVAL <- 1 - pchisq(STATS, DDF)
-        #           deltaR2 <- PROV$deltaR2
-        #           covMat <- PROV$covMat
-        #           if (max(STATS) <= Q) {
-        #             DIFitems <- "No DIF item detected"
-        #             logitPar <- PROV$parM1
-        #           }
-        #           else {
-        #             DIFitems <- (1:NCOL(DATA))[STATS > Q]
-        #             logitPar <- PROV$parM1
-        #             for (idif in 1:length(DIFitems))
-        #               logitPar[DIFitems[idif],] <-
-        #               PROV$parM0[DIFitems[idif],]
-        #           }
-        #           RES <- list(
-        #             genLogistik = STATS,
-        #             p.value = PVAL,
-        #             logitPar = logitPar,
-        #             parM0 = PROV$parM0,
-        #             parM1 = PROV$parM1,
-        #             covMat = covMat,
-        #             deltaR2 = deltaR2,
-        #             alpha = alpha,
-        #             thr = Q,
-        #             DIFitems = DIFitems,
-        #             match = PROV$match,
-        #             type = type,
-        #             pAdjustMethod = pAdjustMethod,
-        #             adjusted.p = NULL,
-        #             purification = purify,
-        #             names = colnames(DATA),
-        #             anchor.names = dif.anchor,
-        #             focalName = focalName,
-        #             criterion = criterion,
-        #             ZT = as.character(symnum(
-        #               deltaR2,
-        #               c(0, 0.13, 0.26, 1),
-        #               symbols = c("A", "B", "C"),
-        #               legend = FALSE
-        #             )),
-        #             JG = as.character(symnum(
-        #               deltaR2,
-        #               c(0, 0.035, 0.07, 1),
-        #               symbols = c("A", "B", "C"),
-        #               legend = FALSE
-        #             ))
-        #           )
-        #           if (!is.null(anchor) & match[1] == "score") {
-        #             RES$genLogistik[ANCHOR] <- NA
-        #             RES$logitPar[ANCHOR,] <- NA
-        #             RES$parM0[ANCHOR,] <- NA
-        #             RES$covMat[, , ANCHOR] <- NA
-        #             RES$deltaR2[ANCHOR] <- NA
-        #             for (i in 1:length(RES$DIFitems)) {
-        #               if (sum(RES$DIFitems[i] == ANCHOR) == 1)
-        #                 RES$DIFitems[i] <- NA
-        #             }
-        #             RES$DIFitems <-
-        #               RES$DIFitems[!is.na(RES$DIFitems)]
-        #           }
-        #         }
-        #         else {
-        #           nrPur <- 0
-        #           difPur <- NULL
-        #           noLoop <- FALSE
-        #           prov1 <- genLogistik(
-        #             DATA,
-        #             Group,
-        #             match = match,
-        #             type = type,
-        #             criterion = criterion
-        #           )
-        #           stats1 <- prov1$stat
-        #           deltaR2 <- prov1$deltaR2
-        #           covMat <- prov1$covMat
-        #           if (max(stats1) <= Q) {
-        #             DIFitems <- "No DIF item detected"
-        #             logitPar <- prov1$parM1
-        #             noLoop <- TRUE
-        #           }
-        #           else {
-        #             dif <- (1:NCOL(DATA))[stats1 > Q]
-        #             difPur <- rep(0, length(stats1))
-        #             difPur[dif] <- 1
-        #             repeat {
-        #               if (nrPur >= nrIter)
-        #                 break
-        #               else {
-        #                 nrPur <- nrPur + 1
-        #                 nodif <- NULL
-        #                 if (is.null(dif) == TRUE)
-        #                   nodif <- 1:NCOL(DATA)
-        #                 else {
-        #                   for (i in 1:NCOL(DATA)) {
-        #                     if (sum(i == dif) == 0)
-        #                       nodif <- c(nodif, i)
-        #                   }
-        #                 }
-        #                 prov2 <-
-        #                   genLogistik(
-        #                     DATA,
-        #                     Group,
-        #                     anchor = nodif,
-        #                     match = match,
-        #                     type = type,
-        #                     criterion = criterion
-        #                   )
-        #                 stats2 <- prov2$stat
-        #                 deltaR2 <- prov2$deltaR2
-        #                 covMat <- prov2$covMat
-        #                 if (max(stats2) <= Q)
-        #                   dif2 <- NULL
-        #                 else
-        #                   dif2 <- (1:NCOL(DATA))[stats2 > Q]
-        #                 difPur <- rbind(difPur, rep(0, NCOL(DATA)))
-        #                 difPur[nrPur + 1, dif2] <- 1
-        #                 if (length(dif) != length(dif2))
-        #                   dif <- dif2
-        #                 else {
-        #                   dif <- sort(dif)
-        #                   dif2 <- sort(dif2)
-        #                   if (sum(dif == dif2) == length(dif)) {
-        #                     noLoop <- TRUE
-        #                     break
-        #                   }
-        #                   else
-        #                     dif <- dif2
-        #                 }
-        #               }
-        #             }
-        #             prov1 <- prov2
-        #             stats1 <- stats2
-        #             PVAL <- 1 - pchisq(stats1, DDF)
-        #             deltaR2 <- deltaR2
-        #             covMat <- covMat
-        #             DIFitems <- (1:NCOL(DATA))[stats1 > Q]
-        #             logitPar <- prov1$parM1
-        #             for (idif in 1:length(DIFitems))
-        #               logitPar[DIFitems[idif],] <-
-        #               prov1$parM0[DIFitems[idif],]
-        #           }
-        #           if (!is.null(difPur)) {
-        #             ro <- co <- NULL
-        #             for (ir in 1:NROW(difPur))
-        #               ro[ir] <- paste("Step",
-        #                               ir - 1, sep = "")
-        #             for (ic in 1:NCOL(difPur))
-        #               co[ic] <- paste("Item",
-        #                               ic, sep = "")
-        #             rownames(difPur) <- ro
-        #             colnames(difPur) <- co
-        #           }
-        #           RES <- list(
-        #             genLogistik = stats1,
-        #             p.value = PVAL,
-        #             logitPar = logitPar,
-        #             parM0 = prov1$parM0,
-        #             covMat = covMat,
-        #             deltaR2 = deltaR2,
-        #             alpha = alpha,
-        #             thr = Q,
-        #             DIFitems = DIFitems,
-        #             match = prov1$match,
-        #             type = type,
-        #             pAdjustMethod = pAdjustMethod,
-        #             adjusted.p = NULL,
-        #             purification = purify,
-        #             nrPur = nrPur,
-        #             difPur = difPur,
-        #             convergence = noLoop,
-        #             names = colnames(DATA),
-        #             anchor.names = NULL,
-        #             focalName = focalName,
-        #             criterion = criterion,
-        #             focalName = focalName,
-        #             ZT = as.character(symnum(
-        #               deltaR2,
-        #               c(0, 0.13, 0.26, 1),
-        #               symbols = c("A", "B", "C"),
-        #               legend = FALSE
-        #             )),
-        #             JG = as.character(symnum(
-        #               deltaR2,
-        #               c(0, 0.035, 0.07, 1),
-        #               symbols = c("A", "B", "C"),
-        #               legend = FALSE
-        #             ))
-        #           )
-        #         }
-        #         if (!is.null(pAdjustMethod)) {
-        #           nGroups <- length(RES$focalName)
-        #           df <-
-        #             switch(
-        #               RES$type,
-        #               both = 2 * nGroups,
-        #               udif = nGroups,
-        #               nudif = nGroups
-        #             )
-        #           pval <- 1 - pchisq(RES$genLogistik, df)
-        #           RES$adjusted.p <-
-        #             p.adjust(pval, method = pAdjustMethod)
-        #           if (min(RES$adjusted.p, na.rm = TRUE) > alpha)
-        #             RES$DIFitems <- "No DIF item detected"
-        #           else
-        #             RES$DIFitems <- which(RES$adjusted.p < alpha)
-        #         }
-        #         class(RES) <- "genLogistic"
-        #       }
-        #       return(RES)
-        #     }
-        #     resToReturn <- internalGenLog()
-        #
-        #     return(resToReturn)
-        #   }
-        #
-        # genLogistik <-
-        #   function (data,
-        #             member,
-        #             match = "score",
-        #             anchor = 1:NCOL(data),
-        #             type = "both",
-        #             criterion = "LRT")
-        #   {
-        #     R2 <-
-        #       function(m, n)
-        #         1 - (exp(-m$null.deviance / 2) / exp(-m$deviance / 2)) ^ (2 / n)
-        #     R2max <- function(m, n)
-        #       1 - (exp(-m$null.deviance / 2)) ^ (2 / n)
-        #     R2DIF <- function(m, n)
-        #       R2(m, n) / R2max(m, n)
-        #     dev <-
-        #       R2full <- R2simple <- deltaR <- rep(NA, NCOL(data))
-        #     nGroup <- length(unique(member)) - 1
-        #     mFull <-
-        #       mSimple <- matrix(0, NCOL(data), 2 + 2 * nGroup)
-        #     if (type == "udif") {
-        #       sigmaMat <- rep(NA, (2 + nGroup) * (2 + nGroup) * NCOL(data))
-        #       dim(sigmaMat) <- c(2 + nGroup, 2 + nGroup, NCOL(data))
-        #     }
-        #     else {
-        #       sigmaMat <- rep(NA, (2 + 2 * nGroup) * (2 + 2 * nGroup) *
-        #                         NCOL(data))
-        #       dim(sigmaMat) <-
-        #         c(2 + 2 * nGroup, 2 + 2 * nGroup, NCOL(data))
-        #     }
-        #     for (item in 1:NCOL(data)) {
-        #       if (match[1] == "score") {
-        #         data2 <- data[, anchor]
-        #         if (sum(anchor == item) == 0)
-        #           data2 <- cbind(data2, data[, item])
-        #         SCORES <- rowSums(data2, na.rm = TRUE)
-        #       }
-        #       else
-        #         SCORES <- match
-        #       GROUP <- as.factor(member)
-        #       ITEM <- data[, item]
-        #       m0 <- switch(
-        #         type,
-        #         both = glm(ITEM ~ SCORES * GROUP,
-        #                    family = "binomial"),
-        #         udif = glm(ITEM ~ SCORES +
-        #                      GROUP, family = "binomial"),
-        #         nudif = glm(ITEM ~ SCORES *
-        #                       GROUP, family = "binomial")
-        #       )
-        #       m1 <-
-        #         switch(
-        #           type,
-        #           both = glm(ITEM ~ SCORES, family = "binomial"),
-        #           udif = glm(ITEM ~ SCORES, family = "binomial"),
-        #           nudif = glm(ITEM ~
-        #                         SCORES + GROUP, family = "binomial")
-        #         )
-        #       if (criterion == "LRT") {
-        #         dev[item] <- deviance(m1) - deviance(m0)
-        #         covMat <- summary(m0)$cov.scaled
-        #         sigmaMat[, , item] <- covMat
-        #       }
-        #       else {
-        #         if (criterion != "Wald")
-        #           stop("'criterion' must be either 'LRT' or Wald'",
-        #                call. = FALSE)
-        #         else {
-        #           coeff <- as.numeric(coefficients(m0))
-        #           covMat <- summary(m0)$cov.scaled
-        #           sigmaMat[, , item] <- covMat
-        #           if (type == "udif") {
-        #             C <- matrix(0, nGroup, length(coeff))
-        #             for (tt in 1:nGroup)
-        #               C[tt, 2 + tt] <- 1
-        #           }
-        #           else {
-        #             if (type == "nudif") {
-        #               C <- matrix(0, nGroup, length(coeff))
-        #               for (tt in 1:nGroup)
-        #                 C[tt, 2 + nGroup + tt] <- 1
-        #             }
-        #             else {
-        #               C <- matrix(0, nGroup * 2, length(coeff))
-        #               for (tt in 1:(2 * nGroup))
-        #                 C[tt, 2 + tt] <- 1
-        #             }
-        #           }
-        #           dev[item] <-
-        #             t(C %*% coeff) %*% solve(C %*% covMat %*%
-        #                                        t(C)) %*% C %*% coeff
-        #         }
-        #       }
-        #       R2full[item] <- R2DIF(m0, NROW(data))
-        #       R2simple[item] <- R2DIF(m1, NROW(data))
-        #       deltaR[item] <-
-        #         R2DIF(m0, NROW(data)) - R2DIF(m1, NROW(data))
-        #       mFull[item, 1:length(m0$coefficients)] <-
-        #         m0$coefficients
-        #       mSimple[item, 1:length(m1$coefficients)] <-
-        #         m1$coefficients
-        #     }
-        #     names <- c("(Intercept)", "SCORE")
-        #     GE <- sort(unique(member))
-        #     for (i in 2:length(GE))
-        #       names <- c(names, paste("GROUP",
-        #                               GE[i], sep = ""))
-        #     for (i in 2:length(GE))
-        #       names <- c(names, paste("SCORE:GROUP",
-        #                               GE[i], sep = ""))
-        #     colnames(mFull) <- colnames(mSimple) <- names
-        #     res <-
-        #       list(
-        #         stat = dev,
-        #         R2M0 = R2full,
-        #         R2M1 = R2simple,
-        #         deltaR2 = deltaR,
-        #         parM0 = mFull,
-        #         parM1 = mSimple,
-        #         covMat = sigmaMat,
-        #         criterion = criterion,
-        #         match = ifelse(match[1] == "score", "score", "matching variable")
-        #       )
-        #     return(res)
-        #   }
         
-        # retroDesign <-
-        #   function(D,
-        #            # True effect size
-        #            s,
-        #            # SE of the estimate
-        #            alpha = alpha,
-        #            # alpha for the hypothesis test
-        #            df = Inf,
-        #            # DF, defaults to INF for approximating a normal distribution in the T-distribution
-        #            n.sims = self$options$sims)
-        #     # Number of simulations to run
-        #   {
-        #     # Dataframe to hold results
-        #     res <-
-        #       data.frame(
-        #         typeS = rep(0, length(s)),
-        #         typeM = rep(0, length(s)),
-        #         power = rep(0, length(s))
-        #       )
-        #     for (i in 1:length(s)) {
-        #       z <- qt(1 - alpha / 2, df)
-        #       p.hi <- 1 - pt(z - De / s, df)
-        #       p.lo <- pt(-z - De / s, df)
-        #       power <- p.hi + p.lo
-        #       res[i, 3] <- power
-        #       # typeS
-        #       res[i, 1] <- p.lo / power
-        #       # typeM
-        #       estimate <- D + s * rt(n.sims, df)
-        #       significant <- abs(estimate) > s * z
-        #       res[i, 2] <- mean(abs(estimate)[significant]) / D
-        #     }
-        #     return(res)
-        #   }
-        #
+        # Bootstrap GC functions ----
+        # Print the output of a bootstrap
+        
+        print.bootSE <- function(x,
+                                 digits = getOption("digits"),
+                                 index = 1L:ncol(boot.out$t),
+                                 ...)
+        {
+          boot.out <- x
+          sim <- boot.out$sim
+          cl <- boot.out$call
+          t <- matrix(boot.out$t[, index], nrow = nrow(boot.out$t))
+          allNA <- apply(t, 2L, function(t)
+            all(is.na(t)))
+          ind1 <- index[allNA]
+          index <- index[!allNA]
+          t <- matrix(t[,!allNA], nrow = nrow(t))
+          rn <- paste("t", index, "*", sep = "")
+          if (length(index) == 0L)
+            op <- NULL
+          else if (is.null(t0 <- boot.out$t0)) {
+            if (is.null(boot.out$call$weights))
+              op <- cbind(apply(t, 2L, mean, na.rm = TRUE),
+                          sqrt(apply(t, 2L, function(t.st)
+                            var(t.st[!is.na(t.st)]))))
+            else {
+              op <- NULL
+              for (i in index)
+                op <-
+                  rbind(op, imp.moments(boot.out, index = i)$rat)
+              op[, 2L] <- sqrt(op[, 2])
+            }
+            dimnames(op) <- list(rn, c("mean", "std. error"))
+            return(op)
+          }
+          else {
+            t0 <- boot.out$t0[index]
+            if (is.null(boot.out$call$weights)) {
+              op <- cbind(t0, apply(t, 2L, mean, na.rm = TRUE) - t0,
+                          sqrt(apply(t, 2L, function(t.st)
+                            var(t.st[!is.na(t.st)]))))
+              dimnames(op) <-
+                list(rn, c("original", " bias  ", " std. error"))
+              return(op)
+            }
+            else {
+              op <- NULL
+              for (i in index)
+                op <-
+                  rbind(op, imp.moments(boot.out, index = i)$rat)
+              op <- cbind(t0, op[, 1L] - t0, sqrt(op[, 2L]),
+                          apply(t, 2L, mean, na.rm = TRUE))
+              dimnames(op) <- list(rn, c("original", " bias  ",
+                                         " std. error", " mean(t*)"))
+              return(op)
+            }
+          }
+          
+        }
+        
+        NagR2 <- function(DATA, ind) {
+          ITEM <- (DATA[, 1])
+          SCORE <- (DATA[, 2])
+          GROUP <- (DATA[, 3])
+          n <- nrow(DATA)
+          
+          m0 <- switch(
+            self$options$type,
+            both = glm(ITEM[ind] ~ SCORE * GROUP,
+                       family = "binomial"),
+            udif = glm(ITEM[ind] ~ SCORE +
+                         GROUP, family = "binomial"),
+            nudif = glm(ITEM[ind] ~ SCORE *
+                          GROUP, family = "binomial")
+          )
+          
+          m1 <-
+            switch(
+              self$options$type,
+              both = glm(ITEM[ind] ~ SCORE, family = "binomial"),
+              udif = glm(ITEM[ind] ~ SCORE, family = "binomial"),
+              nudif = glm(ITEM[ind] ~
+                            SCORE + GROUP, family = "binomial")
+            )
+          
+          R2cox0 <-  1 - exp((m0$deviance - m0$null.deviance) / n)
+          R2nag0 <-  R2cox0 / (1 - exp((-m0$null.deviance) / n))
+          
+          R2cox1 <-  1 - exp((m1$deviance - m1$null.deviance) / n)
+          R2nag1 <-  R2cox1 / (1 - exp((-m1$null.deviance) / n))
+          
+          deltaNagR2 <- R2nag0 - R2nag1
+          return(deltaNagR2)
+        }
+        
+        empDist <- function(DATA, hypTrueEff) {
+          alpha <- self$options$alpha
+          empRes <- matrix(0, nrow = 1, ncol = 2)
+          # Get bootstrapped distribution
+          myBoot <- boot(DATA, NagR2, R = 1000)
+          # se of emp. dist.
+          se <- print.bootSE(myBoot)[[3]]
+          # Density values for use below
+          D <- density(myBoot$t, n = 1024)
+          # calculate 2.5% and 97.5% quantiles. This will be needed to find the "reject region."
+          # length 2 vector of quantiles matching bottom alpha/2 and upper alpha/2 in the emp. dist.
+          quant <- quantile(D$x, c(alpha / 2, 1 - (alpha / 2)))
+          # points in the probability distribution matching the Lower and Upper quantiles
+          p.lo <- quant[[1]]
+          p.hi <- quant[[2]]
+          # Here there be monsters
 
+          ## shifts distribution by the difference between the observed effect size and the empirical effect size
+          D.shifted <- myBoot$t + hypTrueEff
+          ## Calculate shifted distribution. 
+          D.shifted <- density(D.shifted, n = 1024)$x
+          ##returns the fraction of elements of D.shift that fall into the reject regions of the unshifted distribution.
+          rejects = sum(D.shifted > p.hi) == T
+          ##calculates the proportion of rejects among all bootstrapped samples.
+          ##This is the power of the test.
+          powerR <- rejects / length(rejects)
+          empRes[1, 2] <- powerR
+          # typeM error rate
+          estimate <-
+            hypTrueEff + se * sample(D$x, replace = T, size = self$options$sims)
+          significant <- estimate > se * qUpper
+          typeMError <-
+            mean(estimate)[significant] / hypTrueEff
+          empRes[1, 1] <- typeMError
+          return(empRes)
+        }
+        
         # Results functions ----
         
         highlight <- function(table, column, i) {
@@ -1271,26 +736,12 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                   paste0(rownames(GC)[item], " (B)"),
                   paste0(rownames(GC)[item], " (C)")
                 ),
-                typeS = GC[item, 2],
                 typeM = GC[item, 3],
                 power = GC[item, 4]
               )
             )
-            # }
           }
-          # if (self$options$difFlagScale) {
-          #   if (model$ZT[i] %in% c("B", "C") & model$adjusted.p[i] <= alpha) {
-          #     highlight(table, "item")
-          #   }
-          # }
-          # if (self$options$difFlagScale) {
-          #   if (model$JG[i] %in% c("B", "C") & model$adjusted.p[i] <= alpha) {
-          #     highlight(table, "item")
-          #   }
-          # }
         }
-        # }
-        # }
         
         # Model ----
         
@@ -1654,13 +1105,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             }
           }
         }
-        
-        # LRT plot data ----
-        
-        # if (self$results$LRTplot$isNotFilled()) {
-        #   imageLRT <- self$results$LRTplot
-        #   imageLRT$setState(model)
-        # }
       },
       
       .plotICC = function(imageICC, ...) {
@@ -1685,6 +1129,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     )) +
           geom_smooth(
             method = "glm",
+            level = self$options$alpha,
             se = TRUE,
             method.args = (family = "binomial")
           ) +
@@ -1711,59 +1156,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         print(p)
         TRUE
         
-      }#,
-      
-      # .plotLRT = function(imageLRT, ...) {
-      #   model <- imageLRT$state
-      #
-      #   plotLRT <-
-      #     function (x,
-      #               item = 1,
-      #               itemFit = "best",
-      #               pch = 8,
-      #               number = TRUE,
-      #               col = "red",
-      #               colIC = rep("black", 2),
-      #               ltyIC = c(1,
-      #                         2),
-      #               group.names = NULL,
-      #               ...)
-      #     {
-      #       res <- x
-      #       if (class(res) == "Logistic") {
-      #         myClass <- "Logistik"
-      #       } else {
-      #         myClass <- "genLogistik"
-      #       }
-      #       plot(
-      #         res$Logistik,
-      #         xlab = "Item",
-      #         ylab = paste(x$criterion,
-      #                      " statistic", sep = ""),
-      #         ylim = c(0, max(c(
-      #           res$Logistik,
-      #           res$thr
-      #         ) + 1, na.rm = TRUE)),
-      #         xlim = c(1, length(model$names)),
-      #         col = "white",
-      #         main = paste("Logistic regression (",
-      #                      x$criterion,
-      #                      " statistic)",
-      #                      sep = "")
-      #       )
-      #       text(1:length(res$Logistik),
-      #            res$Logistik,
-      #            1:length(res$Logistik))
-      #       if (!is.character(res$DIFitems))
-      #         text(res$DIFitems, res$Logistik[res$DIFitems],
-      #              res$DIFitems, col = col)
-      #
-      #       abline(h = res$thr)
-      #     }
-      #   LRTplot <- plotLRT(model)
-      #   print(LRTplot)
-      #
-      #   TRUE
-      # }
+      }
     )
   )

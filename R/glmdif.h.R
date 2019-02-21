@@ -204,7 +204,6 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
 glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
-        debug = function() private$.items[["debug"]],
         DESCtable = function() private$.items[["DESCtable"]],
         DIFtable = function() private$.items[["DIFtable"]],
         gcTable = function() private$.items[["gcTable"]],
@@ -216,10 +215,6 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="Differential Item Functioning")
-            self$add(jmvcore::Preformatted$new(
-                options=options,
-                name="debug",
-                title="debug"))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="DESCtable",
@@ -321,11 +316,6 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `title`="True Effect", 
                         `type`="text"),
                     list(
-                        `name`="typeS", 
-                        `title`="Type-S", 
-                        `type`="number", 
-                        `format`="zto,pvalue"),
-                    list(
                         `name`="typeM", 
                         `title`="Type-M", 
                         `type`="number", 
@@ -421,7 +411,6 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param plotVarsICC .
 #' @return A results object containing:
 #' \tabular{llllll}{
-#'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$DESCtable} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$DIFtable} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$gcTable} \tab \tab \tab \tab \tab a table \cr
