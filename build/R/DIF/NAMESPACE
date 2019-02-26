@@ -5,3 +5,7 @@ import(boot)
 export(glmDIF)
 export(glmDIFClass)
 export(glmDIFOptions)
+
+export(rdTTest)
+export(rdTTestClass)
+export(rdTTestOptions)

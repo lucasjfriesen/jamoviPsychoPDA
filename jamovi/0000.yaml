@@ -1,5 +1,5 @@
 ---
-title: What the Package Does (Title Case)
+title: Design Analysis
 name: DIF
 version: 1.0.0
 jms: '1.0'
@@ -15,7 +15,7 @@ analyses:
   - title: Differential Item Functioning
     name: glmDIF
     ns: DIF
-    menuGroup: DIF
+    menuGroup: Design Analysis
     menuTitle: Differential Item Functioning
     description: >
       Differential Item Functioning (DIF) analysis is used to assess items on
@@ -24,6 +24,11 @@ analyses:
       performing
 
       diferentially on that item.
+  - title: T-Test
+    name: rdTTest
+    ns: DIF
+    menuGroup: Design Analysis
+    menuTitle: T-Test
 datasets:
   - name: verbal
     path: dataverbal.csv

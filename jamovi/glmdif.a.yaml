@@ -1,7 +1,7 @@
 ---
 name:  glmDIF
 title: Differential Item Functioning
-menuGroup: DIF
+menuGroup: Design Analysis
 version: '1.0.0'
 jas: '1.2'
 

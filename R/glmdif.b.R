@@ -18,8 +18,25 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
       .run = function() {
         if (is.null(self$options$group) |
             is.null(self$data) | is.null(self$options$item)) {
-          stop("Please supply a least 1 item variable and a grouping variable.",
-                   call. = FALSE)
+          self$results$gcTable$setVisible(visible = FALSE)
+          self$results$DESCtable$setVisible(visible = FALSE)
+          self$results$DIFtable$setVisible(visible = FALSE)
+          self$results$instructions$setVisible(visible = TRUE)
+          self$results$instructions$setRow(rowNo = 1, value = list(
+            ted = "1) Place items to be assessed for DIF in the 'Item(s) for analysis' slot."
+          ))
+          self$results$instructions$setRow(rowNo = 2, value = list(
+            ted = "2) Place the grouping variable in the 'Grouping Variable' slot."
+          ))
+          self$results$instructions$setRow(rowNo = 3, value = list(
+            ted = "3) [Optional] Place the remaining measure items in the 'Anchor Items' slot. This is not needed if a Matching Variable is supplied."
+          ))
+          self$results$instructions$setRow(rowNo = 4, value = list(
+            ted = "4) [Optional] Place an external matching variable in the 'Matching Variable' slot. Measure total score will be calculated if this option is omitted."
+          ))
+          return()
+          #stop("Please supply a least 1 item variable and a grouping variable.",
+           #        call. = FALSE)
         }
         # The full DF
         data <- self$data
@@ -168,7 +185,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                   nudif = qchisq(1 - alpha, 1)
                 )
               ANCHOR <- names(anchor)
-              # self$results$debug$setContent(ANCHOR)
               dif.anchor <- self$options$anchor
               DDF <- ifelse(type == "both", 2, 1)
               
@@ -530,7 +546,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                   for (hypInd in 1:length(hypTrueEff)) {
                     private$.checkpoint()
                     GC[item + tick, 1] <- item
-                    GC[item + tick, 2:4] <-
+                    GC[item + tick, 2:3] <-
                       empDist(empDATA, hypTrueEff = hypTrueEff[hypInd])
                   
 
@@ -690,17 +706,17 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           # calculate 2.5% and 97.5% quantiles. This will be needed to find the "reject region."
           # length 2 vector of quantiles matching bottom alpha/2 and upper alpha/2 in the emp. dist.
           quant <- quantile(D$x, c(alpha / 2, 1 - (alpha / 2)))
-          # points in the probability distribution matching the Lower and Upper quantiles
-          p.lo <- quant[[1]]
-          p.hi <- quant[[2]]
           # Here there be monsters
-
+          
+          # points in the probability distribution matching the Lower and Upper quantiles
+          # p.lo <- quant[[1]]
+          qUpper <- quant[[2]]
           ## shifts distribution by the difference between the observed effect size and the empirical effect size
           D.shifted <- myBoot$t + hypTrueEff
           ## Calculate shifted distribution. 
           D.shifted <- density(D.shifted, n = 1024)$x
           ##returns the fraction of elements of D.shift that fall into the reject regions of the unshifted distribution.
-          rejects = sum(D.shifted > p.hi) == T
+          rejects = sum(D.shifted > qUpper) == T
           ##calculates the proportion of rejects among all bootstrapped samples.
           ##This is the power of the test.
           powerR <- rejects / length(rejects)
@@ -710,7 +726,8 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             hypTrueEff + se * sample(D$x, replace = T, size = self$options$sims)
           significant <- estimate > se * qUpper
           typeMError <-
-            mean(estimate)[significant] / hypTrueEff
+            mean(estimate[significant]) / hypTrueEff
+          self$results$debug$setContent(list(qUpper, mean(estimate[significant]), se, typeMError))
           empRes[1, 1] <- typeMError
           return(empRes)
         }
@@ -736,8 +753,8 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                   paste0(rownames(GC)[item], " (B)"),
                   paste0(rownames(GC)[item], " (C)")
                 ),
-                typeM = GC[item, 3],
-                power = GC[item, 4]
+                typeM = GC[item, 2],
+                power = GC[item, 3]
               )
             )
           }
@@ -1129,7 +1146,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     )) +
           geom_smooth(
             method = "glm",
-            level = self$options$alpha,
+            level = 1 - self$options$alpha,
             se = TRUE,
             method.args = (family = "binomial")
           ) +

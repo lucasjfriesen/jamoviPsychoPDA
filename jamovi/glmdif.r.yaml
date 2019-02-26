@@ -4,9 +4,19 @@ title: Differential Item Functioning
 jrs:   '1.1'
 
 items:
-   # - name: debug
-   #   title: debug
-   #   type: Preformatted
+    - name: debug
+      title: debug
+      type: Preformatted
+
+    - name: instructions
+      title: Instructions
+      type: Table
+      rows: 4
+      visible: False
+      columns:
+        - name: ted
+          title: ""
+          type: text
 
     - name:  DESCtable
       title: Procedure Notes
@@ -102,7 +112,7 @@ items:
           title: Item
           type: text
         - name: hypTrueEff
-          title: True Effect
+          title: Hypothesized True Effect
           type: text
         - name: typeM
           title: Type-M

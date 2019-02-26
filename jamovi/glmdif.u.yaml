@@ -6,44 +6,39 @@ compilerMode: tame
 events:
   update: './glmDIF.events::update'
 children:
-  - type: CollapseBox
-    label: Variables
-    margin: large
-    collapsed: false
+  - type: VariableSupplier
+    label: Data variables
+    persistentItems: false
+    stretchFactor: 1
     children:
-      - type: VariableSupplier
-        label: Data variables
-        persistentItems: false
-        stretchFactor: 1
+      - type: TargetLayoutBox
+        label: Item(s) for Analysis
         children:
-          - type: TargetLayoutBox
-            label: Item Variable(s)
-            children:
-              - type: VariablesListBox
-                name: item
-                isTarget: true
-                events:
-                  change: './glmDIF.events::onChange_item'
-          - type: TargetLayoutBox
-            label: Grouping Variable
-            children:
-              - type: VariablesListBox
-                name: group
-                maxItemCount: 1
-                isTarget: true
-          - type: TargetLayoutBox
-            label: Matching Variable
-            children:
-              - type: VariablesListBox
-                name: matchVar
-                maxItemCount: 1
-                isTarget: true
-          - type: TargetLayoutBox
-            label: Anchor Items
-            children:
-              - type: VariablesListBox
-                name: anchor
-                isTarget: true
+          - type: VariablesListBox
+            name: item
+            isTarget: true
+            events:
+              change: './glmDIF.events::onChange_item'
+      - type: TargetLayoutBox
+        label: Grouping Variable
+        children:
+          - type: VariablesListBox
+            name: group
+            maxItemCount: 1
+            isTarget: true
+      - type: TargetLayoutBox
+        label: Matching Variable
+        children:
+          - type: VariablesListBox
+            name: matchVar
+            maxItemCount: 1
+            isTarget: true
+      - type: TargetLayoutBox
+        label: Anchor Items
+        children:
+          - type: VariablesListBox
+            name: anchor
+            isTarget: true
   - type: CollapseBox
     label: DIF Analysis
     margin: large

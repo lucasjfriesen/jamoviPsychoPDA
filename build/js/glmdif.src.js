@@ -24,65 +24,57 @@ view.layout = ui.extend({
     stage: 0, //0 - release, 1 - development, 2 - proposed
     controls: [
 		{
-			type: DefaultControls.CollapseBox,
-			label: "Variables",
-			margin: "large",
-			collapsed: false,
+			type: DefaultControls.VariableSupplier,
+			label: "Data variables",
+			persistentItems: false,
+			stretchFactor: 1,
 			controls: [
 				{
-					type: DefaultControls.VariableSupplier,
-					label: "Data variables",
-					persistentItems: false,
-					stretchFactor: 1,
+					type: DefaultControls.TargetLayoutBox,
+					label: "Item(s) for Analysis",
 					controls: [
 						{
-							type: DefaultControls.TargetLayoutBox,
-							label: "Item Variable(s)",
-							controls: [
-								{
-									type: DefaultControls.VariablesListBox,
-									name: "item",
-									isTarget: true,
-									events: [
-										{ execute: require('./glmDIF.events').onChange_item }
-									]
-								}
+							type: DefaultControls.VariablesListBox,
+							name: "item",
+							isTarget: true,
+							events: [
+								{ execute: require('./glmDIF.events').onChange_item }
 							]
-						},
+						}
+					]
+				},
+				{
+					type: DefaultControls.TargetLayoutBox,
+					label: "Grouping Variable",
+					controls: [
 						{
-							type: DefaultControls.TargetLayoutBox,
-							label: "Grouping Variable",
-							controls: [
-								{
-									type: DefaultControls.VariablesListBox,
-									name: "group",
-									maxItemCount: 1,
-									isTarget: true
-								}
-							]
-						},
+							type: DefaultControls.VariablesListBox,
+							name: "group",
+							maxItemCount: 1,
+							isTarget: true
+						}
+					]
+				},
+				{
+					type: DefaultControls.TargetLayoutBox,
+					label: "Matching Variable",
+					controls: [
 						{
-							type: DefaultControls.TargetLayoutBox,
-							label: "Matching Variable",
-							controls: [
-								{
-									type: DefaultControls.VariablesListBox,
-									name: "matchVar",
-									maxItemCount: 1,
-									isTarget: true
-								}
-							]
-						},
+							type: DefaultControls.VariablesListBox,
+							name: "matchVar",
+							maxItemCount: 1,
+							isTarget: true
+						}
+					]
+				},
+				{
+					type: DefaultControls.TargetLayoutBox,
+					label: "Anchor Items",
+					controls: [
 						{
-							type: DefaultControls.TargetLayoutBox,
-							label: "Anchor Items",
-							controls: [
-								{
-									type: DefaultControls.VariablesListBox,
-									name: "anchor",
-									isTarget: true
-								}
-							]
+							type: DefaultControls.VariablesListBox,
+							name: "anchor",
+							isTarget: true
 						}
 					]
 				}

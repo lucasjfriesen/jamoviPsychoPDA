@@ -204,6 +204,8 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
 glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
+        debug = function() private$.items[["debug"]],
+        instructions = function() private$.items[["instructions"]],
         DESCtable = function() private$.items[["DESCtable"]],
         DIFtable = function() private$.items[["DIFtable"]],
         gcTable = function() private$.items[["gcTable"]],
@@ -215,6 +217,21 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="Differential Item Functioning")
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="debug",
+                title="debug"))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="instructions",
+                title="Instructions",
+                rows=4,
+                visible=FALSE,
+                columns=list(
+                    list(
+                        `name`="ted", 
+                        `title`="", 
+                        `type`="text"))))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="DESCtable",
@@ -313,7 +330,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `type`="text"),
                     list(
                         `name`="hypTrueEff", 
-                        `title`="True Effect", 
+                        `title`="Hypothesized True Effect", 
                         `type`="text"),
                     list(
                         `name`="typeM", 
@@ -411,6 +428,8 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param plotVarsICC .
 #' @return A results object containing:
 #' \tabular{llllll}{
+#'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
+#'   \code{results$instructions} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$DESCtable} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$DIFtable} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$gcTable} \tab \tab \tab \tab \tab a table \cr
@@ -419,9 +438,9 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'
 #' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
 #'
-#' \code{results$DESCtable$asDF}
+#' \code{results$instructions$asDF}
 #'
-#' \code{as.data.frame(results$DESCtable)}
+#' \code{as.data.frame(results$instructions)}
 #'
 #' @export
 glmDIF <- function(

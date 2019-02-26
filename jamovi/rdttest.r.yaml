@@ -1,0 +1,29 @@
+---
+name:  rdTTest
+title: T-Test
+jrs:   '1.1'
+
+items:
+#    - name: debug
+#      title: debug
+#      type: Preformatted
+
+    - name: rdTTest
+      title: Retroactive Design Analysis | T-Test
+      type:  Table
+      rows: 0
+      columns: 
+        - name: hypTrueEffLabel
+          title: Hypothesized True Effect
+          type: number
+        - name: typeS
+          title: Type-S
+          type: number
+        - name: typeM
+          title: Type-M
+          type: number
+        - name: power
+          title: Observed Power
+          type: number
+
+...
