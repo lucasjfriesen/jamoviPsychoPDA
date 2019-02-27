@@ -475,9 +475,12 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             for (item in 1:ncol(data)) {
               private$.checkpoint()
               if (match[1] == "score") {
-                data2 <- cbind(data, anchor)
-                SCORES <- rowSums(sapply(data2, as.numeric), na.rm = TRUE)
-
+                if (!is.null(anchor)){
+                    data2 <- cbind(data, anchor)
+                    SCORES <- rowSums(sapply(data2, as.numeric), na.rm = TRUE)
+                  } else {
+                    SCORES <- rowSums(sapply(data, as.numeric))
+                  }
               }
               else {
                 SCORES <- match}
@@ -1102,16 +1105,24 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             items <- self$options$plotVarsICC
             
             for (i in unique(items)) {
-              # self$results$debug$setContent(list(colnames(Data), i))
               private$.checkpoint()
               
-              if (match == "score") {
-                data2 <- cbind(Data[, colnames(Data) == i], anchor)
-                match <- rowSums(sapply(data2, as.numeric), na.rm = TRUE)
+              if (!is.null(anchor)){
+                  data2 <- cbind(data, anchor)
+                  match <- rowSums(sapply(data2, as.numeric), na.rm = TRUE)
+                } else {
+                  match <- rowSums(sapply(data, as.numeric))
+                }
+              
+              if (groupType == "group") {
+                Group <- rep("Non-Reference Group", NROW(Data))
+                Group[group == focalName] <- "Reference Group"
+              } else {
+                Group <- group
               }
               
               plotData <-
-                data.frame(Data[, colnames(Data) == i], match, group)
+                data.frame(Data[, colnames(Data) == i], match, Group)
               
               colnames(plotData) <-
                 c(i, "match", "group")
@@ -1127,6 +1138,8 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         plotData <- data.frame(imageICC$state[[1]])
         model <- imageICC$state[[2]]
         
+        self$results$debug$setContent(plotData)
+        
         if (!all(self$options$plotVarsICC %in% self$options$item)) {
           stop(
             paste0(
@@ -1141,7 +1154,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     aes(
                       x = as.numeric(plotData$match),
                       y = as.integer(plotData[, 1]),
-                      colour = as.numeric(plotData$group)
+                      colour = as.character(plotData$group)
                     )) +
           geom_smooth(
             method = "glm",
@@ -1159,8 +1172,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               model$ZT[model$names == colnames(plotData)[1]],
               ", JG = ",
               model$JG[model$names == colnames(plotData)[1]]
-          )
-          ) +
+          )) +
           xlab(ifelse(
             is.null(self$options$matchVar),
             "Total sore",
@@ -1170,7 +1182,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           theme_classic()
         
         print(p)
-        self$results$debug$setContent(unlist(p))
+        # self$results$debug$setContent(list(plotData, unlist(p)))
         TRUE
         
       }
