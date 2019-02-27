@@ -1122,7 +1122,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               }
               
               plotData <-
-                data.frame(Data[, colnames(Data) == i], match, Group)
+                data.frame(jmvcore::toNumeric(Data[, colnames(Data) == i]), match, Group)
               
               colnames(plotData) <-
                 c(i, "match", "group")
@@ -1138,7 +1138,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         plotData <- data.frame(imageICC$state[[1]])
         model <- imageICC$state[[2]]
         
-        self$results$debug$setContent(plotData)
+        self$results$debug$setContent(utils::str(plotData))
         
         if (!all(self$options$plotVarsICC %in% self$options$item)) {
           stop(
@@ -1150,7 +1150,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           )
         }
         
-        p <- ggplot(data = plotData,
+        p <- ggplot(data = as.data.frame(plotData),
                     aes(
                       x = as.numeric(plotData$match),
                       y = as.integer(plotData[, 1]),
@@ -1160,8 +1160,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             method = "glm",
             level = 1 - self$options$alpha,
             se = TRUE,
-            method.args = (family = "binomial")
-          ) +
+            method.args = (family = "binomial")) +
           labs(colour = "Group membership") +
           ggtitle(
             paste("Item: ", colnames(plotData)),
