@@ -22,20 +22,20 @@ items:
       title: Procedure Notes
       type:  Table
       rows: 0
-      clearWith: 
-          - item
-          - group
-          - matchVar
-          - anchor
-          - focal
-          - groupType
-          - type
-          - criterion
-          - alpha
-          - nIter
-          - purify
-          - pAdjustMethod
-          - designAnalysis
+     # clearWith: 
+     #     - item
+     #     - group
+     #     - matchVar
+     #     - anchor
+     #     - focal
+     #     - groupType
+     #     - type
+     #     - criterion
+     #     - alpha
+     #     - nIter
+     #     - purify
+     #     - pAdjustMethod
+     #     - designAnalysis
            
       columns: 
         - name: bob
@@ -46,20 +46,20 @@ items:
       title: Differential Item Functioning Analysis
       type: Table
       rows:  (item)
-      clearWith: 
-          - item
-          - group
-          - matchVar
-          - anchor
-          - focal
-          - groupType
-          - type
-          - criterion
-          - alpha
-          - nIter
-          - purify
-          - pAdjustMethod
-          - onlyDIF
+      #clearWith: 
+      #    - item
+      #    - group
+      #    - matchVar
+      #    - anchor
+      #    - focal
+      #    - groupType
+      #    - type
+      #    - criterion
+      #    - alpha
+      #    - nIter
+      #    - purify
+      #    - pAdjustMethod
+      #    - onlyDIF
       columns:
         - name: item
           title: Item
@@ -94,19 +94,19 @@ items:
       type: Table
       rows: 0
       visible: (designAnalysis)
-      clearWith: 
-          - item
-          - group
-          - matchVar
-          - anchor
-          - focal
-          - groupType
-          - type
-          - criterion
-          - alpha
-          - nIter
-          - purify
-          - pAdjustMethod
+      #clearWith: 
+      #    - item
+      #    - group
+      #    - matchVar
+      #    - anchor
+      #    - focal
+      #    - groupType
+      #    - type
+      #    - criterion
+      #    - alpha
+      #    - nIter
+      #    - purify
+      #    - pAdjustMethod
       columns:
         - name: item
           title: Item

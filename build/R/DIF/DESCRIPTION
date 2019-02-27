@@ -8,4 +8,4 @@ Description: Perform differential item functioning (DIF) analyses in dichotomous
 Encoding: UTF-8
 LazyData: true
 Imports: jmvcore (>= 0.8.5), R6, stats, ggplot2, boot
-Built: R 3.3.0; ; 2019-02-26 23:40:18 UTC; unix
+Built: R 3.3.0; ; 2019-02-27 00:41:22 UTC; unix

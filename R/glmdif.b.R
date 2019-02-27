@@ -26,17 +26,15 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             ted = "1) Place items to be assessed for DIF in the 'Item(s) for analysis' slot."
           ))
           self$results$instructions$setRow(rowNo = 2, value = list(
-            ted = "2) Place the grouping variable in the 'Grouping Variable' slot."
+            ted = "2) [Optional] Place the remaining measure items in the 'Anchor Items' slot. This is not needed if a Matching Variable is supplied."
           ))
           self$results$instructions$setRow(rowNo = 3, value = list(
-            ted = "3) [Optional] Place the remaining measure items in the 'Anchor Items' slot. This is not needed if a Matching Variable is supplied."
+            ted = "3) [Optional] Place an external matching variable in the 'Matching Variable' slot. Measure total score will be calculated if this option is omitted."
           ))
           self$results$instructions$setRow(rowNo = 4, value = list(
-            ted = "4) [Optional] Place an external matching variable in the 'Matching Variable' slot. Measure total score will be calculated if this option is omitted."
+            ted = "4) Place the grouping variable in the 'Grouping Variable' slot."
           ))
           return()
-          #stop("Please supply a least 1 item variable and a grouping variable.",
-           #        call. = FALSE)
         }
         # The full DF
         data <- self$data
@@ -230,8 +228,8 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     seM0 = PROV$seM0,
                     parM1 = PROV$parM1,
                     seM1 = PROV$seM1,
-                    cov.M0 = PROV$cov.M0,
-                    cov.M1 = PROV$cov.M1,
+                    #cov.M0 = PROV$cov.M0,
+                    #cov.M1 = PROV$cov.M1,
                     deltaR2 = deltaR2,
                     GC = PROV$GC,
                     alpha = alpha,
@@ -377,8 +375,8 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     logitSe = logitSe,
                     parM0 = prov1$parM0,
                     seM0 = prov1$seM0,
-                    cov.M0 = prov1$cov.M0,
-                    cov.M1 = prov1$cov.M1,
+                    #cov.M0 = prov1$cov.M0,
+                    #cov.M1 = prov1$cov.M1,
                     deltaR2 = deltaR2,
                     alpha = alpha,
                     thr = Q,
@@ -589,8 +587,8 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 parM1 = mSimple,
                 seM0 = seFull,
                 seM1 = seSimple,
-                cov.M0 = cov.matM0,
-                cov.M1 = cov.matM1,
+                #cov.M0 = cov.matM0,
+                #cov.M1 = cov.matM1,
                 criterion = criterion,
                 memberType = memberType,
                 match = ifelse(match[1] ==
@@ -727,7 +725,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           significant <- estimate > se * qUpper
           typeMError <-
             mean(estimate[significant]) / hypTrueEff
-          self$results$debug$setContent(list(qUpper, mean(estimate[significant]), se, typeMError))
+          
           empRes[1, 1] <- typeMError
           return(empRes)
         }
@@ -776,8 +774,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             purify = purify,
             pAdjustMethod = pAdjustMethod
           )
-        
-        # self$results$debug$setContent(model)
         
         # Description Results Table ----
         calculateDESCtable <- function() {
@@ -981,14 +977,14 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                          values = list(bob = ""))
             if (is.null(model$anchor.names) |
                 model$match != "score") {
-              itk <- 1:length(model$genLogistik)
+              #itk <- 1:length(model$genLogistik)
               table$addRow(
                 rowKey = self$results$DESCtable$rowCount + 1,
                 values = list(bob = "No set of anchor items was provided")
               )
             }
             else {
-              itk <- (1:length(model$genLogistik))[!is.na(model$genLogistik)]
+              #itk <- (1:length(model$genLogistik))[!is.na(model$genLogistik)]
               table$addRow(
                 rowKey = self$results$DESCtable$rowCount + 1,
                 values = list(bob =  "Anchor items (provided by the user): ")
@@ -1105,12 +1101,15 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           if (self$results$ICCplots$isNotFilled()) {
             items <- self$options$plotVarsICC
             
-            if (match == "score") {
-              match <- rowSums(Data)
-            }
-            
             for (i in unique(items)) {
+              # self$results$debug$setContent(list(colnames(Data), i))
               private$.checkpoint()
+              
+              if (match == "score") {
+                data2 <- cbind(Data[, colnames(Data) == i], anchor)
+                match <- rowSums(sapply(data2, as.numeric), na.rm = TRUE)
+              }
+              
               plotData <-
                 data.frame(Data[, colnames(Data) == i], match, group)
               
@@ -1142,7 +1141,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     aes(
                       x = as.numeric(plotData$match),
                       y = as.integer(plotData[, 1]),
-                      colour = as.character(plotData$group)
+                      colour = as.numeric(plotData$group)
                     )) +
           geom_smooth(
             method = "glm",
@@ -1160,7 +1159,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               model$ZT[model$names == colnames(plotData)[1]],
               ", JG = ",
               model$JG[model$names == colnames(plotData)[1]]
-            )
+          )
           ) +
           xlab(ifelse(
             is.null(self$options$matchVar),
@@ -1171,6 +1170,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           theme_classic()
         
         print(p)
+        self$results$debug$setContent(unlist(p))
         TRUE
         
       }

@@ -237,20 +237,6 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 name="DESCtable",
                 title="Procedure Notes",
                 rows=0,
-                clearWith=list(
-                    "item",
-                    "group",
-                    "matchVar",
-                    "anchor",
-                    "focal",
-                    "groupType",
-                    "type",
-                    "criterion",
-                    "alpha",
-                    "nIter",
-                    "purify",
-                    "pAdjustMethod",
-                    "designAnalysis"),
                 columns=list(
                     list(
                         `name`="bob", 
@@ -261,20 +247,6 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 name="DIFtable",
                 title="Differential Item Functioning Analysis",
                 rows="(item)",
-                clearWith=list(
-                    "item",
-                    "group",
-                    "matchVar",
-                    "anchor",
-                    "focal",
-                    "groupType",
-                    "type",
-                    "criterion",
-                    "alpha",
-                    "nIter",
-                    "purify",
-                    "pAdjustMethod",
-                    "onlyDIF"),
                 columns=list(
                     list(
                         `name`="item", 
@@ -310,19 +282,6 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 title="Design Analysis",
                 rows=0,
                 visible="(designAnalysis)",
-                clearWith=list(
-                    "item",
-                    "group",
-                    "matchVar",
-                    "anchor",
-                    "focal",
-                    "groupType",
-                    "type",
-                    "criterion",
-                    "alpha",
-                    "nIter",
-                    "purify",
-                    "pAdjustMethod"),
                 columns=list(
                     list(
                         `name`="item", 
