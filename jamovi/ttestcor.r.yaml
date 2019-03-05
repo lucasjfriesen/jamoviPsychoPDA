@@ -1,0 +1,32 @@
+---
+name:  ttestCor
+title: T-Test for Correlations
+jrs:   '1.1'
+
+items:
+    #- name: debug
+    #  title: debug
+    #  type: Preformatted
+
+    - name: rdTTestCor
+      title: Retroactive Design Analysis | T-Test for Correlations
+      type:  Table
+      rows: 0
+      columns: 
+        - name: label
+          title: Label
+          type: text
+        - name: hypTrueCorLabel
+          title: Hypothesized True Correlation
+          type: number
+        - name: typeS
+          title: Type-S
+          type: number
+        - name: typeM
+          title: Type-M
+          type: number
+        - name: power
+          title: Observed Power
+          type: number
+
+...

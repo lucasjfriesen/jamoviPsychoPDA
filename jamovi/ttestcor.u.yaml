@@ -1,5 +1,5 @@
-title: Mean Differences
-name: rdTTest
+title: Correlations
+name: ttestCor
 jus: '2.0'
 stage: 0
 compilerMode: aggressive
@@ -9,10 +9,17 @@ children:
     stretchFactor: 1
     children:
       - type: TargetLayoutBox
-        label: Hypothesised True Effect Size
+        label: Label
         children:
           - type: VariablesListBox
-            name: hypTrueEff
+            name: labelVar
+            maxItemCount: 1
+            isTarget: true
+      - type: TargetLayoutBox
+        label: Hypothesised True Correlation
+        children:
+          - type: VariablesListBox
+            name: hypTrueCor
             maxItemCount: 1
             isTarget: true
       - type: TargetLayoutBox
@@ -23,19 +30,25 @@ children:
             maxItemCount: 1
             isTarget: true
       - type: TargetLayoutBox
-        label: Observed P-Value
+        label: Observed Correlation
         children:
           - type: VariablesListBox
-            name: observedP
+            name: observedCor
             maxItemCount: 1
             isTarget: true
       - type: TargetLayoutBox
-        label: Degrees of Freedom
+        label: 'N'
         children:
           - type: VariablesListBox
-            name: df
+            name: 'n'
             maxItemCount: 1
             isTarget: true
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: TextBox
+        name: nullCor
+        format: number
   - type: LayoutBox
     margin: large
     children:

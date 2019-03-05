@@ -60,6 +60,9 @@ children:
                 format: number
               - type: ComboBox
                 name: pAdjustMethod
+              - type: TextBox
+                name: D
+                format: string
               - type: Label
                 label: ________________
                 children:
@@ -100,10 +103,6 @@ children:
                 enable: (designAnalysis)
               - type: TextBox
                 name: sims
-                enable: (designAnalysis)
-                format: number
-              - type: TextBox
-                name: D
                 enable: (designAnalysis)
                 format: number
   - type: CollapseBox

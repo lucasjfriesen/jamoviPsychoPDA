@@ -1,7 +1,8 @@
 ---
 name:  glmDIF
-title: Differential Item Functioning
+title: Dichotomous GLM
 menuGroup: Design Analysis
+menuSubgroup: Differential Item Functioning
 version: '1.0.0'
 jas: '1.2'
 
@@ -104,7 +105,8 @@ options:
 
     - name: D
       title: Hypothesized True Effect Size
-      type: Number
+      type: String
+      default: ''
 
     - name: sims
       title: Simulations (Recommended > 1000)

@@ -9,3 +9,7 @@ export(glmDIFOptions)
 export(rdTTest)
 export(rdTTestClass)
 export(rdTTestOptions)
+
+export(ttestCor)
+export(ttestCorClass)
+export(ttestCorOptions)

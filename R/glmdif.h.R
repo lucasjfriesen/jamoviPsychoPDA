@@ -16,7 +16,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             designAnalysis = FALSE,
             designAnalysisSigOnly = TRUE,
             power = FALSE,
-            D = NULL,
+            D = "",
             sims = 5000,
             type = "both",
             criterion = NULL,
@@ -90,9 +90,10 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "power",
                 power,
                 default=FALSE)
-            private$..D <- jmvcore::OptionNumber$new(
+            private$..D <- jmvcore::OptionString$new(
                 "D",
-                D)
+                D,
+                default="")
             private$..sims <- jmvcore::OptionNumber$new(
                 "sims",
                 sims,
@@ -346,7 +347,7 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
                 completeWhenFilled = FALSE)
         }))
 
-#' Differential Item Functioning
+#' Dichotomous GLM
 #'
 #' Differential Item Functioning (DIF) analysis is used to assess items on
 #' a test or measure to determine whether or not certain groups are performing
@@ -414,7 +415,7 @@ glmDIF <- function(
     designAnalysis = FALSE,
     designAnalysisSigOnly = TRUE,
     power = FALSE,
-    D,
+    D = "",
     sims = 5000,
     type = "both",
     criterion,

@@ -451,11 +451,15 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             mFull <-
               mSimple <- seFull <- seSimple <- matrix(0, NCOL(data),
                                                       4)
-            if (self$options$difFlagScale == "zt") {
-              hypTrueEff <- c(0.13, 0.26)
-            } else {
-              hypTrueEff <- c(0.035, 0.07)
-            }
+            if (self$options$D == ""){  
+              if (self$options$difFlagScale == "zt") {
+                hypTrueEff <- c(0.13, 0.26)
+              } else {
+                hypTrueEff <- c(0.035, 0.07)
+              }
+              } else {
+                hypTrueEff <- jmvcore::toNumeric(self$options$D)
+              }
             
             GC <-
               matrix(0,
@@ -543,6 +547,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               if (dev[item] > sigThresh) {
                 if (self$options$designAnalysis) {
                   empDATA <- data.frame(ITEM, GROUP, SCORES)
+                  colnames(empDATA) <- c(colnames(data)[item], "GROUP", "SCORES")
                   tick <- item - 1
                   for (hypInd in 1:length(hypTrueEff)) {
                     private$.checkpoint()
@@ -700,18 +705,30 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           empRes <- matrix(0, nrow = 1, ncol = 2)
           # Get bootstrapped distribution
           myBoot <- boot(DATA, NagR2, R = 1000)
+
+          if (!all(!is.na(myBoot$t))){
+            self$results$gcTable$setNote(key = paste(colnames(DATA)[1], hypTrueEff), 
+                                         note = paste0("WARNING: ",
+                                                       length(myBoot$t) - length(na.omit(myBoot$t)),
+                                                       " of ",
+                                                       length(myBoot$t),
+                                                       " simulations did not converge for item '",
+                                                       colnames(DATA)[1],
+                                                       "' on hypothesized true effect '",
+                                                       hypTrueEff,
+                                                       "'"))
+            myBoot$t <- na.omit(myBoot$t)
+          }
           # se of emp. dist.
           se <- print.bootSE(myBoot)[[3]]
           # Density values for use below
+          # self$results$debug$setContent(list(hypTrueEff, myBoot$t))
           D <- density(myBoot$t, n = 1024)
           # calculate 2.5% and 97.5% quantiles. This will be needed to find the "reject region."
-          # length 2 vector of quantiles matching bottom alpha/2 and upper alpha/2 in the emp. dist.
-          quant <- quantile(D$x, c(alpha / 2, 1 - (alpha / 2)))
+          # Quantile matching the upper 1 - alpha/2 in the emp. dist.
+          qUpper <- quantile(D$x, 1 - (alpha))
           # Here there be monsters
           
-          # points in the probability distribution matching the Lower and Upper quantiles
-          # p.lo <- quant[[1]]
-          qUpper <- quant[[2]]
           ## shifts distribution by the difference between the observed effect size and the empirical effect size
           D.shifted <- myBoot$t + hypTrueEff
           ## Calculate shifted distribution. 
@@ -749,11 +766,10 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               rowKey = item,
               values = list(
                 item = name,
-                hypTrueEff = ifelse(
-                  rownames(GC)[item] == 0.13 | rownames(GC)[item] == 0.035,
-                  paste0(rownames(GC)[item], " (B)"),
-                  paste0(rownames(GC)[item], " (C)")
-                ),
+                hypTrueEff = ifelse(self$options$D == "",
+                                    ifelse(rownames(GC)[item] == 0.13 | rownames(GC)[item] == 0.035,
+                                           paste0(rownames(GC)[item], " (B)"),
+                                           paste0(rownames(GC)[item], " (C)")), rownames(GC)[item]),
                 typeM = GC[item, 2],
                 power = GC[item, 3]
               )
@@ -1115,8 +1131,8 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 }
               
               if (groupType == "group") {
-                Group <- rep("Non-Reference Group", NROW(Data))
-                Group[group == focalName] <- "Reference Group"
+                Group <- rep("Non-Reference Group(s)", NROW(Data))
+                Group[group == focalName] <- paste0("Reference Group (", focalName, ")")
               } else {
                 Group <- group
               }
@@ -1138,7 +1154,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         plotData <- data.frame(imageICC$state[[1]])
         model <- imageICC$state[[2]]
         
-        self$results$debug$setContent(utils::str(plotData))
+        # self$results$debug$setContent(utils::str(plotData))
         
         if (!all(self$options$plotVarsICC %in% self$options$item)) {
           stop(
