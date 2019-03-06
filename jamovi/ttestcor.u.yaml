@@ -47,17 +47,5 @@ children:
     margin: large
     children:
       - type: TextBox
-        name: nullCor
-        format: number
-  - type: LayoutBox
-    margin: large
-    children:
-      - type: TextBox
         name: alpha
-        format: number
-  - type: LayoutBox
-    margin: large
-    children:
-      - type: TextBox
-        name: nSims
         format: number

@@ -60,9 +60,6 @@ children:
                 format: number
               - type: ComboBox
                 name: pAdjustMethod
-              - type: TextBox
-                name: D
-                format: string
               - type: Label
                 label: ________________
                 children:
@@ -102,9 +99,8 @@ children:
                 name: power
                 enable: (designAnalysis)
               - type: TextBox
-                name: sims
-                enable: (designAnalysis)
-                format: number
+                name: D
+                format: string
   - type: CollapseBox
     label: Item Characteristic Curves
     margin: large

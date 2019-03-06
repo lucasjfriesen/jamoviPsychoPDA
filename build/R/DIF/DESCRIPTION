@@ -4,8 +4,8 @@ Title: Dichotomous DIF Analysis
 Version: 1.2.3
 Author: Lucas Friesen
 Maintainer: Lucas Friesen <Lucas.j.friesen@gmail.com>
-Description: Perform differential item functioning (DIF) analyses in dichotomously score items using generalized linear models (GLIM), and assess results using design analysis.
+Description: PDA provides several Psychometric Design Analysis functions designed to enable researchers to perform post-data analyses in validation research. Currently, these functions include: Differential Item functioning and Retroactive Design Analysis for T-Tests of mean differences and correlations.
 Encoding: UTF-8
 LazyData: true
 Imports: jmvcore (>= 0.8.5), R6, stats, ggplot2, boot
-Built: R 3.3.0; ; 2019-03-04 16:31:43 UTC; unix
+Built: R 3.3.0; ; 2019-03-06 19:52:45 UTC; unix

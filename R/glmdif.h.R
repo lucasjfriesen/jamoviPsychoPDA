@@ -17,7 +17,6 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             designAnalysisSigOnly = TRUE,
             power = FALSE,
             D = "",
-            sims = 5000,
             type = "both",
             criterion = NULL,
             alpha = 0.05,
@@ -94,10 +93,6 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "D",
                 D,
                 default="")
-            private$..sims <- jmvcore::OptionNumber$new(
-                "sims",
-                sims,
-                default=5000)
             private$..type <- jmvcore::OptionList$new(
                 "type",
                 type,
@@ -151,7 +146,6 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..designAnalysisSigOnly)
             self$.addOption(private$..power)
             self$.addOption(private$..D)
-            self$.addOption(private$..sims)
             self$.addOption(private$..type)
             self$.addOption(private$..criterion)
             self$.addOption(private$..alpha)
@@ -172,7 +166,6 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         designAnalysisSigOnly = function() private$..designAnalysisSigOnly$value,
         power = function() private$..power$value,
         D = function() private$..D$value,
-        sims = function() private$..sims$value,
         type = function() private$..type$value,
         criterion = function() private$..criterion$value,
         alpha = function() private$..alpha$value,
@@ -192,7 +185,6 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..designAnalysisSigOnly = NA,
         ..power = NA,
         ..D = NA,
-        ..sims = NA,
         ..type = NA,
         ..criterion = NA,
         ..alpha = NA,
@@ -205,7 +197,6 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
 glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
-        debug = function() private$.items[["debug"]],
         instructions = function() private$.items[["instructions"]],
         DESCtable = function() private$.items[["DESCtable"]],
         DIFtable = function() private$.items[["DIFtable"]],
@@ -218,10 +209,6 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="Differential Item Functioning")
-            self$add(jmvcore::Preformatted$new(
-                options=options,
-                name="debug",
-                title="debug"))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="instructions",
@@ -299,7 +286,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `format`="pvalue"),
                     list(
                         `name`="power", 
-                        `title`="Power", 
+                        `title`="Empirical Observed Power", 
                         `type`="number", 
                         `format`="(zto)", 
                         `visible`="(power)"))))
@@ -347,7 +334,7 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
                 completeWhenFilled = FALSE)
         }))
 
-#' Dichotomous GLM
+#' Binary LogR
 #'
 #' Differential Item Functioning (DIF) analysis is used to assess items on
 #' a test or measure to determine whether or not certain groups are performing
@@ -373,7 +360,6 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param designAnalysisSigOnly .
 #' @param power .
 #' @param D .
-#' @param sims .
 #' @param type a character string specifying which DIF effects must be tested.
 #'   Possible values are "both" (default), "udif" and "nudif"
 #' @param criterion a character string specifying which DIF statistic is
@@ -388,7 +374,6 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param plotVarsICC .
 #' @return A results object containing:
 #' \tabular{llllll}{
-#'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$DESCtable} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$DIFtable} \tab \tab \tab \tab \tab a table \cr
@@ -416,7 +401,6 @@ glmDIF <- function(
     designAnalysisSigOnly = TRUE,
     power = FALSE,
     D = "",
-    sims = 5000,
     type = "both",
     criterion,
     alpha = 0.05,
@@ -455,7 +439,6 @@ glmDIF <- function(
         designAnalysisSigOnly = designAnalysisSigOnly,
         power = power,
         D = D,
-        sims = sims,
         type = type,
         criterion = criterion,
         alpha = alpha,

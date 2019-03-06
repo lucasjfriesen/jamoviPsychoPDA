@@ -4,9 +4,18 @@ title: T-Test for Correlations
 jrs:   '1.1'
 
 items:
-    #- name: debug
-    #  title: debug
-    #  type: Preformatted
+  #  - name: debug
+  #    title: debug
+  #    type: Preformatted
+
+    - name: instructions
+      title: Instructions
+      type: Table
+      rows: 5
+      columns: 
+        - name: frank
+          title: ""
+          type: text
 
     - name: rdTTestCor
       title: Retroactive Design Analysis | T-Test for Correlations
@@ -16,17 +25,23 @@ items:
         - name: label
           title: Label
           type: text
+        - name: obsCor
+          title: Observed Correlation
+          type: number
         - name: hypTrueCorLabel
           title: Hypothesized True Correlation
           type: number
         - name: typeS
           title: Type-S
           type: number
+          format: zto,pvalue
         - name: typeM
           title: Type-M
           type: number
         - name: power
-          title: Observed Power
+          title: Empirical Observed Power
           type: number
+          format: zto,pvalue
+
 
 ...

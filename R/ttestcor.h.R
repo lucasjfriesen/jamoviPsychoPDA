@@ -11,9 +11,7 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             observedSE = NULL,
             observedCor = NULL,
             n = NULL,
-            nullCor = 0,
-            alpha = 0.05,
-            nSims = 10000, ...) {
+            alpha = 0.05, ...) {
 
             super$initialize(
                 package='DIF',
@@ -54,27 +52,17 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "continuous"),
                 permitted=list(
                     "numeric"))
-            private$..nullCor <- jmvcore::OptionNumber$new(
-                "nullCor",
-                nullCor,
-                default=0)
             private$..alpha <- jmvcore::OptionNumber$new(
                 "alpha",
                 alpha,
                 default=0.05)
-            private$..nSims <- jmvcore::OptionNumber$new(
-                "nSims",
-                nSims,
-                default=10000)
 
             self$.addOption(private$..labelVar)
             self$.addOption(private$..hypTrueCor)
             self$.addOption(private$..observedSE)
             self$.addOption(private$..observedCor)
             self$.addOption(private$..n)
-            self$.addOption(private$..nullCor)
             self$.addOption(private$..alpha)
-            self$.addOption(private$..nSims)
         }),
     active = list(
         labelVar = function() private$..labelVar$value,
@@ -82,23 +70,20 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         observedSE = function() private$..observedSE$value,
         observedCor = function() private$..observedCor$value,
         n = function() private$..n$value,
-        nullCor = function() private$..nullCor$value,
-        alpha = function() private$..alpha$value,
-        nSims = function() private$..nSims$value),
+        alpha = function() private$..alpha$value),
     private = list(
         ..labelVar = NA,
         ..hypTrueCor = NA,
         ..observedSE = NA,
         ..observedCor = NA,
         ..n = NA,
-        ..nullCor = NA,
-        ..alpha = NA,
-        ..nSims = NA)
+        ..alpha = NA)
 )
 
 ttestCorResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
+        instructions = function() private$.items[["instructions"]],
         rdTTestCor = function() private$.items[["rdTTestCor"]]),
     private = list(),
     public=list(
@@ -107,6 +92,16 @@ ttestCorResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="T-Test for Correlations")
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="instructions",
+                title="Instructions",
+                rows=5,
+                columns=list(
+                    list(
+                        `name`="frank", 
+                        `title`="", 
+                        `type`="text"))))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="rdTTestCor",
@@ -118,21 +113,27 @@ ttestCorResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `title`="Label", 
                         `type`="text"),
                     list(
+                        `name`="obsCor", 
+                        `title`="Observed Correlation", 
+                        `type`="number"),
+                    list(
                         `name`="hypTrueCorLabel", 
                         `title`="Hypothesized True Correlation", 
                         `type`="number"),
                     list(
                         `name`="typeS", 
                         `title`="Type-S", 
-                        `type`="number"),
+                        `type`="number", 
+                        `format`="zto,pvalue"),
                     list(
                         `name`="typeM", 
                         `title`="Type-M", 
                         `type`="number"),
                     list(
                         `name`="power", 
-                        `title`="Observed Power", 
-                        `type`="number"))))}))
+                        `title`="Empirical Observed Power", 
+                        `type`="number", 
+                        `format`="zto,pvalue"))))}))
 
 ttestCorBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     "ttestCorBase",
@@ -162,19 +163,18 @@ ttestCorBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param observedSE .
 #' @param observedCor .
 #' @param n .
-#' @param nullCor .
 #' @param alpha .
-#' @param nSims .
 #' @return A results object containing:
 #' \tabular{llllll}{
+#'   \code{results$instructions} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$rdTTestCor} \tab \tab \tab \tab \tab a table \cr
 #' }
 #'
 #' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
 #'
-#' \code{results$rdTTestCor$asDF}
+#' \code{results$instructions$asDF}
 #'
-#' \code{as.data.frame(results$rdTTestCor)}
+#' \code{as.data.frame(results$instructions)}
 #'
 #' @export
 ttestCor <- function(
@@ -184,9 +184,7 @@ ttestCor <- function(
     observedSE,
     observedCor,
     n,
-    nullCor = 0,
-    alpha = 0.05,
-    nSims = 10000) {
+    alpha = 0.05) {
 
     if ( ! requireNamespace('jmvcore'))
         stop('ttestCor requires jmvcore to be installed (restart may be required)')
@@ -212,9 +210,7 @@ ttestCor <- function(
         observedSE = observedSE,
         observedCor = observedCor,
         n = n,
-        nullCor = nullCor,
-        alpha = alpha,
-        nSims = nSims)
+        alpha = alpha)
 
     results <- ttestCorResults$new(
         options = options)

@@ -4,9 +4,9 @@ title: Differential Item Functioning
 jrs:   '1.1'
 
 items:
-    - name: debug
-      title: debug
-      type: Preformatted
+   # - name: debug
+   #   title: debug
+   #   type: Preformatted
 
     - name: instructions
       title: Instructions
@@ -70,6 +70,10 @@ items:
           type: number
           format: zto,pvalue
 
+        #- name: chiSquare
+        #  title: Chi^2
+        #  type: number
+
         - name: effSize
           title: Naeglekirke R^2
           type: number
@@ -119,7 +123,7 @@ items:
           type: number
           format: pvalue
         - name: power
-          title: Power
+          title: Empirical Observed Power
           type: number
           format: (zto)
           visible: (power)

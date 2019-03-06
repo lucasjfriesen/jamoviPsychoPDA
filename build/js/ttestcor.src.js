@@ -3,7 +3,7 @@
 
 'use strict';
 
-const options = [{"name":"data","type":"Data"},{"name":"labelVar","title":"Label","type":"Variable","suggested":["nominal"]},{"name":"hypTrueCor","title":"Hypothesised True Correlation","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"observedSE","title":"Observed Standard Error","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"observedCor","title":"Observed Correlation","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"n","title":"N","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"nullCor","title":"Null Correlation","type":"Number","default":0},{"name":"alpha","type":"Number","title":"Alpha","default":0.05},{"name":"nSims","type":"Number","title":"Number of Simulations","default":10000}];
+const options = [{"name":"data","type":"Data"},{"name":"labelVar","title":"Label","type":"Variable","suggested":["nominal"]},{"name":"hypTrueCor","title":"Hypothesised True Correlation","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"observedSE","title":"Observed Standard Error","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"observedCor","title":"Observed Correlation","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"n","title":"N","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"alpha","type":"Number","title":"Alpha","default":0.05}];
 
 const view = View.extend({
     jus: "2.0",
@@ -94,29 +94,7 @@ view.layout = ui.extend({
 			controls: [
 				{
 					type: DefaultControls.TextBox,
-					name: "nullCor",
-					format: FormatDef.number
-				}
-			]
-		},
-		{
-			type: DefaultControls.LayoutBox,
-			margin: "large",
-			controls: [
-				{
-					type: DefaultControls.TextBox,
 					name: "alpha",
-					format: FormatDef.number
-				}
-			]
-		},
-		{
-			type: DefaultControls.LayoutBox,
-			margin: "large",
-			controls: [
-				{
-					type: DefaultControls.TextBox,
-					name: "nSims",
 					format: FormatDef.number
 				}
 			]

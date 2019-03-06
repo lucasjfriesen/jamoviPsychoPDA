@@ -12,11 +12,11 @@ description: >-
   The DIF module performs DIF analysis using the generalized logistic regression
   technique.
 analyses:
-  - title: Dichotomous GLM
+  - title: Binary LogR
     name: glmDIF
     ns: DIF
-    menuGroup: Design Analysis
-    menuTitle: Dichotomous GLM
+    menuGroup: Psychometric Design Analysis
+    menuTitle: Binary LogR
     description: >
       Differential Item Functioning (DIF) analysis is used to assess items on
 
@@ -28,13 +28,13 @@ analyses:
   - title: Mean Differences
     name: rdTTest
     ns: DIF
-    menuGroup: Design Analysis
+    menuGroup: Psychometric Design Analysis
     menuTitle: Mean Differences
     menuSubgroup: T-Tests
   - title: Correlations
     name: ttestCor
     ns: DIF
-    menuGroup: Design Analysis
+    menuGroup: Psychometric Design Analysis
     menuTitle: Correlations
     menuSubgroup: T-Tests
 datasets:

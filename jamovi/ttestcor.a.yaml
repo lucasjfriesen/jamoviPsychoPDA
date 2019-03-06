@@ -1,7 +1,7 @@
 ---
 name:  ttestCor
 title: Correlations
-menuGroup: Design Analysis
+menuGroup: Psychometric Design Analysis
 menuSubgroup: T-Tests
 version: '1.0.0'
 jas: '1.2'
@@ -48,20 +48,15 @@ options:
       permitted:
         - numeric
 
-    - name: nullCor
-      title: Null Correlation
-      type: Number
-      default: 0
-
     - name: alpha
       type: Number
       title: Alpha
       default: 0.05
 
-    - name: nSims
-      type: Number
-      title: Number of Simulations
-      default: 10000
+   # - name: nSims
+   #   type: Number
+   #   title: Number of Simulations
+   #   default: 10000
 
 #    - name: df
 #      type: Number
