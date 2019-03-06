@@ -10,7 +10,6 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             group = NULL,
             matchVar = NULL,
             anchor = NULL,
-            focal = NULL,
             groupType = NULL,
             difFlagScale = NULL,
             designAnalysis = FALSE,
@@ -62,9 +61,6 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 permitted=list(
                     "numeric"),
                 default=NULL)
-            private$..focal <- jmvcore::OptionString$new(
-                "focal",
-                focal)
             private$..groupType <- jmvcore::OptionList$new(
                 "groupType",
                 groupType,
@@ -139,7 +135,6 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..group)
             self$.addOption(private$..matchVar)
             self$.addOption(private$..anchor)
-            self$.addOption(private$..focal)
             self$.addOption(private$..groupType)
             self$.addOption(private$..difFlagScale)
             self$.addOption(private$..designAnalysis)
@@ -159,7 +154,6 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         group = function() private$..group$value,
         matchVar = function() private$..matchVar$value,
         anchor = function() private$..anchor$value,
-        focal = function() private$..focal$value,
         groupType = function() private$..groupType$value,
         difFlagScale = function() private$..difFlagScale$value,
         designAnalysis = function() private$..designAnalysis$value,
@@ -178,7 +172,6 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..group = NA,
         ..matchVar = NA,
         ..anchor = NA,
-        ..focal = NA,
         ..groupType = NA,
         ..difFlagScale = NA,
         ..designAnalysis = NA,
@@ -350,8 +343,6 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param matchVar a string naming the matching variable from \code{data}
 #' @param anchor a vector of strings naming the anchor item columns from
 #'   \code{data}
-#' @param focal a string indicating which group(s) are to be considered focal
-#'   groups
 #' @param groupType either "discrete" (default) to specify that group
 #'   membership is made of two (or more than two) groups, or "continuous" to
 #'   indicate that group membership is based on a continuous criterion.
@@ -394,7 +385,6 @@ glmDIF <- function(
     group,
     matchVar,
     anchor = NULL,
-    focal,
     groupType,
     difFlagScale,
     designAnalysis = FALSE,
@@ -432,7 +422,6 @@ glmDIF <- function(
         group = group,
         matchVar = matchVar,
         anchor = anchor,
-        focal = focal,
         groupType = groupType,
         difFlagScale = difFlagScale,
         designAnalysis = designAnalysis,

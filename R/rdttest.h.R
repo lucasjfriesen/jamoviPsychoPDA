@@ -6,10 +6,11 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Options,
     public = list(
         initialize = function(
+            labelVar = NULL,
             hypTrueEff = NULL,
             observedSE = NULL,
             observedP = NULL,
-            df = NULL,
+            n = NULL,
             alpha = 0.05,
             nSims = 10000, ...) {
 
@@ -19,6 +20,9 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 requiresData=TRUE,
                 ...)
 
+            private$..labelVar <- jmvcore::OptionVariable$new(
+                "labelVar",
+                labelVar)
             private$..hypTrueEff <- jmvcore::OptionVariable$new(
                 "hypTrueEff",
                 hypTrueEff,
@@ -40,9 +44,9 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "continuous"),
                 permitted=list(
                     "numeric"))
-            private$..df <- jmvcore::OptionVariable$new(
-                "df",
-                df,
+            private$..n <- jmvcore::OptionVariable$new(
+                "n",
+                n,
                 suggested=list(
                     "continuous"),
                 permitted=list(
@@ -56,25 +60,28 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 nSims,
                 default=10000)
 
+            self$.addOption(private$..labelVar)
             self$.addOption(private$..hypTrueEff)
             self$.addOption(private$..observedSE)
             self$.addOption(private$..observedP)
-            self$.addOption(private$..df)
+            self$.addOption(private$..n)
             self$.addOption(private$..alpha)
             self$.addOption(private$..nSims)
         }),
     active = list(
+        labelVar = function() private$..labelVar$value,
         hypTrueEff = function() private$..hypTrueEff$value,
         observedSE = function() private$..observedSE$value,
         observedP = function() private$..observedP$value,
-        df = function() private$..df$value,
+        n = function() private$..n$value,
         alpha = function() private$..alpha$value,
         nSims = function() private$..nSims$value),
     private = list(
+        ..labelVar = NA,
         ..hypTrueEff = NA,
         ..observedSE = NA,
         ..observedP = NA,
-        ..df = NA,
+        ..n = NA,
         ..alpha = NA,
         ..nSims = NA)
 )
@@ -82,6 +89,7 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
 rdTTestResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
+        instructions = function() private$.items[["instructions"]],
         rdTTest = function() private$.items[["rdTTest"]]),
     private = list(),
     public=list(
@@ -92,14 +100,29 @@ rdTTestResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 title="T-Test")
             self$add(jmvcore::Table$new(
                 options=options,
+                name="instructions",
+                title="Instructions",
+                rows=4,
+                visible=FALSE,
+                columns=list(
+                    list(
+                        `name`="frank", 
+                        `title`="", 
+                        `type`="text"))))
+            self$add(jmvcore::Table$new(
+                options=options,
                 name="rdTTest",
-                title="Retroactive Design Analysis | T-Test",
+                title="Retroactive Design Analysis | Mean Differences",
                 rows=0,
                 columns=list(
                     list(
-                        `name`="hypTrueEffLabel", 
-                        `title`="Hypothesized True Effect", 
+                        `name`="label", 
+                        `title`="Label", 
                         `type`="number"),
+                    list(
+                        `name`="D", 
+                        `title`="Hyp. True Difference", 
+                        `type`="text"),
                     list(
                         `name`="typeS", 
                         `title`="Type-S", 
@@ -136,54 +159,60 @@ rdTTestBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'
 #' 
 #' @param data .
+#' @param labelVar .
 #' @param hypTrueEff .
 #' @param observedSE .
 #' @param observedP .
-#' @param df .
+#' @param n .
 #' @param alpha .
 #' @param nSims .
 #' @return A results object containing:
 #' \tabular{llllll}{
+#'   \code{results$instructions} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$rdTTest} \tab \tab \tab \tab \tab a table \cr
 #' }
 #'
 #' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
 #'
-#' \code{results$rdTTest$asDF}
+#' \code{results$instructions$asDF}
 #'
-#' \code{as.data.frame(results$rdTTest)}
+#' \code{as.data.frame(results$instructions)}
 #'
 #' @export
 rdTTest <- function(
     data,
+    labelVar,
     hypTrueEff,
     observedSE,
     observedP,
-    df,
+    n,
     alpha = 0.05,
     nSims = 10000) {
 
     if ( ! requireNamespace('jmvcore'))
         stop('rdTTest requires jmvcore to be installed (restart may be required)')
 
+    if ( ! missing(labelVar)) labelVar <- jmvcore:::resolveQuo(jmvcore:::enquo(labelVar))
     if ( ! missing(hypTrueEff)) hypTrueEff <- jmvcore:::resolveQuo(jmvcore:::enquo(hypTrueEff))
     if ( ! missing(observedSE)) observedSE <- jmvcore:::resolveQuo(jmvcore:::enquo(observedSE))
     if ( ! missing(observedP)) observedP <- jmvcore:::resolveQuo(jmvcore:::enquo(observedP))
-    if ( ! missing(df)) df <- jmvcore:::resolveQuo(jmvcore:::enquo(df))
+    if ( ! missing(n)) n <- jmvcore:::resolveQuo(jmvcore:::enquo(n))
     if (missing(data))
         data <- jmvcore:::marshalData(
             parent.frame(),
+            `if`( ! missing(labelVar), labelVar, NULL),
             `if`( ! missing(hypTrueEff), hypTrueEff, NULL),
             `if`( ! missing(observedSE), observedSE, NULL),
             `if`( ! missing(observedP), observedP, NULL),
-            `if`( ! missing(df), df, NULL))
+            `if`( ! missing(n), n, NULL))
 
 
     options <- rdTTestOptions$new(
+        labelVar = labelVar,
         hypTrueEff = hypTrueEff,
         observedSE = observedSE,
         observedP = observedP,
-        df = df,
+        n = n,
         alpha = alpha,
         nSims = nSims)
 

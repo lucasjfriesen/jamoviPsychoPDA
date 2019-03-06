@@ -96,7 +96,8 @@ ttestCorResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="instructions",
                 title="Instructions",
-                rows=5,
+                rows=4,
+                visible=FALSE,
                 columns=list(
                     list(
                         `name`="frank", 
@@ -105,7 +106,7 @@ ttestCorResults <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$add(jmvcore::Table$new(
                 options=options,
                 name="rdTTestCor",
-                title="Retroactive Design Analysis | T-Test for Correlations",
+                title="Retroactive Design Analysis | Correlations",
                 rows=0,
                 columns=list(
                     list(
@@ -114,11 +115,23 @@ ttestCorResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `type`="text"),
                     list(
                         `name`="obsCor", 
-                        `title`="Observed Correlation", 
+                        `title`="Obs. Correlation", 
                         `type`="number"),
                     list(
-                        `name`="hypTrueCorLabel", 
-                        `title`="Hypothesized True Correlation", 
+                        `name`="obsN", 
+                        `title`="N", 
+                        `type`="number"),
+                    list(
+                        `name`="hypTrueCor", 
+                        `title`="Hyp. True Correlation", 
+                        `type`="number"),
+                    list(
+                        `name`="obsSE", 
+                        `title`="Obs. SE", 
+                        `type`="number"),
+                    list(
+                        `name`="hypTrueEffSD", 
+                        `title`="D", 
                         `type`="number"),
                     list(
                         `name`="typeS", 
@@ -131,7 +144,7 @@ ttestCorResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `type`="number"),
                     list(
                         `name`="power", 
-                        `title`="Empirical Observed Power", 
+                        `title`="Emp. Obs. Power", 
                         `type`="number", 
                         `format`="zto,pvalue"))))}))
 

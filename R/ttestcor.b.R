@@ -11,7 +11,16 @@ ttestCorClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$results$rdTTestCor$setVisible(visible = FALSE)
             self$results$instructions$setVisible(visible = TRUE)
             self$results$instructions$setRow(rowNo = 1, value = list(
-              frank = "Place the things in the places"
+              frank = "1) Label"
+            ))
+            self$results$instructions$setRow(rowNo = 2, value = list(
+              frank = "2) Hypothesized True Correlation"
+            ))
+            self$results$instructions$setRow(rowNo = 3, value = list(
+              frank = "3) Sample size (N)"
+            ))
+            self$results$instructions$setRow(rowNo = 4, value = list(
+              frank = "4) ONE OF Observed Correlation OR Observed Standard Error"
             ))
             return()
           }
@@ -32,52 +41,37 @@ ttestCorClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             observedSE <- sqrt((1 - observedCor^2)/df)
           }
           
+          D <- (observedCor - hypTrueCor)/observedSE
+          
           alpha <- self$options$alpha
           
-          # self$results$debug$setContent(nSims)
-          
-          retroDesign <- function(hypTrueCor,
-                                  observedCor,
+          retroDesign <- function(D,
                                   observedSE,
                                   alpha,
                                   df,
-                                  nSims = 100000) {
-            # D <- abs((hypTrueCor - observedCor)/observedSE)
-            D <- abs(hypTrueCor)
+                                  nSims) {
+            
             z <- qt(1-alpha/2, df)
             p.hi <- 1 - pt(z-D/observedSE, df)
             p.lo <- pt(-z-D/observedSE, df)
             power <- p.hi + p.lo
             typeS <- p.lo/power
-            estimate <- D + observedSE*rt(nSims,df)
+            estimate <- D + observedSE*rt(n = nSims, df = df)
             significant <- abs(estimate) > observedSE*z
             typeM <- mean(abs(estimate)[significant])/D
             return(list(power=power, typeS=typeS, typeM=typeM))
-            # t <- qt(1-alpha/2, df)
-            # p.hi <- 1 - pt(t - (D - nullCor) / observedSE, df)
-            # p.lo <- pt(-t - (D - nullCor) / observedSE, df)
-            # power <- p.hi + p.lo
-            # typeS <- p.lo/power
-            # 
-            # tStatistic <- ((D + observedSE*rt(nSims,df)) - nullCor) / observedSE
-            # 
-            # significant <- abs(tStatistic) > t#*observedSE
-            # typeM <- mean(abs(tStatistic)[significant])/D
-            # 
-            # 
-            # return(list(power=power, typeS=typeS, typeM=typeM))
           }
           
           results <- matrix(ncol = 4, nrow = nrow(data))
-          colnames(results) <- c("hypTrueCor", "typeS", "typeM", "power")
+          colnames(results) <- c("D", "typeS", "typeM", "power")
           
           for (i in 1:nrow(results)){
-            resultsRow <- retroDesign(hypTrueCor[i], # Confirm this | | assumption
-                                  observedCor[i],
+            resultsRow <- retroDesign(abs(D[i]),
                                   observedSE[i],
                                   alpha,
-                                  df[i])
-            results[i, 1] <- hypTrueCor[i]
+                                  df[i],
+                                  nSims = 10000)
+            results[i, 1] <- D[i]
             results[i, 2] <- resultsRow$typeS
             results[i, 3] <- resultsRow$typeM
             results[i, 4] <- resultsRow$power
@@ -91,8 +85,11 @@ ttestCorClass <- if (requireNamespace('jmvcore')) R6::R6Class(
               rowKey = i,
               values = list(
                 label = labels[[i]],
-                hypTrueCorLabel = as.character(results[i, "hypTrueCor"]),
-                obsCor = observedCor[i],
+                obsCor = as.character(observedCor[i]),
+                obsN = df[i] + 2,
+                hypTrueCor = as.character(hypTrueCor[i]),
+                obsSE = observedSE[i],
+                hypTrueEffSD = results[i, "D"],
                 typeS = results[i,"typeS"],
                 typeM = results[i,"typeM"],
                 power = results[i,"power"]

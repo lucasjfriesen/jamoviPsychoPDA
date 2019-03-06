@@ -10,6 +10,10 @@ options:
     - name: data
       type: Data
 
+    - name: labelVar
+      title: Label
+      type: Variable
+
     - name: hypTrueEff
       title: Hypothesised True Effect Size
       type: Variable
@@ -34,8 +38,8 @@ options:
       permitted:
         - numeric
 
-    - name: df
-      title: Degrees of Freedom
+    - name: n
+      title: N
       type: Variable
       suggested:
         - continuous

@@ -3,7 +3,7 @@
 
 'use strict';
 
-const options = [{"name":"data","type":"Data"},{"name":"hypTrueEff","title":"Hypothesised True Effect Size","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"observedSE","title":"Observed Standard Error","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"observedP","title":"Observed P-Value","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"df","title":"Degrees of Freedom","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"alpha","type":"Number","title":"Alpha","default":0.05},{"name":"nSims","type":"Number","title":"Number of Simulations","default":10000}];
+const options = [{"name":"data","type":"Data"},{"name":"labelVar","title":"Label","type":"Variable"},{"name":"hypTrueEff","title":"Hypothesised True Effect Size","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"observedSE","title":"Observed Standard Error","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"observedP","title":"Observed P-Value","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"n","title":"N","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"alpha","type":"Number","title":"Alpha","default":0.05},{"name":"nSims","type":"Number","title":"Number of Simulations","default":10000}];
 
 const view = View.extend({
     jus: "2.0",
@@ -26,6 +26,18 @@ view.layout = ui.extend({
 			persistentItems: false,
 			stretchFactor: 1,
 			controls: [
+				{
+					type: DefaultControls.TargetLayoutBox,
+					label: "Label",
+					controls: [
+						{
+							type: DefaultControls.VariablesListBox,
+							name: "labelVar",
+							maxItemCount: 1,
+							isTarget: true
+						}
+					]
+				},
 				{
 					type: DefaultControls.TargetLayoutBox,
 					label: "Hypothesised True Effect Size",
@@ -64,11 +76,11 @@ view.layout = ui.extend({
 				},
 				{
 					type: DefaultControls.TargetLayoutBox,
-					label: "Degrees of Freedom",
+					label: "N",
 					controls: [
 						{
 							type: DefaultControls.VariablesListBox,
-							name: "df",
+							name: "n",
 							maxItemCount: 1,
 							isTarget: true
 						}

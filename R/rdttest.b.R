@@ -7,7 +7,28 @@ rdTTestClass <- if (requireNamespace('jmvcore')) R6::R6Class(
     private = list(
         .run = function() {
           
+          if (is.null(self$options$labelVar) | is.null(self$options$hypTrueEff) | (is.null(self$options$observedP) & is.null(self$options$observedSE))){
+            self$results$rdTTest$setVisible(visible = FALSE)
+            self$results$instructions$setVisible(visible = TRUE)
+            self$results$instructions$setRow(rowNo = 1, value = list(
+              frank = "1) Label"
+            ))
+            self$results$instructions$setRow(rowNo = 2, value = list(
+              frank = "2) Observed Effect in SD units"
+            ))
+            self$results$instructions$setRow(rowNo = 3, value = list(
+              frank = "3) Hypothesized True Effect in SD units"
+            ))
+            self$results$instructions$setRow(rowNo = 4, value = list(
+              frank = "4) ONE OF Observed Standard Error OR Observed P-Value"
+            ))
+            return()
+          }
+          
           data <- self$data
+          
+          labels <- as.character(data[, self$options$labelVar])
+          
           hypTrueEff <- data[, self$options$hypTrueEff]
           
           if (!is.null(self$options$observedSE)){
@@ -21,8 +42,8 @@ rdTTestClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             observedP <- NULL
           }
           
-          if (!is.null(self$options$df)){
-            df <- data[, self$options$df]
+          if (!is.null(self$options$n)){
+            df <- data[, self$options$n] - 1
           } else { 
             df <- Inf
             }
@@ -34,27 +55,28 @@ rdTTestClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             observedSE <- observedP/z
           }
           
-          retroDesign <- function(hypTrueEff,
+          retroDesign <- function(D,
                                   observedSE,
                                   alpha,
                                   df,
                                   nSims) {
+            
             z <- qt(1-alpha/2, df)
-            p.hi <- 1 - pt(z-hypTrueEff/observedSE, df)
-            p.lo <- pt(-z-hypTrueEff/observedSE, df)
+            p.hi <- 1 - pt(z-D/observedSE, df)
+            p.lo <- pt(-z-D/observedSE, df)
             power <- p.hi + p.lo
             typeS <- p.lo/power
-            estimate <- hypTrueEff + observedSE*rt(nSims,df)
+            estimate <- D + observedSE*rt(nSims,df)
             significant <- abs(estimate) > observedSE*z
-            typeM <- mean(abs(estimate)[significant])/hypTrueEff
+            typeM <- mean(abs(estimate)[significant])/D
             return(list(power=power, typeS=typeS, typeM=typeM))
           }
           
           results <- matrix(ncol = 4, nrow = nrow(data))
-          colnames(results) <- c("hypTrueEff", "typeS", "typeM", "power")
+          colnames(results) <- c("D", "typeS", "typeM", "power")
           
           for (i in 1:nrow(results)){
-            resultsRow <- retroDesign(abs(hypTrueEff[i]), # Confirm this | | assumption
+            resultsRow <- retroDesign(abs(hypTrueEff[i]),
                                   observedSE[i],
                                   alpha,
                                   df[i],
@@ -72,7 +94,8 @@ rdTTestClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             table$addRow(
               rowKey = i,
               values = list(
-                hypTrueEffLabel = results[i, "hypTrueEff"],
+                label = labels[[i]],
+                D = as.character(results[i, "D"]),
                 typeS = results[i,"typeS"],
                 typeM = results[i,"typeM"],
                 power = results[i,"power"]

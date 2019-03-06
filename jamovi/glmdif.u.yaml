@@ -65,9 +65,6 @@ children:
                 children:
                   - type: ComboBox
                     name: groupType
-                  - type: TextBox
-                    name: focal
-                    format: string
               - type: Label
                 label: ________________
                 children:

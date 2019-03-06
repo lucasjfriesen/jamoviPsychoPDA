@@ -8,14 +8,28 @@ items:
 #      title: debug
 #      type: Preformatted
 
+    - name: instructions
+      title: Instructions
+      type: Table
+      rows: 4
+      visible: False
+      columns: 
+        - name: frank
+          title: ""
+          type: text
+
+
     - name: rdTTest
-      title: Retroactive Design Analysis | T-Test
+      title: Retroactive Design Analysis | Mean Differences
       type:  Table
       rows: 0
       columns: 
-        - name: hypTrueEffLabel
-          title: Hypothesized True Effect
+        - name: label
+          title: Label
           type: number
+        - name: D
+          title: Hyp. True Difference
+          type: text
         - name: typeS
           title: Type-S
           type: number
