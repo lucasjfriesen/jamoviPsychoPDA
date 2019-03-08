@@ -1,6 +1,6 @@
-Package: DIF
+Package: psychoDesign
 Type: Package
-Title: Dichotomous DIF Analysis
+Title: Psychometric Design Analysis (PDA)
 Version: 1.2.3
 Author: Lucas Friesen
 Maintainer: Lucas Friesen <Lucas.j.friesen@gmail.com>

@@ -15,7 +15,7 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             nSims = 10000, ...) {
 
             super$initialize(
-                package='DIF',
+                package='psychoDesign',
                 name='rdTTest',
                 requiresData=TRUE,
                 ...)
@@ -142,7 +142,7 @@ rdTTestBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     public = list(
         initialize = function(options, data=NULL, datasetId="", analysisId="", revision=0) {
             super$initialize(
-                package = 'DIF',
+                package = 'psychoDesign',
                 name = 'rdTTest',
                 version = c(1,0,0),
                 options = options,
@@ -192,13 +192,13 @@ rdTTest <- function(
     if ( ! requireNamespace('jmvcore'))
         stop('rdTTest requires jmvcore to be installed (restart may be required)')
 
-    if ( ! missing(labelVar)) labelVar <- jmvcore:::resolveQuo(jmvcore:::enquo(labelVar))
-    if ( ! missing(hypTrueEff)) hypTrueEff <- jmvcore:::resolveQuo(jmvcore:::enquo(hypTrueEff))
-    if ( ! missing(observedSE)) observedSE <- jmvcore:::resolveQuo(jmvcore:::enquo(observedSE))
-    if ( ! missing(observedP)) observedP <- jmvcore:::resolveQuo(jmvcore:::enquo(observedP))
-    if ( ! missing(n)) n <- jmvcore:::resolveQuo(jmvcore:::enquo(n))
+    if ( ! missing(labelVar)) labelVar <- jmvcore::resolveQuo(jmvcore::enquo(labelVar))
+    if ( ! missing(hypTrueEff)) hypTrueEff <- jmvcore::resolveQuo(jmvcore::enquo(hypTrueEff))
+    if ( ! missing(observedSE)) observedSE <- jmvcore::resolveQuo(jmvcore::enquo(observedSE))
+    if ( ! missing(observedP)) observedP <- jmvcore::resolveQuo(jmvcore::enquo(observedP))
+    if ( ! missing(n)) n <- jmvcore::resolveQuo(jmvcore::enquo(n))
     if (missing(data))
-        data <- jmvcore:::marshalData(
+        data <- jmvcore::marshalData(
             parent.frame(),
             `if`( ! missing(labelVar), labelVar, NULL),
             `if`( ! missing(hypTrueEff), hypTrueEff, NULL),

@@ -25,7 +25,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             plotVarsICC = NULL, ...) {
 
             super$initialize(
-                package='DIF',
+                package='psychoDesign',
                 name='glmDIF',
                 requiresData=TRUE,
                 ...)
@@ -326,7 +326,7 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     public = list(
         initialize = function(options, data=NULL, datasetId="", analysisId="", revision=0) {
             super$initialize(
-                package = 'DIF',
+                package = 'psychoDesign',
                 name = 'glmDIF',
                 version = c(1,0,0),
                 options = options,
@@ -415,13 +415,13 @@ glmDIF <- function(
     if ( ! requireNamespace('jmvcore'))
         stop('glmDIF requires jmvcore to be installed (restart may be required)')
 
-    if ( ! missing(item)) item <- jmvcore:::resolveQuo(jmvcore:::enquo(item))
-    if ( ! missing(group)) group <- jmvcore:::resolveQuo(jmvcore:::enquo(group))
-    if ( ! missing(matchVar)) matchVar <- jmvcore:::resolveQuo(jmvcore:::enquo(matchVar))
-    if ( ! missing(anchor)) anchor <- jmvcore:::resolveQuo(jmvcore:::enquo(anchor))
-    if ( ! missing(plotVarsICC)) plotVarsICC <- jmvcore:::resolveQuo(jmvcore:::enquo(plotVarsICC))
+    if ( ! missing(item)) item <- jmvcore::resolveQuo(jmvcore::enquo(item))
+    if ( ! missing(group)) group <- jmvcore::resolveQuo(jmvcore::enquo(group))
+    if ( ! missing(matchVar)) matchVar <- jmvcore::resolveQuo(jmvcore::enquo(matchVar))
+    if ( ! missing(anchor)) anchor <- jmvcore::resolveQuo(jmvcore::enquo(anchor))
+    if ( ! missing(plotVarsICC)) plotVarsICC <- jmvcore::resolveQuo(jmvcore::enquo(plotVarsICC))
     if (missing(data))
-        data <- jmvcore:::marshalData(
+        data <- jmvcore::marshalData(
             parent.frame(),
             `if`( ! missing(item), item, NULL),
             `if`( ! missing(group), group, NULL),

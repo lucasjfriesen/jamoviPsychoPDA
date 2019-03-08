@@ -14,7 +14,7 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             alpha = 0.05, ...) {
 
             super$initialize(
-                package='DIF',
+                package='psychoDesign',
                 name='ttestCor',
                 requiresData=TRUE,
                 ...)
@@ -154,7 +154,7 @@ ttestCorBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     public = list(
         initialize = function(options, data=NULL, datasetId="", analysisId="", revision=0) {
             super$initialize(
-                package = 'DIF',
+                package = 'psychoDesign',
                 name = 'ttestCor',
                 version = c(1,0,0),
                 options = options,
@@ -202,13 +202,13 @@ ttestCor <- function(
     if ( ! requireNamespace('jmvcore'))
         stop('ttestCor requires jmvcore to be installed (restart may be required)')
 
-    if ( ! missing(labelVar)) labelVar <- jmvcore:::resolveQuo(jmvcore:::enquo(labelVar))
-    if ( ! missing(hypTrueCor)) hypTrueCor <- jmvcore:::resolveQuo(jmvcore:::enquo(hypTrueCor))
-    if ( ! missing(observedSE)) observedSE <- jmvcore:::resolveQuo(jmvcore:::enquo(observedSE))
-    if ( ! missing(observedCor)) observedCor <- jmvcore:::resolveQuo(jmvcore:::enquo(observedCor))
-    if ( ! missing(n)) n <- jmvcore:::resolveQuo(jmvcore:::enquo(n))
+    if ( ! missing(labelVar)) labelVar <- jmvcore::resolveQuo(jmvcore::enquo(labelVar))
+    if ( ! missing(hypTrueCor)) hypTrueCor <- jmvcore::resolveQuo(jmvcore::enquo(hypTrueCor))
+    if ( ! missing(observedSE)) observedSE <- jmvcore::resolveQuo(jmvcore::enquo(observedSE))
+    if ( ! missing(observedCor)) observedCor <- jmvcore::resolveQuo(jmvcore::enquo(observedCor))
+    if ( ! missing(n)) n <- jmvcore::resolveQuo(jmvcore::enquo(n))
     if (missing(data))
-        data <- jmvcore:::marshalData(
+        data <- jmvcore::marshalData(
             parent.frame(),
             `if`( ! missing(labelVar), labelVar, NULL),
             `if`( ! missing(hypTrueCor), hypTrueCor, NULL),
