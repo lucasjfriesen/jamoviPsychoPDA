@@ -529,7 +529,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           }
         
         # Bootstrap GC functions ----
-        # Print the output of a bootstrap
         
         print.bootSE <- function(x,
                                  digits = getOption("digits"),
@@ -590,8 +589,8 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         
         NagR2 <- function(DATA, ind) {
           ITEM <- (DATA[, 1])
-          SCORE <- (DATA[, 2])
-          GROUP <- (DATA[, 3])
+          SCORE <- (DATA[, 3])
+          GROUP <- (DATA[, 2])
           n <- nrow(DATA)
           
           m0 <- switch(
@@ -625,9 +624,11 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         
         empDist <- function(DATA, hypTrueEff) {
           alpha <- self$options$alpha
-          empRes <- matrix(0, nrow = 1, ncol = 2)
+          empRes <- matrix(0, nrow = 1, ncol = 3)
           # Get bootstrapped distribution
           myBoot <- boot(DATA, NagR2, R = 1000)
+          
+          empRes[1,1] <- myBoot$t0
           
           if (!all(!is.na(myBoot$t))) {
             self$results$gcTable$setNote(
@@ -647,32 +648,33 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             myBoot$t <- na.omit(myBoot$t)
           }
           # se of emp. dist.
-          se <- print.bootSE(myBoot)[[3]]
+          observedSE <- print.bootSE(myBoot)[[3]]
           # Density values for use below
-          D <- density(myBoot$t, n = 1024)
+          bootDensity <- density(myBoot$t, n = 1024)
+          # D <- abs((myBoot$t0 - hypTrueEff)/observedSE)
+          D <- myBoot$t0
           # calculate 2.5% and 97.5% quantiles. This will be needed to find the "reject region."
           # Quantile matching the upper 1 - alpha/2 in the emp. dist.
-          qUpper <- quantile(D$x, 1 - (alpha))
-          # Here there be monsters
-          
+          qUpper <- quantile(bootDensity$x, 1 - (alpha))
           ## shifts distribution by the difference between the observed effect size and the empirical effect size
-          D.shifted <- myBoot$t + hypTrueEff
+          bootDensity.Shifted <- bootDensity$x + D
           ## Calculate shifted distribution.
-          D.shifted <- density(D.shifted, n = 1024)$x
+          bootDensity.Shifted <- density(bootDensity.Shifted, n = 1024)$x
           ##returns the fraction of elements of D.shift that fall into the reject regions of the unshifted distribution.
-          rejects = ifelse(D.shifted > qUpper, TRUE, FALSE)
+          rejects = ifelse(bootDensity.Shifted > qUpper, TRUE, FALSE)
           ##calculates the proportion of rejects among all bootstrapped samples.
           ##This is the power of the test.
           powerR <- sum(rejects) / length(rejects)
-          empRes[1, 2] <- powerR
+          empRes[1, 3] <- powerR
           # typeM error rate
-          estimate <-
-            hypTrueEff + se * sample(D$x, replace = T, size = 10000)
-          significant <- estimate > se * qUpper
-          typeMError <-
-            mean(estimate[significant]) / hypTrueEff
+          estimate <- 
+            D + observedSE * sample(bootDensity$x, replace = T, size = 10000)
+          significant <- estimate > observedSE * qUpper
           
-          empRes[1, 1] <- typeMError
+          typeMError <-
+            mean(estimate[significant]) / D
+          
+          empRes[1, 2] <- typeMError
           return(empRes)
         }
         
@@ -684,27 +686,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                           format = jmvcore::Cell.NEGATIVE)
         }
         
-        buildGC <- function(GC, item, name) {
-          table <- self$results$gcTable
-          if (GC[item, 1] != 0) {
-            table$addRow(
-              rowKey = item,
-              values = list(
-                item = name,
-                hypTrueEff = ifelse(
-                  self$options$D == "",
-                  ifelse(
-                    rownames(GC)[item] == 0.13 | rownames(GC)[item] == 0.035,
-                    paste0(rownames(GC)[item], " (B)"),
-                    paste0(rownames(GC)[item], " (C)")),
-                  rownames(GC)[item]),
-                typeM = GC[item, 2],
-                power = GC[item, 3]
-              )
-            )
-          }
-        }
-        
         designAnalysis <- function(designList, Data, group, match) {
             if (self$options$D == "") {
               if (self$options$difFlagScale == "zt") {
@@ -713,34 +694,55 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 hypTrueEff <- c(0.035, 0.07)
               }
             } else {
-              hypTrueEff <- jmvcore::toNumeric(self$options$D)
+              hypTrueEff <- 0
             }
             
             GC <-
               matrix(0,
-                     nrow = NCOL(data) * length(hypTrueEff),
+                     nrow = length(designList) * length(hypTrueEff),
                      4,
                      dimnames = list(c(rep(
-                       hypTrueEff, times = NCOL(data)
-                     )), c("item", "typeS", "typeM", "power")))
+                       hypTrueEff, times = length(designList)
+                     )), c("item", "obsEff", "typeM", "power")))
           
           for (item in 1:length(designList)) {
-            empDATA <- data.frame(Item = Data[item], group, match)
+            curItem <- designList[item]
+            empDATA <- cbind(Item = jmvcore::toNumeric(Data[, curItem]), jmvcore::toNumeric(group), match)
             colnames(empDATA) <-
               c(colnames(Data)[item], "GROUP", "SCORES")
-            tick <- item - 1
+            tick <- ifelse(length(hypTrueEff) == 2, item - 1, 0)
             for (hypInd in 1:length(hypTrueEff)) {
               private$.checkpoint()
               GC[item + tick, 1] <- item
-              GC[item + tick, 2:3] <-
+              GC[item + tick, 2:4] <-
                 empDist(empDATA, hypTrueEff = hypTrueEff[hypInd])
-              
-              
-              buildGC(GC, item + tick, colnames(data)[item])
+              buildGC(GC, item + tick, curItem)
               tick <- tick + 1
               }
             }
           }
+        
+        buildGC <- function(GC, item, name) {
+          table <- self$results$gcTable
+          if (GC[item, 1] != 0) {
+            table$addRow(
+              rowKey = item,
+              values = list(
+                itemName = name,
+                obsEff = GC[item, 2],
+                hypTrueEff = ifelse(
+                  self$options$D == "",
+                  ifelse(
+                    rownames(GC)[item] == 0.13 | rownames(GC)[item] == 0.035,
+                    paste0(rownames(GC)[item], " (B)"),
+                    paste0(rownames(GC)[item], " (C)")),
+                  rownames(GC)[item]),
+                typeM = GC[item, 3],
+                power = GC[item, 4]
+              )
+            )
+          }
+        }
         
         # Model ----
         
@@ -761,7 +763,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         
         if (self$options$designAnalysis) {
           if (self$options$designAnalysisSigOnly) {
-            designList <- model$DIFitems
+            designList <- model$names[model$DIFitems]
           } else{
             designList <- model$names
           }
@@ -1018,16 +1020,17 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                   rowNo = i,
                   values = list(
                     item = model$names[i],
+                    chiSquare = model$Logistik[i],
                     p = model$adjusted.p[i],
                     difType = ifelse(
                       model$adjusted.p[i] <= alpha,
                       ifelse(model$logitPar[i, 4] == 0, "Uni", "Non-Uni"),
-                      "."
+                      "No DIF"
                     ),
                     #p = paste0(round(model$p.value[i], 3), symnum(model$p.value[i], c(0, 0.001, 0.01, 0.05, 0.1, 1), symbols = c("***", "**", "*", ".", ""))),
                     effSize = model$deltaR2[i],
-                    ZT = ifelse(model$adjusted.p[i] <= alpha, model$ZT[i], "No DIF"),
-                    JG = ifelse(model$adjusted.p[i] <= alpha, model$JG[i], "No DIF")
+                    ZT = ifelse(model$adjusted.p[i] <= alpha, model$ZT[i], ""),
+                    JG = ifelse(model$adjusted.p[i] <= alpha, model$JG[i], "")
                   )
                 )
               }

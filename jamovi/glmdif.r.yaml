@@ -4,9 +4,9 @@ title: Differential Item Functioning
 jrs:   '1.1'
 
 items:
-   # - name: debug
-   #   title: debug
-   #   type: Preformatted
+    - name: debug
+      title: debug
+      type: Preformatted
 
     - name: instructions
       title: Instructions
@@ -70,9 +70,9 @@ items:
           type: number
           format: zto,pvalue
 
-        #- name: chiSquare
-        #  title: Chi^2
-        #  type: number
+        - name: chiSquare
+          title: Chi^2 Stat.
+          type: number
 
         - name: effSize
           title: Naeglekirke R^2
@@ -112,16 +112,22 @@ items:
       #    - purify
       #    - pAdjustMethod
       columns:
-        - name: item
+        - name: itemName
           title: Item
           type: text
-        - name: hypTrueEff
-          title: Hypothesized True Effect
+        - name: obsEff
+          title: Obs. Effect
           type: text
+        - name: hypTrueEff
+          title: Hyp. True Effect
+          type: text
+       # - name: typeS
+       #   title: Type-S
+       #   type: number
+       #   format: pvalue
         - name: typeM
           title: Type-M
           type: number
-          format: pvalue
         - name: power
           title: Empirical Observed Power
           type: number

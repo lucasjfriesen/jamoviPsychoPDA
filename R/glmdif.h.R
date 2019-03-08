@@ -190,6 +190,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
 glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
+        debug = function() private$.items[["debug"]],
         instructions = function() private$.items[["instructions"]],
         DESCtable = function() private$.items[["DESCtable"]],
         DIFtable = function() private$.items[["DIFtable"]],
@@ -202,6 +203,10 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="Differential Item Functioning")
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="debug",
+                title="debug"))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="instructions",
@@ -239,6 +244,10 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `type`="number", 
                         `format`="zto,pvalue"),
                     list(
+                        `name`="chiSquare", 
+                        `title`="Chi^2 Stat.", 
+                        `type`="number"),
+                    list(
                         `name`="effSize", 
                         `title`="Naeglekirke R^2", 
                         `type`="number", 
@@ -265,18 +274,21 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 visible="(designAnalysis)",
                 columns=list(
                     list(
-                        `name`="item", 
+                        `name`="itemName", 
                         `title`="Item", 
                         `type`="text"),
                     list(
+                        `name`="obsEff", 
+                        `title`="Obs. Effect", 
+                        `type`="text"),
+                    list(
                         `name`="hypTrueEff", 
-                        `title`="Hypothesized True Effect", 
+                        `title`="Hyp. True Effect", 
                         `type`="text"),
                     list(
                         `name`="typeM", 
                         `title`="Type-M", 
-                        `type`="number", 
-                        `format`="pvalue"),
+                        `type`="number"),
                     list(
                         `name`="power", 
                         `title`="Empirical Observed Power", 
@@ -365,6 +377,7 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param plotVarsICC .
 #' @return A results object containing:
 #' \tabular{llllll}{
+#'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$DESCtable} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$DIFtable} \tab \tab \tab \tab \tab a table \cr
