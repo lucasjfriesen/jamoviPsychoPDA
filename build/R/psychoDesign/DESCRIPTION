@@ -8,4 +8,4 @@ Description: PDA provides several Psychometric Design Analysis functions designe
 Encoding: UTF-8
 LazyData: true
 Imports: jmvcore (>= 0.8.5), R6, stats, ggplot2, boot
-Built: R 3.3.0; ; 2019-03-08 03:30:37 UTC; unix
+Built: R 3.3.0; ; 2019-03-09 21:03:52 UTC; unix

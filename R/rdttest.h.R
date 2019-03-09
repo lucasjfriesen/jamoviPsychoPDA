@@ -89,8 +89,10 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
 rdTTestResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
+        debug = function() private$.items[["debug"]],
         instructions = function() private$.items[["instructions"]],
-        rdTTest = function() private$.items[["rdTTest"]]),
+        rdTTest = function() private$.items[["rdTTest"]],
+        sensPlot = function() private$.items[["sensPlot"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -98,6 +100,10 @@ rdTTestResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="T-Test")
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="debug",
+                title="debug"))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="instructions",
@@ -134,7 +140,14 @@ rdTTestResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     list(
                         `name`="power", 
                         `title`="Observed Power", 
-                        `type`="number"))))}))
+                        `type`="number"))))
+            self$add(jmvcore::Image$new(
+                options=options,
+                name="sensPlot",
+                title="Sensitivity Analysis",
+                width=800,
+                height=600,
+                renderFun=".plot"))}))
 
 rdTTestBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     "rdTTestBase",
@@ -168,8 +181,10 @@ rdTTestBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param nSims .
 #' @return A results object containing:
 #' \tabular{llllll}{
+#'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$rdTTest} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$sensPlot} \tab \tab \tab \tab \tab an image \cr
 #' }
 #'
 #' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:

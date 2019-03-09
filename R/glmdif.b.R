@@ -653,14 +653,14 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           bootDensity <- density(myBoot$t, n = 1024)
           # D <- abs((myBoot$t0 - hypTrueEff)/observedSE)
           D <- myBoot$t0
-          # calculate 2.5% and 97.5% quantiles. This will be needed to find the "reject region."
-          # Quantile matching the upper 1 - alpha/2 in the emp. dist.
+          # calculate "reject region" quantile
+          # Quantile matching the upper 1 - alpha in the emp. dist.
           qUpper <- quantile(bootDensity$x, 1 - (alpha))
           ## shifts distribution by the difference between the observed effect size and the empirical effect size
           bootDensity.Shifted <- bootDensity$x + D
           ## Calculate shifted distribution.
           bootDensity.Shifted <- density(bootDensity.Shifted, n = 1024)$x
-          ##returns the fraction of elements of D.shift that fall into the reject regions of the unshifted distribution.
+          ##returns the fraction of elements of D.shift that fall into the reject region of the unshifted distribution.
           rejects = ifelse(bootDensity.Shifted > qUpper, TRUE, FALSE)
           ##calculates the proportion of rejects among all bootstrapped samples.
           ##This is the power of the test.

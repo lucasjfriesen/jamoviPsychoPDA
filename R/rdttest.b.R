@@ -26,6 +26,7 @@ rdTTestClass <- if (requireNamespace('jmvcore')) R6::R6Class(
           }
           
           data <- self$data
+          data <- na.omit(data)
           
           labels <- as.character(data[, self$options$labelVar])
           
@@ -88,6 +89,34 @@ rdTTestClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             
           }
           
+          # Sensitivity ----
+          
+          sensRange <- seq(-1,1, length.out = 50)
+          sensRes <- matrix(ncol = 5, nrow = nrow(data)*length(sensRange))
+          
+          for (i in 1:nrow(data)){
+            hypTrueEffSens <- hypTrueEff[i] + (observedSE[i] * sensRange)
+            for (j in 1:length(sensRange)){
+              res <- retroDesign(abs(hypTrueEffSens[j]),
+                                    observedSE[i],
+                                    alpha,
+                                    df[i],
+                                    nSims)
+              sensRes[((i-1)*length(sensRange))+j, 1] <- hypTrueEff[i]
+              sensRes[((i-1)*length(sensRange))+j, 2] <- hypTrueEffSens[j]
+              sensRes[((i-1)*length(sensRange))+j,3:5] <- unlist(res)
+            }
+          }
+
+          plotData <- data.frame(cbind(rep(sensRange, nrow(data)), sensRes))
+          
+          colnames(plotData) <- c("SD", "hypTrueGroup", "hypTrueEffSens","power", "typeS", "typeM")
+          
+          image <- self$results$sensPlot
+          image$setState(plotData)
+          
+          # Results ----
+          
           table <- self$results$rdTTest
           
           for (i in 1:nrow(results)){
@@ -102,5 +131,20 @@ rdTTestClass <- if (requireNamespace('jmvcore')) R6::R6Class(
               )
             )
           }
-        })
+        },
+        .plot=function(image, ...) {
+          plotData <- image$state
+          self$results$debug$setContent(plotData)
+          plot <- ggplot(plotData) +
+            geom_line(aes(x=hypTrueEffSens, y = typeS, colour = "typeS")) +
+            geom_line(aes(x=hypTrueEffSens, y = typeM, colour = "typeM")) +
+            geom_line(aes(x=hypTrueEffSens, y = power, colour = "power")) +
+            scale_y_continuous(name = "Type-M", sec.axis = dup_axis(trans = ~ .)) +
+            theme_classic() +
+            facet_wrap(~hypTrueGroup, scales = "free")
+
+          print(plot)
+          TRUE
+        }
+        )
 )
