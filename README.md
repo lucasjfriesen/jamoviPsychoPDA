@@ -41,7 +41,7 @@ or
 You can clone this repository and compile the module within R with 
 
 ```
-library(jmvtools)
+install.packages('jmvtools', repos=c('https://repo.jamovi.org', 'https://cran.r-project.org'))
 
 jmvtools::install()
 
