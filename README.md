@@ -12,17 +12,9 @@ The current tools available are:
 
 Implements Type-S, Type-M error rate calculations, and sensitivity analysis for T-Tests of mean differences.
 
-From Gelman & Carlin (2014):
-
-"Statistical power analysis provides the conventional approach to assess error rates when designing a research study. However, power analysis is flawed in that a narrow emphasis on statistical significance is placed as the primary focus of study design. In noisy, small-sample settings, statistically significant results can often be misleading. To help researchers address this problem in the context of their own studies, we recommend design calculations in which (a) the probability of an estimate being in the wrong direction (Type S [sign] error) and (b) the factor by which the magnitude of an effect might be overestimated (Type M [magnitude] error or exaggeration ratio) are estimated."
-
 - *T-Test for Correlations*:
 
 Implements Type-S, Type-M error rate calculations, and sensitivity analysis for T-Tests of Pearson correlations.
-
-From Gelman & Carlin (2014):
-
-"Statistical power analysis provides the conventional approach to assess error rates when designing a research study. However, power analysis is flawed in that a narrow emphasis on statistical significance is placed as the primary focus of study design. In noisy, small-sample settings, statistically significant results can often be misleading. To help researchers address this problem in the context of their own studies, we recommend design calculations in which (a) the probability of an estimate being in the wrong direction (Type S [sign] error) and (b) the factor by which the magnitude of an effect might be overestimated (Type M [magnitude] error or exaggeration ratio) are estimated."
 
 To be added:
 
