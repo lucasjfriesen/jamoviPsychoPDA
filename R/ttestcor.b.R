@@ -127,10 +127,13 @@ ttestCorClass <- if (requireNamespace('jmvcore')) R6::R6Class(
           }
         },
         .plot=function(image, ...) {
+<<<<<<< HEAD
           # if (is.null(self$options$labelVar) | is.null(self$options$hypTrueCor) | is.null(self$options$n) | (is.null(self$options$observedCor) & is.null(self$options$observedSE))){
           #   self$results$sensPlot$setVisible(visible = FALSE)
           #    return()
           #  }
+=======
+>>>>>>> parent of 661c542... blah
           plotData <- image$state
 
           plot <- ggplot(plotData) +

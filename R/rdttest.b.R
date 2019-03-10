@@ -133,10 +133,13 @@ rdTTestClass <- if (requireNamespace('jmvcore')) R6::R6Class(
           }
         },
         .plot=function(image, ...) {
+<<<<<<< HEAD
            # if (is.null(self$options$labelVar) | is.null(self$options$hypTrueEff) | (is.null(self$options$observedP) & is.null(self$options$observedSE))){
            #  self$results$sensPlot$setVisible(visible = FALSE)
            #   return()
            # }
+=======
+>>>>>>> parent of 661c542... blah
           plotData <- image$state
           # self$results$debug$setContent(plotData)
           plot <- ggplot(plotData) +

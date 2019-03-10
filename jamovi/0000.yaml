@@ -1,6 +1,11 @@
 ---
+<<<<<<< HEAD
 title: Psychometric Post-Data Analysis
 name: psychoPDA
+=======
+title: Psychometric Design Analysis
+name: psychoDesign
+>>>>>>> parent of 661c542... blah
 version: 1.0.0
 jms: '1.0'
 authors:
@@ -16,8 +21,13 @@ description: >-
 analyses:
   - title: Binary LogR
     name: glmDIF
+<<<<<<< HEAD
     ns: psychoPDA
     menuGroup: PPDA
+=======
+    ns: psychoDesign
+    menuGroup: Psychometric Design Analysis
+>>>>>>> parent of 661c542... blah
     menuTitle: Binary LogR
     description: >
       Differential Item Functioning (DIF) analysis is used to assess items on
@@ -29,14 +39,24 @@ analyses:
     menuSubgroup: Differential Item Functioning
   - title: Mean Differences
     name: rdTTest
+<<<<<<< HEAD
     ns: psychoPDA
     menuGroup: PPDA
+=======
+    ns: psychoDesign
+    menuGroup: Psychometric Design Analysis
+>>>>>>> parent of 661c542... blah
     menuTitle: Mean Differences
     menuSubgroup: T-Tests
   - title: Correlations
     name: ttestCor
+<<<<<<< HEAD
     ns: psychoPDA
     menuGroup: PPDA
+=======
+    ns: psychoDesign
+    menuGroup: Psychometric Design Analysis
+>>>>>>> parent of 661c542... blah
     menuTitle: Correlations
     menuSubgroup: T-Tests
 datasets:
