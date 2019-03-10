@@ -127,18 +127,18 @@ ttestCorClass <- if (requireNamespace('jmvcore')) R6::R6Class(
           }
         },
         .plot=function(image, ...) {
-          if (is.null(self$options$labelVar) | is.null(self$options$hypTrueCor) | is.null(self$options$n) | (is.null(self$options$observedCor) & is.null(self$options$observedSE))){
-            self$results$sensPlot$setVisible(visible = FALSE)
-             return()
-           }
+          # if (is.null(self$options$labelVar) | is.null(self$options$hypTrueCor) | is.null(self$options$n) | (is.null(self$options$observedCor) & is.null(self$options$observedSE))){
+          #   self$results$sensPlot$setVisible(visible = FALSE)
+          #    return()
+          #  }
           plotData <- image$state
 
           plot <- ggplot(plotData) +
             geom_line(aes(x=`Hyp. True Cor.`, y = typeS*(max(typeM)), colour = "typeS")) +
             geom_line(aes(x=`Hyp. True Cor.`, y = typeM, colour = "typeM")) +
             geom_line(aes(x=`Hyp. True Cor.`, y = power*(max(typeM)), colour = "power")) +
-            # scale_y_continuous(name = "Type-M", sec.axis = sec_axis(name = "Type-S/Power", trans = ~./max(plotData$typeM))) +
-            scale_x_continuous(name = "Hypothesized True Effect Size (Units from Proposed H.T.E.)") +
+            scale_y_continuous(name = "Type-M", sec.axis = sec_axis(name = "Type-S/Power", trans = ~./max(plotData$typeM))) +
+            # scale_x_continuous(name = "Hypothesized True Effect Size (Units from Proposed H.T.E.)") +
             theme_classic() +
             facet_wrap(~`Observed Cor.`, scales = "free")
 

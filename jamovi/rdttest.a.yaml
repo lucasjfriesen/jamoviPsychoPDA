@@ -1,7 +1,7 @@
 ---
 name:  rdTTest
 title: Mean Differences
-menuGroup: PDPA
+menuGroup: PPDA
 menuSubgroup: T-Tests
 version: '1.0.0'
 jas: '1.2'

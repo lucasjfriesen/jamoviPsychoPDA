@@ -8,4 +8,4 @@ Description: PDPA provides several Analysis functions designed to enable researc
 Encoding: UTF-8
 LazyData: true
 Imports: jmvcore (>= 0.8.5), R6, stats, ggplot2, boot
-Built: R 3.3.0; ; 2019-03-10 19:37:20 UTC; unix
+Built: R 3.3.0; ; 2019-03-10 22:06:07 UTC; unix

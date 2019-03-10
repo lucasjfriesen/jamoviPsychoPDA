@@ -133,10 +133,10 @@ rdTTestClass <- if (requireNamespace('jmvcore')) R6::R6Class(
           }
         },
         .plot=function(image, ...) {
-           if (is.null(self$options$labelVar) | is.null(self$options$hypTrueEff) | (is.null(self$options$observedP) & is.null(self$options$observedSE))){
-            self$results$sensPlot$setVisible(visible = FALSE)
-             return()
-           }
+           # if (is.null(self$options$labelVar) | is.null(self$options$hypTrueEff) | (is.null(self$options$observedP) & is.null(self$options$observedSE))){
+           #  self$results$sensPlot$setVisible(visible = FALSE)
+           #   return()
+           # }
           plotData <- image$state
           # self$results$debug$setContent(plotData)
           plot <- ggplot(plotData) +

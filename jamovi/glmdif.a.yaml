@@ -1,7 +1,7 @@
 ---
 name:  glmDIF
 title: Binary LogR
-menuGroup: PDPA
+menuGroup: PPDA
 menuSubgroup: Differential Item Functioning
 version: '1.0.0'
 jas: '1.2'
