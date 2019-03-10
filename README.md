@@ -6,9 +6,9 @@ The current tools available are:
 
 - *Binary Differential Item Functioning* (D.DIF): for assessing DIF on dichotomously scored items using a generalized linear model framework (GLIM). By incorporating the GLIM family of methods for detecting DIF in a user-friendly interface, the technical barrier to assessing DIF has been greatly reduced. The development of techniques for assessing of Type-S and Type-M error rates (Gelman & Carlin, 2014) on DIF-classification thresholds represents a revolution in the interpretability of DIF-flagging, especially in the context of low-powered research settings. The goal developing this module is to encourage the use of the the GLIM framework in the broader psychosocial measure validation praxis.
 
-- *T-Test for Mean differences:
+- *T-Test for Mean differences*:
 
-- *T-Test for Correlations:
+- *T-Test for Correlations*:
 
 To be added:
 
