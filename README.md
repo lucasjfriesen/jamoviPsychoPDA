@@ -1,6 +1,6 @@
 # Design Analysis for Jamovi
 
-This module is a tool for performing Post-Data Design Analysis.
+This module is a tool for performing Post-Data Psychometric Analysis.
 
 The current tools available are:
 

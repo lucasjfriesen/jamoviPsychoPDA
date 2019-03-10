@@ -1,11 +1,7 @@
 ---
 name:  glmDIF
 title: Binary LogR
-<<<<<<< HEAD
 menuGroup: PPDA
-=======
-menuGroup: Psychometric Design Analysis
->>>>>>> parent of 661c542... blah
 menuSubgroup: Differential Item Functioning
 version: '1.0.0'
 jas: '1.2'

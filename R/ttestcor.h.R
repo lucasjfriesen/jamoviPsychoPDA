@@ -14,7 +14,7 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             alpha = 0.05, ...) {
 
             super$initialize(
-                package='psychoDesign',
+                package='psychoPDA',
                 name='ttestCor',
                 requiresData=TRUE,
                 ...)
@@ -83,7 +83,6 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
 ttestCorResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
-        debug = function() private$.items[["debug"]],
         instructions = function() private$.items[["instructions"]],
         rdTTestCor = function() private$.items[["rdTTestCor"]],
         sensPlot = function() private$.items[["sensPlot"]]),
@@ -94,10 +93,6 @@ ttestCorResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="T-Test for Correlations")
-            self$add(jmvcore::Preformatted$new(
-                options=options,
-                name="debug",
-                title="debug"))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="instructions",
@@ -167,7 +162,7 @@ ttestCorBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     public = list(
         initialize = function(options, data=NULL, datasetId="", analysisId="", revision=0) {
             super$initialize(
-                package = 'psychoDesign',
+                package = 'psychoPDA',
                 name = 'ttestCor',
                 version = c(1,0,0),
                 options = options,
@@ -192,7 +187,6 @@ ttestCorBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param alpha .
 #' @return A results object containing:
 #' \tabular{llllll}{
-#'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$rdTTestCor} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$sensPlot} \tab \tab \tab \tab \tab an image \cr

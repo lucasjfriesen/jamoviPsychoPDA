@@ -19,9 +19,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
       .run = function() {
         if (is.null(self$options$group) |
             is.null(self$data) | is.null(self$options$item)) {
-          self$results$gcTable$setVisible(visible = FALSE)
-          self$results$DESCtable$setVisible(visible = FALSE)
-          self$results$DIFtable$setVisible(visible = FALSE)
           self$results$instructions$setVisible(visible = TRUE)
           self$results$instructions$setRow(
             rowNo = 1,

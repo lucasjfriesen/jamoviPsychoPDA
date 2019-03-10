@@ -8,7 +8,6 @@ ttestCorClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         .run = function() {
           
           if (is.null(self$options$labelVar) | is.null(self$options$hypTrueCor) | is.null(self$options$n) | (is.null(self$options$observedCor) & is.null(self$options$observedSE))){
-            self$results$rdTTestCor$setVisible(visible = FALSE)
             self$results$instructions$setVisible(visible = TRUE)
             self$results$instructions$setRow(rowNo = 1, value = list(
               frank = "1) Label"
@@ -127,13 +126,9 @@ ttestCorClass <- if (requireNamespace('jmvcore')) R6::R6Class(
           }
         },
         .plot=function(image, ...) {
-<<<<<<< HEAD
-          # if (is.null(self$options$labelVar) | is.null(self$options$hypTrueCor) | is.null(self$options$n) | (is.null(self$options$observedCor) & is.null(self$options$observedSE))){
-          #   self$results$sensPlot$setVisible(visible = FALSE)
-          #    return()
-          #  }
-=======
->>>>>>> parent of 661c542... blah
+          if (is.null(self$options$labelVar) | is.null(self$options$hypTrueCor) | is.null(self$options$n) | (is.null(self$options$observedCor) & is.null(self$options$observedSE))){
+            return()
+          }
           plotData <- image$state
 
           plot <- ggplot(plotData) +
