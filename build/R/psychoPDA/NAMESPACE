@@ -1,0 +1,15 @@
+exportPattern("^[[:alpha:]]+")
+import(stats)
+import(ggplot2)
+import(boot)
+export(glmDIF)
+export(glmDIFClass)
+export(glmDIFOptions)
+
+export(rdTTest)
+export(rdTTestClass)
+export(rdTTestOptions)
+
+export(ttestCor)
+export(ttestCorClass)
+export(ttestCorOptions)

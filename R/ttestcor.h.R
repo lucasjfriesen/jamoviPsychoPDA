@@ -14,7 +14,7 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             alpha = 0.05, ...) {
 
             super$initialize(
-                package='psychoDesign',
+                package='psychoPDA',
                 name='ttestCor',
                 requiresData=TRUE,
                 ...)
@@ -167,7 +167,7 @@ ttestCorBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     public = list(
         initialize = function(options, data=NULL, datasetId="", analysisId="", revision=0) {
             super$initialize(
-                package = 'psychoDesign',
+                package = 'psychoPDA',
                 name = 'ttestCor',
                 version = c(1,0,0),
                 options = options,

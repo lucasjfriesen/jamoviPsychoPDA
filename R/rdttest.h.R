@@ -15,7 +15,7 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             nSims = 10000, ...) {
 
             super$initialize(
-                package='psychoDesign',
+                package='psychoPDA',
                 name='rdTTest',
                 requiresData=TRUE,
                 ...)
@@ -155,7 +155,7 @@ rdTTestBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     public = list(
         initialize = function(options, data=NULL, datasetId="", analysisId="", revision=0) {
             super$initialize(
-                package = 'psychoDesign',
+                package = 'psychoPDA',
                 name = 'rdTTest',
                 version = c(1,0,0),
                 options = options,

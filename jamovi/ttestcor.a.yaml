@@ -1,7 +1,7 @@
 ---
 name:  ttestCor
 title: Correlations
-menuGroup: Psychometric Design Analysis
+menuGroup: PDPA
 menuSubgroup: T-Tests
 version: '1.0.0'
 jas: '1.2'

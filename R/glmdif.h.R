@@ -25,7 +25,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             plotVarsICC = NULL, ...) {
 
             super$initialize(
-                package='psychoDesign',
+                package='psychoPDA',
                 name='glmDIF',
                 requiresData=TRUE,
                 ...)
@@ -326,7 +326,7 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     public = list(
         initialize = function(options, data=NULL, datasetId="", analysisId="", revision=0) {
             super$initialize(
-                package = 'psychoDesign',
+                package = 'psychoPDA',
                 name = 'glmDIF',
                 version = c(1,0,0),
                 options = options,
