@@ -26,6 +26,7 @@ ttestCorClass <- if (requireNamespace('jmvcore')) R6::R6Class(
           }
           
           data <- self$data
+          data <- na.omit(data)
           
           labels <- as.character(data[, self$options$labelVar])
           
@@ -78,6 +79,34 @@ ttestCorClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             
           }
           
+          # Sensitivity ----
+          
+          sensRange <- seq(-.99,.99, length.out = 500)
+          sensRes <- matrix(ncol = 5, nrow = length(observedCor)*length(sensRange))
+        
+          for (i in 1:length(observedCor)){
+            for (j in 1:length(sensRange)){
+              D <- (observedCor[i] - sensRange[j])/observedSE[i]
+              res <- retroDesign(abs(D),
+                                    observedSE[i],
+                                    alpha,
+                                    df[i],
+                                    nSims = 1000)
+              sensRes[((i-1)*length(sensRange))+j, 1] <- observedCor[i]
+              sensRes[((i-1)*length(sensRange))+j, 2] <- sensRange[j]
+              sensRes[((i-1)*length(sensRange))+j,3:5] <- unlist(res)
+            }
+          }
+
+          # plotData <- data.frame(cbind(rep(sensRange, nrow(data)), sensRes))
+          plotData <- data.frame(sensRes)
+          colnames(plotData) <- c("Observed Cor.", "Hyp. True Cor.", "power", "typeS", "typeM")
+          plotData <- plotData[plotData$power != 1,]
+          image <- self$results$sensPlot
+          image$setState(plotData)
+          
+          # Results ----
+          
           table <- self$results$rdTTestCor
           
           for (i in 1:nrow(results)){
@@ -96,5 +125,21 @@ ttestCorClass <- if (requireNamespace('jmvcore')) R6::R6Class(
               )
             )
           }
-        })
+        },
+        .plot=function(image, ...) {
+          plotData <- image$state
+
+          plot <- ggplot(plotData) +
+            geom_line(aes(x=`Hyp. True Cor.`, y = typeS*(max(typeM)), colour = "typeS")) +
+            geom_line(aes(x=`Hyp. True Cor.`, y = typeM, colour = "typeM")) +
+            geom_line(aes(x=`Hyp. True Cor.`, y = power*(max(typeM)), colour = "power")) +
+            # scale_y_continuous(name = "Type-M", sec.axis = sec_axis(name = "Type-S/Power", trans = ~./max(plotData$typeM))) +
+            scale_x_continuous(name = "Hypothesized True Effect Size (Units from Proposed H.T.E.)") +
+            theme_classic() +
+            facet_wrap(~`Observed Cor.`, scales = "free")
+
+          print(plot)
+          TRUE
+        }
+        )
 )
