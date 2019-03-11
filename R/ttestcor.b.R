@@ -10,16 +10,16 @@ ttestCorClass <- if (requireNamespace('jmvcore')) R6::R6Class(
           if (is.null(self$options$labelVar) | is.null(self$options$hypTrueCor) | is.null(self$options$n) | (is.null(self$options$observedCor) & is.null(self$options$observedSE))){
             self$results$instructions$setVisible(visible = TRUE)
             self$results$instructions$setRow(rowNo = 1, value = list(
-              frank = "1) Label"
+              frank = "1) Input the 'Label'"
             ))
             self$results$instructions$setRow(rowNo = 2, value = list(
-              frank = "2) Hypothesized True Correlation"
+              frank = "2) Input the 'Hypothesized True Correlation'"
             ))
             self$results$instructions$setRow(rowNo = 3, value = list(
-              frank = "3) Sample size (N)"
+              frank = "3) Input the 'Sample size' (N)"
             ))
             self$results$instructions$setRow(rowNo = 4, value = list(
-              frank = "4) ONE OF Observed Correlation OR Observed Standard Error"
+              frank = "4) Input ONE OF 'Observed Correlation' OR 'Observed Standard Error'"
             ))
             return()
           }

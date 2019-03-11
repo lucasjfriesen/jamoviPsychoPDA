@@ -10,16 +10,16 @@ rdTTestClass <- if (requireNamespace('jmvcore')) R6::R6Class(
           if (is.null(self$options$labelVar) | is.null(self$options$hypTrueEff) | (is.null(self$options$observedP) & is.null(self$options$observedSE))){
             self$results$instructions$setVisible(visible = TRUE)
             self$results$instructions$setRow(rowNo = 1, value = list(
-              frank = "1) Label"
+              frank = "1) Input the 'Label'"
             ))
             self$results$instructions$setRow(rowNo = 2, value = list(
-              frank = "2) Observed Effect in SD units"
+              frank = "2) Input the 'Observed Effect'"
             ))
             self$results$instructions$setRow(rowNo = 3, value = list(
-              frank = "3) Hypothesized True Effect in SD units"
+              frank = "3) Input the 'Hypothesized True Effect'"
             ))
             self$results$instructions$setRow(rowNo = 4, value = list(
-              frank = "4) ONE OF Observed Standard Error OR Observed P-Value"
+              frank = "4) Input ONE OF 'Observed Standard Error' OR 'Observed P-Value'"
             ))
             return()
           }
@@ -90,7 +90,7 @@ rdTTestClass <- if (requireNamespace('jmvcore')) R6::R6Class(
           
           # Sensitivity ----
           
-          sensRange <- seq(-2,2, length.out = 50)
+          sensRange <- seq(-2,2, length.out = 500)
           sensRes <- matrix(ncol = 5, nrow = nrow(data)*length(sensRange))
           
           for (i in 1:nrow(data)){
@@ -141,12 +141,13 @@ rdTTestClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             geom_line(aes(x=hypTrueEffSens, y = typeS*(max(typeM)), colour = "typeS")) +
             geom_line(aes(x=hypTrueEffSens, y = typeM, colour = "typeM")) +
             geom_line(aes(x=hypTrueEffSens, y = power*(max(typeM)), colour = "power")) +
-            # scale_y_continuous(name = "Type-M", sec.axis = sec_axis(name = "Type-S/Power", trans = ~./max(plotData$typeM))) +
+            scale_y_continuous(name = "Type-M", sec.axis = sec_axis(name = "Type-S/Power", trans = ~./max(plotData$typeM))) +
             scale_x_continuous(name = "Hypothesized True Effect Size (Units from Proposed H.T.E.)") +
             theme_classic() +
             facet_wrap(~hypTrueGroup, scales = "free")
 
           print(plot)
+          # ggplotly(plot)
           TRUE
         }
         )
