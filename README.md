@@ -1,17 +1,25 @@
-# Design Analysis for Jamovi
 
-This module is a tool for performing Post-Data Psychometric Analysis.
+# Psychometric Post-Data Analysis for Jamovi
+
+This module is a tool for performing Psychometric Post-Data Analysis.
 
 The current tools available are:
 
-- *Binary Differential Item Functioning* (D.DIF): for assessing DIF on dichotomously scored items using a generalized linear model framework (GLIM). By incorporating the GLIM family of methods for detecting DIF in a user-friendly interface, the technical barrier to assessing DIF has been greatly reduced. The development of techniques for assessing of Type-S and Type-M error rates (Gelman & Carlin, 2014) on DIF-classification thresholds represents a revolution in the interpretability of DIF-flagging, especially in the context of low-powered research settings. The goal developing this module is to encourage the use of the the GLIM framework in the broader psychosocial measure validation praxis.
+- *Binary Differential Item Functioning* (D.DIF): 
 
-- *T-Test for Mean differences:
+   Assessing DIF on dichotomously scored items using a generalized linear model framework (GLIM). By incorporating the GLIM family of methods for detecting DIF in a user-friendly interface, the technical barrier to assessing DIF has been greatly reduced. The development of techniques for assessing of Type-M error rates (Gelman & Carlin, 2014) on DIF-classification thresholds represents a revolution in the interpretability of DIF-flagging, particularly in the context of low-powered research settings. The goal developing this module is to encourage the use of the the GLIM framework in the broader psychosocial measure validation praxis.
 
-- *T-Test for Correlations:
+- *T-Test for Mean differences*:
+
+  Implements Type-S, Type-M error rate calculations, and sensitivity analysis for T-Tests of mean differences.
+
+- *T-Test for Correlations*:
+
+  Implements Type-S, Type-M error rate calculations, and sensitivity analysis for T-Tests of Pearson correlations.
 
 To be added:
 
+- Chi^2 Test Type-S/Type-M
 - Everything else
 
 <img src="docs/i1.png" class="img-responsive" alt="">
@@ -34,7 +42,7 @@ or
 You can clone this repository and compile the module within R with 
 
 ```
-library(jmvtools)
+install.packages('jmvtools', repos=c('https://repo.jamovi.org', 'https://cran.r-project.org'))
 
 jmvtools::install()
 
