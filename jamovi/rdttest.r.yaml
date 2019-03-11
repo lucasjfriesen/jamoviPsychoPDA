@@ -1,0 +1,50 @@
+---
+name:  rdTTest
+title: T-Test
+jrs:   '1.1'
+
+items:
+    #- name: debug
+    #  title: debug
+    #  type: Preformatted
+
+    - name: instructions
+      title: Instructions
+      type: Table
+      rows: 4
+      visible: False
+      columns: 
+        - name: frank
+          title: ""
+          type: text
+
+
+    - name: rdTTest
+      title: Retroactive Design Analysis | Mean Differences
+      type:  Table
+      rows: 0
+      columns: 
+        - name: label
+          title: Label
+          type: number
+        - name: D
+          title: Hyp. True Difference
+          type: text
+        - name: typeS
+          title: Type-S
+          type: number
+        - name: typeM
+          title: Type-M
+          type: number
+        - name: power
+          title: Observed Power
+          type: number
+
+    - name: sensPlot
+      title: Sensitivity Analysis
+      type: Image
+      width:  800
+      height: 600
+      renderFun: .plot
+
+...

@@ -4,28 +4,38 @@ title: Differential Item Functioning
 jrs:   '1.1'
 
 items:
-   # - name: debug
-   #   title: debug
-   #   type: Preformatted
+    #- name: debug
+    #  title: debug
+    #  type: Preformatted
+
+    - name: instructions
+      title: Instructions
+      type: Table
+      rows: 4
+      visible: False
+      columns:
+        - name: ted
+          title: ""
+          type: text
 
     - name:  DESCtable
       title: Procedure Notes
       type:  Table
       rows: 0
-      clearWith: 
-          - item
-          - group
-          - matchVar
-          - anchor
-          - focal
-          - groupType
-          - type
-          - criterion
-          - alpha
-          - nIter
-          - purify
-          - pAdjustMethod
-          - designAnalysis
+     # clearWith: 
+     #     - item
+     #     - group
+     #     - matchVar
+     #     - anchor
+     #     - focal
+     #     - groupType
+     #     - type
+     #     - criterion
+     #     - alpha
+     #     - nIter
+     #     - purify
+     #     - pAdjustMethod
+     #     - designAnalysis
            
       columns: 
         - name: bob
@@ -36,20 +46,20 @@ items:
       title: Differential Item Functioning Analysis
       type: Table
       rows:  (item)
-      clearWith: 
-          - item
-          - group
-          - matchVar
-          - anchor
-          - focal
-          - groupType
-          - type
-          - criterion
-          - alpha
-          - nIter
-          - purify
-          - pAdjustMethod
-          - onlyDIF
+      #clearWith: 
+      #    - item
+      #    - group
+      #    - matchVar
+      #    - anchor
+      #    - focal
+      #    - groupType
+      #    - type
+      #    - criterion
+      #    - alpha
+      #    - nIter
+      #    - purify
+      #    - pAdjustMethod
+      #    - onlyDIF
       columns:
         - name: item
           title: Item
@@ -59,6 +69,10 @@ items:
           title: P-value
           type: number
           format: zto,pvalue
+
+        - name: chiSquare
+          title: Chi^2 Stat.
+          type: number
 
         - name: effSize
           title: Naeglekirke R^2
@@ -84,32 +98,38 @@ items:
       type: Table
       rows: 0
       visible: (designAnalysis)
-      clearWith: 
-          - item
-          - group
-          - matchVar
-          - anchor
-          - focal
-          - groupType
-          - type
-          - criterion
-          - alpha
-          - nIter
-          - purify
-          - pAdjustMethod
+      #clearWith: 
+      #    - item
+      #    - group
+      #    - matchVar
+      #    - anchor
+      #    - focal
+      #    - groupType
+      #    - type
+      #    - criterion
+      #    - alpha
+      #    - nIter
+      #    - purify
+      #    - pAdjustMethod
       columns:
-        - name: item
+        - name: itemName
           title: Item
           type: text
-        - name: hypTrueEff
-          title: True Effect
+        - name: obsEff
+          title: Obs. Effect
           type: text
+        - name: hypTrueEff
+          title: Hyp. True Effect
+          type: text
+       # - name: typeS
+       #   title: Type-S
+       #   type: number
+       #   format: pvalue
         - name: typeM
           title: Type-M
           type: number
-          format: pvalue
         - name: power
-          title: Power
+          title: Empirical Observed Power
           type: number
           format: (zto)
           visible: (power)

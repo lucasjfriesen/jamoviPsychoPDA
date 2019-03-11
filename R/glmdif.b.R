@@ -8,6 +8,7 @@
 
 
 
+
 # Data Wrangling ----
 
 glmDIFClass <- if (requireNamespace('jmvcore'))
@@ -18,8 +19,24 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
       .run = function() {
         if (is.null(self$options$group) |
             is.null(self$data) | is.null(self$options$item)) {
-          stop("Please supply a least 1 item variable and a grouping variable.",
-                   call. = FALSE)
+          self$results$instructions$setVisible(visible = TRUE)
+          self$results$instructions$setRow(
+            rowNo = 1,
+            value = list(ted = "1) Place items to be assessed for DIF in the 'Item(s) for analysis' slot.")
+          )
+          self$results$instructions$setRow(
+            rowNo = 2,
+            value = list(ted = "2) [Optional] Place the remaining measure items in the 'Anchor Items' slot. This is not needed if a Matching Variable is supplied.")
+          )
+          self$results$instructions$setRow(
+            rowNo = 3,
+            value = list(ted = "3) [Optional] Place an external matching variable in the 'Matching Variable' slot. Measure total score will be calculated if this option is omitted.")
+          )
+          self$results$instructions$setRow(
+            rowNo = 4,
+            value = list(ted = "4) Place the grouping variable in the 'Grouping Variable' slot.")
+          )
+          return()
         }
         # The full DF
         data <- self$data
@@ -28,10 +45,16 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         Data <-
           data.frame(jmvcore::toNumeric(data[, self$options$item]))
         colnames(Data) <- self$options$item
-        for (i in 1:length(self$options$item)){
-          if (!all(unique(Data[,i]) %in% c(0,1, NA))){
-            stop(paste("One or more rows contains an invalid value in column: ", colnames(Data)[i]), ". (Item responses must be one of c(0,1,NA))",
-                   call. = FALSE)
+        for (i in 1:length(self$options$item)) {
+          if (!all(unique(Data[, i]) %in% c(0, 1, NA))) {
+            stop(
+              paste(
+                "One or more rows contains an invalid value in column: ",
+                colnames(Data)[i]
+              ),
+              ". (Item responses must be one of c(0,1,NA))",
+              call. = FALSE
+            )
           }
         }
         
@@ -39,7 +62,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           anchor <- NULL
         } else {
           anchor <-
-          data.frame(jmvcore::toNumeric(data[, self$options$anchor]))
+            data.frame(jmvcore::toNumeric(data[, self$options$anchor]))
           colnames(anchor) <- self$options$anchor
         }
         
@@ -56,14 +79,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           match <- unlist(match)
         }
         
-        if (length(self$options$focal) == 0) {
-          focalName <- levels(group)[1]
-        } else {
-          focalName <- self$options$focal
-        }
-        if (nchar(focalName) > 1) {
-          focalName <- unlist(strsplit(focalName, split = "*"))
-        }
+        focalName <- levels(group)[1]
         
         groupType <- self$options$groupType
         
@@ -78,15 +94,12 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         nIter <- self$options$nIter
         
         pAdjustMethod <- self$options$pAdjustMethod
-        if (pAdjustMethod == "None") {
-          pAdjustMethod <- NULL
-        }
         
         # DIF ----
         # difLogReg is a starter function to determine whether GLM or LM should be used, as well as QA on the arguments input
         
         difLogReg <-
-          function (Data,
+          function (DATA,
                     group,
                     focalName,
                     anchor = NULL,
@@ -99,23 +112,16 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     nrIter = 10,
                     pAdjustMethod = NULL)
           {
-            if (groupType != "group" & groupType != "cont")
-              stop("'groupType' must be either 'group' or 'cont'",
-                   call. = FALSE)
-            if (purify & match[1] != "score")
-              stop("purification not allowed when matching variable is not 'score'",
-                   call. = FALSE)
-            if (groupType == "group" & length(focalName) > 1) {
-              # If there is more than one focal group selected, use Generalized Logistic Regression
-              stop(paste0(
-                "Only one reference group may be provided, and it must be a value from the provided grouping variable. You have input: ", self$options$focal
-                
-              ))
+            if (purify & match[1] != "score") {
+              stop(
+                "purification not allowed when using a custom matching variable. Please remove the custom matching variable or deselect 'Purification'.",
+                call. = FALSE
+              )
             } else {
               # If there is one or no focal group selected, use regular Logistic Regression
               res <-
                 difLogistic(
-                  Data = Data,
+                  DATA = Data,
                   group = group,
                   focalName = focalName,
                   anchor = anchor,
@@ -133,7 +139,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           }
         
         difLogistic <-
-          function (Data,
+          function (DATA,
                     group,
                     focalName,
                     anchor = NULL,
@@ -142,24 +148,18 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     type = "both",
                     criterion = "LRT",
                     alpha = 0.05,
-                    all.cov = TRUE,
                     purify = FALSE,
                     nrIter = 10,
                     pAdjustMethod = NULL)
           {
-            if (purify & match[1] != "score")
-              stop("purification not allowed when matching variable is not 'score'",
-                   call. = FALSE)
             internalLog <- function() {
-                gr <- group
-                DATA <- Data
               if (memberType == "group") {
                 Group <- rep(0, NROW(DATA))
-                Group[gr == focalName] <- 1
+                Group[group == focalName] <- 1
               }
               else
-                Group <- gr
-              Q <-
+                Group <- group
+              sigThreshold <-
                 switch(
                   type,
                   both = qchisq(1 - alpha, 2),
@@ -167,15 +167,12 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                                   alpha, 1),
                   nudif = qchisq(1 - alpha, 1)
                 )
-              ANCHOR <- names(anchor)
-              # self$results$debug$setContent(ANCHOR)
-              dif.anchor <- self$options$anchor
-              DDF <- ifelse(type == "both", 2, 1)
+              anchorNames <- self$options$anchor
+              DF <- ifelse(type == "both", 2, 1)
               
               # Purification == FALSE ----
               
-              if (!purify |
-                  match[1] != "score" | !is.null(anchor)) {
+              if (!purify) {
                 PROV <- Logistik(
                   DATA,
                   Group,
@@ -183,25 +180,24 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                   match = match,
                   type = type,
                   criterion = criterion,
-                  anchor = anchor,
-                  all.cov = all.cov
+                  anchor = anchor
                 )
                 STATS <- PROV$stat
-                PVAL <- 1 - pchisq(STATS, DDF)
+                PVAL <- 1 - pchisq(STATS, DF)
                 deltaR2 <- PROV$deltaR2
-                if (max(STATS) <= Q) {
+                if (max(STATS) <= sigThreshold) {
                   DIFitems <- "No DIF item detected"
                   logitPar <- PROV$parM1
                   logitSe <- PROV$seM1
                 }
                 else {
-                  DIFitems <- (1:NCOL(DATA))[STATS > Q]
+                  DIFitems <- (1:NCOL(DATA))[STATS > sigThreshold]
                   logitPar <- PROV$parM1
                   logitSe <- PROV$seM1
                   for (idif in 1:length(DIFitems)) {
-                    logitPar[DIFitems[idif],] <- PROV$parM0[DIFitems[idif],]
-                    logitSe[DIFitems[idif],] <-
-                      PROV$seM0[DIFitems[idif],]
+                    logitPar[DIFitems[idif], ] <- PROV$parM0[DIFitems[idif], ]
+                    logitSe[DIFitems[idif], ] <-
+                      PROV$seM0[DIFitems[idif], ]
                   }
                 }
                 RES <-
@@ -214,12 +210,9 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     seM0 = PROV$seM0,
                     parM1 = PROV$parM1,
                     seM1 = PROV$seM1,
-                    cov.M0 = PROV$cov.M0,
-                    cov.M1 = PROV$cov.M1,
                     deltaR2 = deltaR2,
-                    GC = PROV$GC,
                     alpha = alpha,
-                    thr = Q,
+                    thr = sigThreshold,
                     DIFitems = DIFitems,
                     memberType = memberType,
                     match = PROV$match,
@@ -228,9 +221,10 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     adjusted.p = NULL,
                     purification = purify,
                     names = colnames(DATA),
-                    anchor.names = dif.anchor,
+                    anchor.names = anchorNames,
                     criterion = criterion,
                     focalName = focalName,
+                    matchScores = PROV$matchScores,
                     ZT = as.character(symnum(
                       deltaR2,
                       c(0, 0.13, 0.26, 1),
@@ -244,17 +238,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                       legend = FALSE
                     ))
                   )
-                # if (!is.null(anchor) & match[1] == "score") {
-                #   RES$Logistik[ANCHOR] <- NA
-                #   RES$logitPar[ANCHOR,] <- NA
-                #   RES$parM0[ANCHOR,] <- NA
-                #   RES$deltaR2[ANCHOR] <- NA
-                #   for (i in 1:length(RES$DIFitems)) {
-                #     if (sum(RES$DIFitems[i] == ANCHOR) == 1){
-                #       RES$DIFitems[i] <- NA}
-                #   }
-                #   RES$DIFitems <- RES$DIFitems[!is.na(RES$DIFitems)]
-                # }
+                
               }
               # Purification == TRUE ----
               else {
@@ -267,34 +251,36 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     Group,
                     memberType = memberType,
                     match = match,
+                    anchor = anchor,
                     type = type,
-                    criterion = criterion,
-                    all.cov = all.cov
+                    criterion = criterion
                   )
+                
                 stats1 <- prov1$stat
                 deltaR2 <- prov1$deltaR2
-                if (max(stats1) <= Q) {
+                if (max(stats1) <= sigThreshold) {
                   DIFitems <- "No DIF item detected"
                   logitPar <- prov1$parM1
                   logitSe <- prov1$seM1
                   noLoop <- TRUE
                 }
                 else {
-                  dif <- (1:NCOL(DATA))[stats1 > Q]
+                  dif <- (1:NCOL(DATA))[stats1 > sigThreshold]
                   difPur <- rep(0, length(stats1))
                   difPur[dif] <- 1
                   repeat {
-                    if (nrPur >= nrIter)
+                    if (nrPur >= nrIter) {
                       break
-                    else {
+                    } else {
                       nrPur <- nrPur + 1
                       nodif <- NULL
-                      if (is.null(dif))
+                      if (is.null(dif)) {
                         nodif <- 1:NCOL(DATA)
-                      else {
+                      } else {
                         for (i in 1:NCOL(DATA)) {
-                          if (sum(i == dif) == 0)
-                            nodif <- c(nodif, i)
+                          if (sum(i == dif) == 0) {
+                            nodif <- cbind(anchor, DATA[i])
+                          }
                         }
                       }
                       prov2 <- Logistik(
@@ -304,42 +290,43 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                         memberType = memberType,
                         match = match,
                         type = type,
-                        criterion = criterion,
-                        all.cov = all.cov
+                        criterion = criterion
                       )
                       stats2 <- prov2$stat
                       deltaR2 <- prov2$deltaR2
-                      if (max(stats2) <= Q)
+                      if (max(stats2) <= sigThreshold) {
                         dif2 <- NULL
-                      else
-                        dif2 <- (1:NCOL(DATA))[stats2 > Q]
-                      difPur <- rbind(difPur, rep(0, NCOL(DATA)))
-                      difPur[nrPur + 1, dif2] <- 1
-                      if (length(dif) != length(dif2))
+                      } else {
+                        dif2 <- (1:NCOL(DATA))[stats2 > sigThreshold]
+                        difPur <- rbind(difPur, rep(0, NCOL(DATA)))
+                        difPur[nrPur + 1, dif2] <- 1
+                      } 
+                      
+                      if (length(dif) != length(dif2)) {
                         dif <- dif2
-                      else {
+                        } else {
                         dif <- sort(dif)
                         dif2 <- sort(dif2)
                         if (sum(dif == dif2) == length(dif)) {
                           noLoop <- TRUE
                           break
-                        }
-                        else
-                          dif <- dif2
+                      } else {
+                        dif <- dif2
                       }
                     }
                   }
+                }
                   prov1 <- prov2
                   stats1 <- stats2
-                  PVAL <- 1 - pchisq(stats1, DDF)
+                  PVAL <- 1 - pchisq(stats1, DF)
                   deltaR2 <- deltaR2
-                  DIFitems <- (1:NCOL(DATA))[stats1 > Q]
+                  DIFitems <- (1:NCOL(DATA))[stats1 > sigThreshold]
                   logitPar <- prov1$parM1
                   logitSe <- prov1$seM1
                   for (idif in 1:length(DIFitems)) {
-                    logitPar[DIFitems[idif],] <- prov1$parM0[DIFitems[idif],]
-                    logitSe[DIFitems[idif],] <-
-                      prov1$seM0[DIFitems[idif],]
+                    logitPar[DIFitems[idif], ] <- prov1$parM0[DIFitems[idif], ]
+                    logitSe[DIFitems[idif], ] <-
+                      prov1$seM0[DIFitems[idif], ]
                   }
                 }
                 if (is.null(difPur) == FALSE) {
@@ -361,11 +348,11 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     logitSe = logitSe,
                     parM0 = prov1$parM0,
                     seM0 = prov1$seM0,
-                    cov.M0 = prov1$cov.M0,
-                    cov.M1 = prov1$cov.M1,
+                    #cov.M0 = prov1$cov.M0,
+                    #cov.M1 = prov1$cov.M1,
                     deltaR2 = deltaR2,
                     alpha = alpha,
-                    thr = Q,
+                    thr = sigThreshold,
                     DIFitems = DIFitems,
                     memberType = memberType,
                     match = prov1$match,
@@ -380,6 +367,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     anchor.names = NULL,
                     criterion = criterion,
                     focalName = focalName,
+                    matchScores = prov1$matchScores,
                     ZT = as.character(symnum(
                       deltaR2,
                       c(0, 0.13, 0.26, 1),
@@ -395,22 +383,24 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                   )
               }
               # p-Adjust ----
-              if (!is.null(pAdjustMethod)) {
-                df <- switch(RES$type,
-                             both = 2,
-                             udif = 1,
-                             nudif = 1)
-                pval <- 1 - pchisq(RES$Logistik, df)
-                RES$adjusted.p <-
-                  p.adjust(pval, method = pAdjustMethod)
-                if (min(RES$adjusted.p, na.rm = TRUE) > alpha)
-                  RES$DIFitems <- "No DIF item detected"
-                else
-                  RES$DIFitems <- which(RES$adjusted.p < alpha)
+              df <- switch(
+                self$options$type,
+                both = 2,
+                udif = 1,
+                nudif = 1
+              )
+              pval <- 1 - pchisq(RES$Logistik, df)
+              RES$adjusted.p <-
+                p.adjust(pval, method = pAdjustMethod)
+              if (min(RES$adjusted.p, na.rm = TRUE) > alpha) {
+                RES$DIFitems <- "No DIF item detected"
+              } else {
+                RES$DIFitems <- which(RES$adjusted.p < alpha)
               }
               class(RES) <- "Logistic"
               return(RES)
             }
+            
             resToReturn <- internalLog()
             
             return(resToReturn)
@@ -423,8 +413,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     match = "score",
                     anchor = NULL,
                     type = "both",
-                    criterion = "LRT",
-                    all.cov = TRUE)
+                    criterion = "LRT")
           {
             R2 <-
               function(m, n)
@@ -437,22 +426,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             mFull <-
               mSimple <- seFull <- seSimple <- matrix(0, NCOL(data),
                                                       4)
-            if (self$options$difFlagScale == "zt") {
-              hypTrueEff <- c(0.13, 0.26)
-            } else {
-              hypTrueEff <- c(0.035, 0.07)
-            }
-            
-            GC <-
-              matrix(0,
-                     nrow = NCOL(data) * length(hypTrueEff),
-                     4,
-                     dimnames = list(c(rep(
-                       hypTrueEff, times = NCOL(data)
-                     )), c("item", "typeS", "typeM", "power")))
-            if (all.cov)
-              cov.matM0 <- cov.matM1 <- vector("list", NCOL(data))
-            else
               cov.matM0 <- cov.matM1 <- NULL
             if (memberType == "group")
               GROUP <- as.factor(member)
@@ -461,12 +434,17 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             for (item in 1:ncol(data)) {
               private$.checkpoint()
               if (match[1] == "score") {
-                data2 <- cbind(data, anchor)
-                SCORES <- rowSums(sapply(data2, as.numeric), na.rm = TRUE)
-
+                if (!is.null(anchor)) {
+                  data2 <- cbind(data, anchor)
+                  SCORES <-
+                    rowSums(sapply(data2, as.numeric), na.rm = TRUE)
+                } else {
+                  SCORES <- rowSums(sapply(data, as.numeric))
+                }
               }
               else {
-                SCORES <- match}
+                SCORES <- match
+              }
               
               ITEM <- data[, item]
               m0 <- switch(
@@ -487,9 +465,9 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                   nudif = glm(ITEM ~
                                 SCORES + GROUP, family = "binomial")
                 )
-              if (criterion == "LRT")
+              if (criterion == "LRT") {
                 dev[item] <- deviance(m1) - deviance(m0)
-              else {
+              } else {
                 if (criterion != "Wald")
                   stop("'criterion' must be either 'LRT' or Wald'",
                        call. = FALSE)
@@ -510,36 +488,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 }
               }
               
-              if (self$options$designAnalysisSigOnly) {
-                sigThresh <-
-                  switch(
-                    type,
-                    both = qchisq(1 - alpha, 2),
-                    udif = qchisq(1 -
-                                    alpha, 1),
-                    nudif = qchisq(1 - alpha, 1)
-                  )
-              } else{
-                sigThresh <- 0
-              }
-              
-              if (dev[item] > sigThresh) {
-                if (self$options$designAnalysis) {
-                  empDATA <- data.frame(ITEM, GROUP, SCORES)
-                  tick <- item - 1
-                  for (hypInd in 1:length(hypTrueEff)) {
-                    private$.checkpoint()
-                    GC[item + tick, 1] <- item
-                    GC[item + tick, 2:4] <-
-                      empDist(empDATA, hypTrueEff = hypTrueEff[hypInd])
-                  
-
-                    buildGC(GC, item + tick, colnames(data)[item])
-                    tick <- tick + 1
-                  }
-                }
-              }
-              
               R2full[item] <- R2DIF(m0, NROW(data))
               R2simple[item] <- R2DIF(m1, NROW(data))
               deltaR[item] <-
@@ -552,10 +500,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 sqrt(diag(vcov(m0)))
               seSimple[item, 1:length(m1$coefficients)] <-
                 sqrt(diag(vcov(m1)))
-              if (all.cov)
-                cov.matM0[[item]] <- vcov(m0)
-              if (all.cov)
-                cov.matM1[[item]] <- vcov(m1)
             }
             colnames(mFull) <-
               colnames(mSimple) <-
@@ -568,23 +512,20 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 R2M0 = R2full,
                 R2M1 = R2simple,
                 deltaR2 = deltaR,
-                GC = GC,
                 parM0 = mFull,
                 parM1 = mSimple,
                 seM0 = seFull,
                 seM1 = seSimple,
-                cov.M0 = cov.matM0,
-                cov.M1 = cov.matM1,
                 criterion = criterion,
                 memberType = memberType,
                 match = ifelse(match[1] ==
-                                 "score", "score", "matching variable")
+                                 "score", "score", "matching variable"),
+                matchScores = SCORES
               )
             return(res)
           }
         
         # Bootstrap GC functions ----
-        # Print the output of a bootstrap
         
         print.bootSE <- function(x,
                                  digits = getOption("digits"),
@@ -599,7 +540,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             all(is.na(t)))
           ind1 <- index[allNA]
           index <- index[!allNA]
-          t <- matrix(t[,!allNA], nrow = nrow(t))
+          t <- matrix(t[, !allNA], nrow = nrow(t))
           rn <- paste("t", index, "*", sep = "")
           if (length(index) == 0L)
             op <- NULL
@@ -645,8 +586,8 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         
         NagR2 <- function(DATA, ind) {
           ITEM <- (DATA[, 1])
-          SCORE <- (DATA[, 2])
-          GROUP <- (DATA[, 3])
+          SCORE <- (DATA[, 3])
+          GROUP <- (DATA[, 2])
           n <- nrow(DATA)
           
           m0 <- switch(
@@ -680,38 +621,57 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         
         empDist <- function(DATA, hypTrueEff) {
           alpha <- self$options$alpha
-          empRes <- matrix(0, nrow = 1, ncol = 2)
+          empRes <- matrix(0, nrow = 1, ncol = 3)
           # Get bootstrapped distribution
           myBoot <- boot(DATA, NagR2, R = 1000)
+          
+          empRes[1,1] <- myBoot$t0
+          
+          if (!all(!is.na(myBoot$t))) {
+            self$results$gcTable$setNote(
+              key = paste(colnames(DATA)[1], hypTrueEff),
+              note = paste0(
+                "WARNING: ",
+                length(myBoot$t) - length(na.omit(myBoot$t)),
+                " of ",
+                length(myBoot$t),
+                " simulations did not converge for item '",
+                colnames(DATA)[1],
+                "' on hypothesized true effect '",
+                hypTrueEff,
+                "'"
+              )
+            )
+            myBoot$t <- na.omit(myBoot$t)
+          }
           # se of emp. dist.
-          se <- print.bootSE(myBoot)[[3]]
+          observedSE <- print.bootSE(myBoot)[[3]]
           # Density values for use below
-          D <- density(myBoot$t, n = 1024)
-          # calculate 2.5% and 97.5% quantiles. This will be needed to find the "reject region."
-          # length 2 vector of quantiles matching bottom alpha/2 and upper alpha/2 in the emp. dist.
-          quant <- quantile(D$x, c(alpha / 2, 1 - (alpha / 2)))
-          # points in the probability distribution matching the Lower and Upper quantiles
-          p.lo <- quant[[1]]
-          p.hi <- quant[[2]]
-          # Here there be monsters
-
+          bootDensity <- density(myBoot$t, n = 1024)
+          # D <- abs((myBoot$t0 - hypTrueEff)/observedSE)
+          D <- myBoot$t0
+          # calculate "reject region" quantile
+          # Quantile matching the upper 1 - alpha in the emp. dist.
+          qUpper <- quantile(bootDensity$x, 1 - (alpha))
           ## shifts distribution by the difference between the observed effect size and the empirical effect size
-          D.shifted <- myBoot$t + hypTrueEff
-          ## Calculate shifted distribution. 
-          D.shifted <- density(D.shifted, n = 1024)$x
-          ##returns the fraction of elements of D.shift that fall into the reject regions of the unshifted distribution.
-          rejects = sum(D.shifted > p.hi) == T
+          bootDensity.Shifted <- bootDensity$x + D
+          ## Calculate shifted distribution.
+          bootDensity.Shifted <- density(bootDensity.Shifted, n = 1024)$x
+          ##returns the fraction of elements of D.shift that fall into the reject region of the unshifted distribution.
+          rejects = ifelse(bootDensity.Shifted > qUpper, TRUE, FALSE)
           ##calculates the proportion of rejects among all bootstrapped samples.
           ##This is the power of the test.
-          powerR <- rejects / length(rejects)
-          empRes[1, 2] <- powerR
+          powerR <- sum(rejects) / length(rejects)
+          empRes[1, 3] <- powerR
           # typeM error rate
-          estimate <-
-            hypTrueEff + se * sample(D$x, replace = T, size = self$options$sims)
-          significant <- estimate > se * qUpper
+          estimate <- 
+            D + observedSE * sample(bootDensity$x, replace = T, size = 10000)
+          significant <- estimate > observedSE * qUpper
+          
           typeMError <-
-            mean(estimate)[significant] / hypTrueEff
-          empRes[1, 1] <- typeMError
+            mean(estimate[significant]) / D
+          
+          empRes[1, 2] <- typeMError
           return(empRes)
         }
         
@@ -723,6 +683,41 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                           format = jmvcore::Cell.NEGATIVE)
         }
         
+        designAnalysis <- function(designList, Data, group, match) {
+            if (self$options$D == "") {
+              if (self$options$difFlagScale == "zt") {
+                hypTrueEff <- c(0.13, 0.26)
+              } else {
+                hypTrueEff <- c(0.035, 0.07)
+              }
+            } else {
+              hypTrueEff <- 0
+            }
+            
+            GC <-
+              matrix(0,
+                     nrow = length(designList) * length(hypTrueEff),
+                     4,
+                     dimnames = list(c(rep(
+                       hypTrueEff, times = length(designList)
+                     )), c("item", "obsEff", "typeM", "power")))
+          
+          for (item in 1:length(designList)) {
+            curItem <- designList[item]
+            empDATA <- cbind(Item = jmvcore::toNumeric(Data[, curItem]), jmvcore::toNumeric(group), match)
+            colnames(empDATA) <-
+              c(colnames(Data)[item], "GROUP", "SCORES")
+            tick <- ifelse(length(hypTrueEff) == 2, item - 1, 0)
+            for (hypInd in 1:length(hypTrueEff)) {
+              private$.checkpoint()
+              GC[item + tick, 1] <- item
+              GC[item + tick, 2:4] <-
+                empDist(empDATA, hypTrueEff = hypTrueEff[hypInd])
+              buildGC(GC, item + tick, curItem)
+              tick <- tick + 1
+              }
+            }
+          }
         
         buildGC <- function(GC, item, name) {
           table <- self$results$gcTable
@@ -730,12 +725,15 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             table$addRow(
               rowKey = item,
               values = list(
-                item = name,
+                itemName = name,
+                obsEff = GC[item, 2],
                 hypTrueEff = ifelse(
-                  rownames(GC)[item] == 0.13 | rownames(GC)[item] == 0.035,
-                  paste0(rownames(GC)[item], " (B)"),
-                  paste0(rownames(GC)[item], " (C)")
-                ),
+                  self$options$D == "",
+                  ifelse(
+                    rownames(GC)[item] == 0.13 | rownames(GC)[item] == 0.035,
+                    paste0(rownames(GC)[item], " (B)"),
+                    paste0(rownames(GC)[item], " (C)")),
+                  rownames(GC)[item]),
                 typeM = GC[item, 3],
                 power = GC[item, 4]
               )
@@ -747,7 +745,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         
         model <-
           difLogReg(
-            Data = Data,
+            DATA = Data,
             group = group,
             focalName = focalName,
             anchor = anchor,
@@ -760,7 +758,14 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             pAdjustMethod = pAdjustMethod
           )
         
-        # self$results$debug$setContent(model)
+        if (self$options$designAnalysis) {
+          if (self$options$designAnalysisSigOnly) {
+            designList <- model$names[model$DIFitems]
+          } else{
+            designList <- model$names
+          }
+          designAnalysis(designList = designList, Data = Data, group = group, match = model$matchScores)
+        }
         
         # Description Results Table ----
         calculateDESCtable <- function() {
@@ -772,9 +777,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                      both = " both types of ",
                      nudif = " nonuniform ",
                      udif = " uniform ")
-            if (model$purification &
-                is.null(model$anchor.names) & model$match ==
-                "score") {
+            if (model$purification) {
               pur <- "with "
             } else {
               pur <- "without "
@@ -801,8 +804,8 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                   ),
                   pur,
                   "item purification and with ",
-                  length(model$focalName),
-                  " reference group(s) and ",
+                  # length(model$focalName),
+                  #  " reference group(s) and ",
                   df,
                   " degree(s) of freedom."
                 )
@@ -857,9 +860,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             table$addRow(rowKey = self$results$DESCtable$rowCount + 1,
                          values = list(bob = ""))
             
-            if (model$purification &
-                is.null(model$anchor.names) &
-                model$match == "score") {
+            if (model$purification) {
               if (model$nrPur <= 1) {
                 word <- " iteration"
               } else {
@@ -879,7 +880,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 )
                 loop <- NULL
                 for (i in 1:model$nrPur) {
-                  loop[i] <- sum(model$difPur[1, ] == model$difPur[i + 1, ])
+                  loop[i] <- sum(model$difPur[1,] == model$difPur[i + 1,])
                 }
                 if (max(loop) != length(model$genLogistik)) {
                   table$addRow(
@@ -938,15 +939,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               ))
             )
             
-            table$addRow(
-              rowKey = self$results$DESCtable$rowCount + 1,
-              values = list(bob = paste0(
-                "Reference group(s): ", list(model$focalName)
-              ))
-            )
-            table$addRow(rowKey = self$results$DESCtable$rowCount + 1,
-                         values = list(bob = ""))
-            
             if (model$match[1] == "score") {
               table$addRow(
                 rowKey = self$results$DESCtable$rowCount + 1,
@@ -964,24 +956,22 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                          values = list(bob = ""))
             if (is.null(model$anchor.names) |
                 model$match != "score") {
-              itk <- 1:length(model$genLogistik)
               table$addRow(
                 rowKey = self$results$DESCtable$rowCount + 1,
                 values = list(bob = "No set of anchor items was provided")
               )
             }
             else {
-              itk <- (1:length(model$genLogistik))[!is.na(model$genLogistik)]
               table$addRow(
                 rowKey = self$results$DESCtable$rowCount + 1,
                 values = list(bob =  "Anchor items (provided by the user): ")
               )
-              for (i in 1:length(self$options$anchor)){
-              table$addRow(
-                rowKey = self$results$DESCtable$rowCount +
-                  1,
-                values = list(bob = self$options$anchor[[i]])
-              )
+              for (i in 1:length(self$options$anchor)) {
+                table$addRow(
+                  rowKey = self$results$DESCtable$rowCount +
+                    1,
+                  values = list(bob = self$options$anchor[[i]])
+                )
               }
             }
             table$addRow(rowKey = self$results$DESCtable$rowCount + 1,
@@ -1019,7 +1009,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         # DIF Results Table ----
         
         calculateDIFTable <- function() {
-          for (i in 1:length(Data)){
+          for (i in 1:length(Data)) {
             if (self$results$DIFtable$isNotFilled()) {
               table <- self$results$DIFtable
               for (i in 1:length(Data)) {
@@ -1027,22 +1017,23 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                   rowNo = i,
                   values = list(
                     item = model$names[i],
+                    chiSquare = model$Logistik[i],
                     p = model$adjusted.p[i],
                     difType = ifelse(
                       model$adjusted.p[i] <= alpha,
                       ifelse(model$logitPar[i, 4] == 0, "Uni", "Non-Uni"),
-                      "."
+                      "No DIF"
                     ),
                     #p = paste0(round(model$p.value[i], 3), symnum(model$p.value[i], c(0, 0.001, 0.01, 0.05, 0.1, 1), symbols = c("***", "**", "*", ".", ""))),
                     effSize = model$deltaR2[i],
-                    ZT = ifelse(model$adjusted.p[i] <= alpha, model$ZT[i], "No DIF"),
-                    JG = ifelse(model$adjusted.p[i] <= alpha, model$JG[i], "No DIF")
+                    ZT = ifelse(model$adjusted.p[i] <= alpha, model$ZT[i], ""),
+                    JG = ifelse(model$adjusted.p[i] <= alpha, model$JG[i], "")
                   )
                 )
               }
             }
-          
-          # Highlight DIF results table
+            
+            # Highlight DIF results table
             if (self$options$difFlagScale == "zt") {
               if (model$ZT[i] %in% c("B", "C") & model$adjusted.p[i] <= alpha) {
                 highlight(table, "ZT", i)
@@ -1056,6 +1047,17 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               }
             }
           }
+          
+          df <-
+            ifelse(type == "both", 2 * length(focalName), length(focalName))
+          table$setNote(
+            key = "df",
+            note = paste0(
+              "Tests of significance conducted using: ",
+              df,
+              " degrees of freedom"
+            )
+          )
           # Set notes
           if (self$options$difFlagScale == "zt") {
             table$setNote(key = "ZT", note = "Zumbo & Thomas (ZT): 'A' = 'R\u00B2' 0 <> 0.13, 'B' = 'R\u00B2' 0.13 <> 0.26, 'C' = 'R\u00B2' 0.26 <> 1")
@@ -1088,14 +1090,19 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           if (self$results$ICCplots$isNotFilled()) {
             items <- self$options$plotVarsICC
             
-            if (match == "score") {
-              match <- rowSums(Data)
-            }
-            
             for (i in unique(items)) {
               private$.checkpoint()
+              
+              if (!is.null(anchor)) {
+                data2 <- cbind(data, anchor)
+                match <-
+                  rowSums(sapply(data2, as.numeric), na.rm = TRUE)
+              } else {
+                match <- rowSums(sapply(data, as.numeric))
+              }
+              
               plotData <-
-                data.frame(Data[, colnames(Data) == i], match, group)
+                data.frame(jmvcore::toNumeric(Data[, colnames(Data) == i]), match, group)
               
               colnames(plotData) <-
                 c(i, "match", "group")
@@ -1117,11 +1124,11 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               "Not all items selected to be plotted have been evaluated, please remove: ",
               self$options$plotVarsICC[!self$options$plotVarsICC %in% self$options$item]
             ),
-                   call. = FALSE
+            call. = FALSE
           )
         }
         
-        p <- ggplot(data = plotData,
+        p <- ggplot(data = as.data.frame(plotData),
                     aes(
                       x = as.numeric(plotData$match),
                       y = as.integer(plotData[, 1]),
@@ -1129,7 +1136,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     )) +
           geom_smooth(
             method = "glm",
-            level = self$options$alpha,
+            level = 1 - self$options$alpha,
             se = TRUE,
             method.args = (family = "binomial")
           ) +

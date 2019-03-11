@@ -1,7 +1,8 @@
 ---
 name:  glmDIF
-title: Differential Item Functioning
-menuGroup: DIF
+title: Binary LogR
+menuGroup: PPDA
+menuSubgroup: Differential Item Functioning
 version: '1.0.0'
 jas: '1.2'
 
@@ -63,10 +64,18 @@ options:
       description:
           R: a vector of strings naming the anchor item columns from `data`
 
-    - name: focal
-      title: Reference Group
-      type: String
-      description: a string indicating which group(s) are to be considered focal groups
+#    - name: groupA
+#      title: Group 1
+#      type: String
+
+#    - name: groupB
+#      title: Group 2
+#      type: String
+
+   # - name: focal
+   #   title: Reference Group
+   #   type: String
+   #   description: a string indicating which group(s) are to be considered focal groups
 
     - name: groupType
       title: Group Type
@@ -99,17 +108,13 @@ options:
 
     - name: power
       type: Bool
-      title: Power
+      title: Observed Power
       default: false
 
     - name: D
       title: Hypothesized True Effect Size
-      type: Number
-
-    - name: sims
-      title: Simulations (Recommended > 1000)
-      type: Number
-      default: 5000
+      type: String
+      default: ''
 
     - name: type
       title: Type

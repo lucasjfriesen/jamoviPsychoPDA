@@ -10,14 +10,12 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             group = NULL,
             matchVar = NULL,
             anchor = NULL,
-            focal = NULL,
             groupType = NULL,
             difFlagScale = NULL,
             designAnalysis = FALSE,
             designAnalysisSigOnly = TRUE,
             power = FALSE,
-            D = NULL,
-            sims = 5000,
+            D = "",
             type = "both",
             criterion = NULL,
             alpha = 0.05,
@@ -27,7 +25,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             plotVarsICC = NULL, ...) {
 
             super$initialize(
-                package='DIF',
+                package='psychoPDA',
                 name='glmDIF',
                 requiresData=TRUE,
                 ...)
@@ -63,9 +61,6 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 permitted=list(
                     "numeric"),
                 default=NULL)
-            private$..focal <- jmvcore::OptionString$new(
-                "focal",
-                focal)
             private$..groupType <- jmvcore::OptionList$new(
                 "groupType",
                 groupType,
@@ -90,13 +85,10 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "power",
                 power,
                 default=FALSE)
-            private$..D <- jmvcore::OptionNumber$new(
+            private$..D <- jmvcore::OptionString$new(
                 "D",
-                D)
-            private$..sims <- jmvcore::OptionNumber$new(
-                "sims",
-                sims,
-                default=5000)
+                D,
+                default="")
             private$..type <- jmvcore::OptionList$new(
                 "type",
                 type,
@@ -143,14 +135,12 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..group)
             self$.addOption(private$..matchVar)
             self$.addOption(private$..anchor)
-            self$.addOption(private$..focal)
             self$.addOption(private$..groupType)
             self$.addOption(private$..difFlagScale)
             self$.addOption(private$..designAnalysis)
             self$.addOption(private$..designAnalysisSigOnly)
             self$.addOption(private$..power)
             self$.addOption(private$..D)
-            self$.addOption(private$..sims)
             self$.addOption(private$..type)
             self$.addOption(private$..criterion)
             self$.addOption(private$..alpha)
@@ -164,14 +154,12 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         group = function() private$..group$value,
         matchVar = function() private$..matchVar$value,
         anchor = function() private$..anchor$value,
-        focal = function() private$..focal$value,
         groupType = function() private$..groupType$value,
         difFlagScale = function() private$..difFlagScale$value,
         designAnalysis = function() private$..designAnalysis$value,
         designAnalysisSigOnly = function() private$..designAnalysisSigOnly$value,
         power = function() private$..power$value,
         D = function() private$..D$value,
-        sims = function() private$..sims$value,
         type = function() private$..type$value,
         criterion = function() private$..criterion$value,
         alpha = function() private$..alpha$value,
@@ -184,14 +172,12 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..group = NA,
         ..matchVar = NA,
         ..anchor = NA,
-        ..focal = NA,
         ..groupType = NA,
         ..difFlagScale = NA,
         ..designAnalysis = NA,
         ..designAnalysisSigOnly = NA,
         ..power = NA,
         ..D = NA,
-        ..sims = NA,
         ..type = NA,
         ..criterion = NA,
         ..alpha = NA,
@@ -204,6 +190,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
 glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
+        instructions = function() private$.items[["instructions"]],
         DESCtable = function() private$.items[["DESCtable"]],
         DIFtable = function() private$.items[["DIFtable"]],
         gcTable = function() private$.items[["gcTable"]],
@@ -217,23 +204,20 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 title="Differential Item Functioning")
             self$add(jmvcore::Table$new(
                 options=options,
+                name="instructions",
+                title="Instructions",
+                rows=4,
+                visible=FALSE,
+                columns=list(
+                    list(
+                        `name`="ted", 
+                        `title`="", 
+                        `type`="text"))))
+            self$add(jmvcore::Table$new(
+                options=options,
                 name="DESCtable",
                 title="Procedure Notes",
                 rows=0,
-                clearWith=list(
-                    "item",
-                    "group",
-                    "matchVar",
-                    "anchor",
-                    "focal",
-                    "groupType",
-                    "type",
-                    "criterion",
-                    "alpha",
-                    "nIter",
-                    "purify",
-                    "pAdjustMethod",
-                    "designAnalysis"),
                 columns=list(
                     list(
                         `name`="bob", 
@@ -244,20 +228,6 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 name="DIFtable",
                 title="Differential Item Functioning Analysis",
                 rows="(item)",
-                clearWith=list(
-                    "item",
-                    "group",
-                    "matchVar",
-                    "anchor",
-                    "focal",
-                    "groupType",
-                    "type",
-                    "criterion",
-                    "alpha",
-                    "nIter",
-                    "purify",
-                    "pAdjustMethod",
-                    "onlyDIF"),
                 columns=list(
                     list(
                         `name`="item", 
@@ -268,6 +238,10 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `title`="P-value", 
                         `type`="number", 
                         `format`="zto,pvalue"),
+                    list(
+                        `name`="chiSquare", 
+                        `title`="Chi^2 Stat.", 
+                        `type`="number"),
                     list(
                         `name`="effSize", 
                         `title`="Naeglekirke R^2", 
@@ -293,36 +267,26 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 title="Design Analysis",
                 rows=0,
                 visible="(designAnalysis)",
-                clearWith=list(
-                    "item",
-                    "group",
-                    "matchVar",
-                    "anchor",
-                    "focal",
-                    "groupType",
-                    "type",
-                    "criterion",
-                    "alpha",
-                    "nIter",
-                    "purify",
-                    "pAdjustMethod"),
                 columns=list(
                     list(
-                        `name`="item", 
+                        `name`="itemName", 
                         `title`="Item", 
                         `type`="text"),
                     list(
+                        `name`="obsEff", 
+                        `title`="Obs. Effect", 
+                        `type`="text"),
+                    list(
                         `name`="hypTrueEff", 
-                        `title`="True Effect", 
+                        `title`="Hyp. True Effect", 
                         `type`="text"),
                     list(
                         `name`="typeM", 
                         `title`="Type-M", 
-                        `type`="number", 
-                        `format`="pvalue"),
+                        `type`="number"),
                     list(
                         `name`="power", 
-                        `title`="Power", 
+                        `title`="Empirical Observed Power", 
                         `type`="number", 
                         `format`="(zto)", 
                         `visible`="(power)"))))
@@ -357,7 +321,7 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     public = list(
         initialize = function(options, data=NULL, datasetId="", analysisId="", revision=0) {
             super$initialize(
-                package = 'DIF',
+                package = 'psychoPDA',
                 name = 'glmDIF',
                 version = c(1,0,0),
                 options = options,
@@ -370,7 +334,7 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
                 completeWhenFilled = FALSE)
         }))
 
-#' Differential Item Functioning
+#' Binary LogR
 #'
 #' Differential Item Functioning (DIF) analysis is used to assess items on
 #' a test or measure to determine whether or not certain groups are performing
@@ -386,8 +350,6 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param matchVar a string naming the matching variable from \code{data}
 #' @param anchor a vector of strings naming the anchor item columns from
 #'   \code{data}
-#' @param focal a string indicating which group(s) are to be considered focal
-#'   groups
 #' @param groupType either "discrete" (default) to specify that group
 #'   membership is made of two (or more than two) groups, or "continuous" to
 #'   indicate that group membership is based on a continuous criterion.
@@ -396,7 +358,6 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param designAnalysisSigOnly .
 #' @param power .
 #' @param D .
-#' @param sims .
 #' @param type a character string specifying which DIF effects must be tested.
 #'   Possible values are "both" (default), "udif" and "nudif"
 #' @param criterion a character string specifying which DIF statistic is
@@ -411,6 +372,7 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param plotVarsICC .
 #' @return A results object containing:
 #' \tabular{llllll}{
+#'   \code{results$instructions} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$DESCtable} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$DIFtable} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$gcTable} \tab \tab \tab \tab \tab a table \cr
@@ -419,9 +381,9 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'
 #' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
 #'
-#' \code{results$DESCtable$asDF}
+#' \code{results$instructions$asDF}
 #'
-#' \code{as.data.frame(results$DESCtable)}
+#' \code{as.data.frame(results$instructions)}
 #'
 #' @export
 glmDIF <- function(
@@ -430,14 +392,12 @@ glmDIF <- function(
     group,
     matchVar,
     anchor = NULL,
-    focal,
     groupType,
     difFlagScale,
     designAnalysis = FALSE,
     designAnalysisSigOnly = TRUE,
     power = FALSE,
-    D,
-    sims = 5000,
+    D = "",
     type = "both",
     criterion,
     alpha = 0.05,
@@ -449,13 +409,13 @@ glmDIF <- function(
     if ( ! requireNamespace('jmvcore'))
         stop('glmDIF requires jmvcore to be installed (restart may be required)')
 
-    if ( ! missing(item)) item <- jmvcore:::resolveQuo(jmvcore:::enquo(item))
-    if ( ! missing(group)) group <- jmvcore:::resolveQuo(jmvcore:::enquo(group))
-    if ( ! missing(matchVar)) matchVar <- jmvcore:::resolveQuo(jmvcore:::enquo(matchVar))
-    if ( ! missing(anchor)) anchor <- jmvcore:::resolveQuo(jmvcore:::enquo(anchor))
-    if ( ! missing(plotVarsICC)) plotVarsICC <- jmvcore:::resolveQuo(jmvcore:::enquo(plotVarsICC))
+    if ( ! missing(item)) item <- jmvcore::resolveQuo(jmvcore::enquo(item))
+    if ( ! missing(group)) group <- jmvcore::resolveQuo(jmvcore::enquo(group))
+    if ( ! missing(matchVar)) matchVar <- jmvcore::resolveQuo(jmvcore::enquo(matchVar))
+    if ( ! missing(anchor)) anchor <- jmvcore::resolveQuo(jmvcore::enquo(anchor))
+    if ( ! missing(plotVarsICC)) plotVarsICC <- jmvcore::resolveQuo(jmvcore::enquo(plotVarsICC))
     if (missing(data))
-        data <- jmvcore:::marshalData(
+        data <- jmvcore::marshalData(
             parent.frame(),
             `if`( ! missing(item), item, NULL),
             `if`( ! missing(group), group, NULL),
@@ -469,14 +429,12 @@ glmDIF <- function(
         group = group,
         matchVar = matchVar,
         anchor = anchor,
-        focal = focal,
         groupType = groupType,
         difFlagScale = difFlagScale,
         designAnalysis = designAnalysis,
         designAnalysisSigOnly = designAnalysisSigOnly,
         power = power,
         D = D,
-        sims = sims,
         type = type,
         criterion = criterion,
         alpha = alpha,

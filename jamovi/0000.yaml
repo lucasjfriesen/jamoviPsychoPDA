@@ -1,6 +1,6 @@
 ---
-title: What the Package Does (Title Case)
-name: DIF
+title: Psychometric Post-Data Analysis
+name: psychoPDA
 version: 1.0.0
 jms: '1.0'
 authors:
@@ -8,15 +8,17 @@ authors:
 maintainer: <lucas.j.friesen@gmail.com>
 date: '2019-01-17'
 type: R
-description: >-
-  The DIF module performs DIF analysis using the generalized logistic regression
-  technique.
+description: >
+  A suite designed to enable the performance of post-data analyses in validation
+  research. Currently included functions are tests for: Differential Item
+  Functioning, Retroactive Design Analysis for T-Tests of mean differences and
+  of correlations.
 analyses:
-  - title: Differential Item Functioning
+  - title: Binary LogR
     name: glmDIF
-    ns: DIF
-    menuGroup: DIF
-    menuTitle: Differential Item Functioning
+    ns: psychoPDA
+    menuGroup: PPDA
+    menuTitle: Binary LogR
     description: >
       Differential Item Functioning (DIF) analysis is used to assess items on
 
@@ -24,8 +26,21 @@ analyses:
       performing
 
       diferentially on that item.
+    menuSubgroup: Differential Item Functioning
+  - title: Mean Differences
+    name: rdTTest
+    ns: psychoPDA
+    menuGroup: PPDA
+    menuTitle: Mean Differences
+    menuSubgroup: T-Tests
+  - title: Correlations
+    name: ttestCor
+    ns: psychoPDA
+    menuGroup: PPDA
+    menuTitle: Correlations
+    menuSubgroup: T-Tests
 datasets:
-  - name: verbal
+  - name: DIF
     path: dataverbal.csv
     description: Example data
 

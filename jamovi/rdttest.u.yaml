@@ -1,0 +1,57 @@
+title: Mean Differences
+name: rdTTest
+jus: '2.0'
+stage: 0
+compilerMode: aggressive
+children:
+  - type: VariableSupplier
+    persistentItems: false
+    stretchFactor: 1
+    children:
+      - type: TargetLayoutBox
+        label: Label
+        children:
+          - type: VariablesListBox
+            name: labelVar
+            maxItemCount: 1
+            isTarget: true
+      - type: TargetLayoutBox
+        label: Hypothesised True Effect Size
+        children:
+          - type: VariablesListBox
+            name: hypTrueEff
+            maxItemCount: 1
+            isTarget: true
+      - type: TargetLayoutBox
+        label: Observed Standard Error
+        children:
+          - type: VariablesListBox
+            name: observedSE
+            maxItemCount: 1
+            isTarget: true
+      - type: TargetLayoutBox
+        label: Observed P-Value
+        children:
+          - type: VariablesListBox
+            name: observedP
+            maxItemCount: 1
+            isTarget: true
+      - type: TargetLayoutBox
+        label: 'N'
+        children:
+          - type: VariablesListBox
+            name: 'n'
+            maxItemCount: 1
+            isTarget: true
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: TextBox
+        name: alpha
+        format: number
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: TextBox
+        name: nSims
+        format: number

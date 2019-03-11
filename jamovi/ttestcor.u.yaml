@@ -1,0 +1,51 @@
+title: Correlations
+name: ttestCor
+jus: '2.0'
+stage: 0
+compilerMode: aggressive
+children:
+  - type: VariableSupplier
+    persistentItems: false
+    stretchFactor: 1
+    children:
+      - type: TargetLayoutBox
+        label: Label
+        children:
+          - type: VariablesListBox
+            name: labelVar
+            maxItemCount: 1
+            isTarget: true
+      - type: TargetLayoutBox
+        label: Hypothesised True Correlation
+        children:
+          - type: VariablesListBox
+            name: hypTrueCor
+            maxItemCount: 1
+            isTarget: true
+      - type: TargetLayoutBox
+        label: Observed Standard Error
+        children:
+          - type: VariablesListBox
+            name: observedSE
+            maxItemCount: 1
+            isTarget: true
+      - type: TargetLayoutBox
+        label: Observed Correlation
+        children:
+          - type: VariablesListBox
+            name: observedCor
+            maxItemCount: 1
+            isTarget: true
+      - type: TargetLayoutBox
+        label: 'N'
+        children:
+          - type: VariablesListBox
+            name: 'n'
+            maxItemCount: 1
+            isTarget: true
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: TextBox
+        name: alpha
+        format: number
