@@ -4,9 +4,9 @@ title: T-Test for Correlations
 jrs:   '1.1'
 
 items:
-    #- name: debug
-    #  title: debug
-    #  type: Preformatted
+    - name: debug
+      title: debug
+      type: Preformatted
 
     - name: instructions
       title: Instructions
@@ -53,11 +53,20 @@ items:
           type: number
           format: zto,pvalue
 
-    - name: sensPlot
-      title: Sensitivity Analysis
+    - name: plotHTE
+      title: Sensitivity - Hypothesized True Effect
       type: Image
+      visible: (sensHyp)
       width:  800
       height: 600
-      renderFun: .plot
+      renderFun: .plotHTE
+
+    - name: plotN
+      title: Sensitivity - Sample Size
+      type: Image
+      visible: (sensN)
+      width:  800
+      height: 600
+      renderFun: .plotN
 
 ...

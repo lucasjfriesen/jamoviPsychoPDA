@@ -4,9 +4,9 @@ title: Differential Item Functioning
 jrs:   '1.1'
 
 items:
-    #- name: debug
-    #  title: debug
-    #  type: Preformatted
+    - name: debug
+      title: debug
+      type: Preformatted
 
     - name: instructions
       title: Instructions
@@ -121,10 +121,6 @@ items:
         - name: hypTrueEff
           title: Hyp. True Effect
           type: text
-       # - name: typeS
-       #   title: Type-S
-       #   type: number
-       #   format: pvalue
         - name: typeM
           title: Type-M
           type: number

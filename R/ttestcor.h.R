@@ -11,7 +11,9 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             observedSE = NULL,
             observedCor = NULL,
             n = NULL,
-            alpha = 0.05, ...) {
+            alpha = 0.05,
+            sensHyp = TRUE,
+            sensN = TRUE, ...) {
 
             super$initialize(
                 package='psychoPDA',
@@ -56,6 +58,14 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "alpha",
                 alpha,
                 default=0.05)
+            private$..sensHyp <- jmvcore::OptionBool$new(
+                "sensHyp",
+                sensHyp,
+                default=TRUE)
+            private$..sensN <- jmvcore::OptionBool$new(
+                "sensN",
+                sensN,
+                default=TRUE)
 
             self$.addOption(private$..labelVar)
             self$.addOption(private$..hypTrueCor)
@@ -63,6 +73,8 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..observedCor)
             self$.addOption(private$..n)
             self$.addOption(private$..alpha)
+            self$.addOption(private$..sensHyp)
+            self$.addOption(private$..sensN)
         }),
     active = list(
         labelVar = function() private$..labelVar$value,
@@ -70,22 +82,28 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         observedSE = function() private$..observedSE$value,
         observedCor = function() private$..observedCor$value,
         n = function() private$..n$value,
-        alpha = function() private$..alpha$value),
+        alpha = function() private$..alpha$value,
+        sensHyp = function() private$..sensHyp$value,
+        sensN = function() private$..sensN$value),
     private = list(
         ..labelVar = NA,
         ..hypTrueCor = NA,
         ..observedSE = NA,
         ..observedCor = NA,
         ..n = NA,
-        ..alpha = NA)
+        ..alpha = NA,
+        ..sensHyp = NA,
+        ..sensN = NA)
 )
 
 ttestCorResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
+        debug = function() private$.items[["debug"]],
         instructions = function() private$.items[["instructions"]],
         rdTTestCor = function() private$.items[["rdTTestCor"]],
-        sensPlot = function() private$.items[["sensPlot"]]),
+        plotHTE = function() private$.items[["plotHTE"]],
+        plotN = function() private$.items[["plotN"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -93,6 +111,10 @@ ttestCorResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="T-Test for Correlations")
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="debug",
+                title="debug"))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="instructions",
@@ -150,11 +172,20 @@ ttestCorResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `format`="zto,pvalue"))))
             self$add(jmvcore::Image$new(
                 options=options,
-                name="sensPlot",
-                title="Sensitivity Analysis",
+                name="plotHTE",
+                title="Sensitivity - Hypothesized True Effect",
+                visible="(sensHyp)",
                 width=800,
                 height=600,
-                renderFun=".plot"))}))
+                renderFun=".plotHTE"))
+            self$add(jmvcore::Image$new(
+                options=options,
+                name="plotN",
+                title="Sensitivity - Sample Size",
+                visible="(sensN)",
+                width=800,
+                height=600,
+                renderFun=".plotN"))}))
 
 ttestCorBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     "ttestCorBase",
@@ -185,11 +216,15 @@ ttestCorBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param observedCor .
 #' @param n .
 #' @param alpha .
+#' @param sensHyp .
+#' @param sensN .
 #' @return A results object containing:
 #' \tabular{llllll}{
+#'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$rdTTestCor} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$sensPlot} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$plotHTE} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$plotN} \tab \tab \tab \tab \tab an image \cr
 #' }
 #'
 #' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
@@ -206,7 +241,9 @@ ttestCor <- function(
     observedSE,
     observedCor,
     n,
-    alpha = 0.05) {
+    alpha = 0.05,
+    sensHyp = TRUE,
+    sensN = TRUE) {
 
     if ( ! requireNamespace('jmvcore'))
         stop('ttestCor requires jmvcore to be installed (restart may be required)')
@@ -232,7 +269,9 @@ ttestCor <- function(
         observedSE = observedSE,
         observedCor = observedCor,
         n = n,
-        alpha = alpha)
+        alpha = alpha,
+        sensHyp = sensHyp,
+        sensN = sensN)
 
     results <- ttestCorResults$new(
         options = options)

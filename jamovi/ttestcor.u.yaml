@@ -49,3 +49,10 @@ children:
       - type: TextBox
         name: alpha
         format: number
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: CheckBox
+        name: sensHyp
+      - type: CheckBox
+        name: sensN

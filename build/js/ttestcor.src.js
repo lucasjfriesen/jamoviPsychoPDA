@@ -3,7 +3,7 @@
 
 'use strict';
 
-const options = [{"name":"data","type":"Data"},{"name":"labelVar","title":"Label","type":"Variable","suggested":["nominal"]},{"name":"hypTrueCor","title":"Hypothesised True Correlation","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"observedSE","title":"Observed Standard Error","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"observedCor","title":"Observed Correlation","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"n","title":"N","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"alpha","type":"Number","title":"Alpha","default":0.05}];
+const options = [{"name":"data","type":"Data"},{"name":"labelVar","title":"Label","type":"Variable","suggested":["nominal"]},{"name":"hypTrueCor","title":"Hypothesised True Correlation","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"observedSE","title":"Observed Standard Error","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"observedCor","title":"Observed Correlation","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"n","title":"N","type":"Variable","suggested":["continuous"],"permitted":["numeric"]},{"name":"alpha","type":"Number","title":"Alpha","default":0.05},{"name":"sensHyp","title":"Sensitivity - Hypothesized True Effect","type":"Bool","default":true},{"name":"sensN","title":"Sensitivity - Sample Size","type":"Bool","default":true}];
 
 const view = View.extend({
     jus: "2.0",
@@ -96,6 +96,20 @@ view.layout = ui.extend({
 					type: DefaultControls.TextBox,
 					name: "alpha",
 					format: FormatDef.number
+				}
+			]
+		},
+		{
+			type: DefaultControls.LayoutBox,
+			margin: "large",
+			controls: [
+				{
+					type: DefaultControls.CheckBox,
+					name: "sensHyp"
+				},
+				{
+					type: DefaultControls.CheckBox,
+					name: "sensN"
 				}
 			]
 		}

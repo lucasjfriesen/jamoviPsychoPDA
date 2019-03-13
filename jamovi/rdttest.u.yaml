@@ -55,3 +55,12 @@ children:
       - type: TextBox
         name: nSims
         format: number
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: CheckBox
+        name: sensHyp
+      - type: CheckBox
+        name: sensN
+      - type: CheckBox
+        name: sensSE

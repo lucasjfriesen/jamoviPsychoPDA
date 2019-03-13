@@ -4,9 +4,9 @@ title: T-Test
 jrs:   '1.1'
 
 items:
-    #- name: debug
-    #  title: debug
-    #  type: Preformatted
+    - name: debug
+      title: debug
+      type: Preformatted
 
     - name: instructions
       title: Instructions
@@ -40,11 +40,29 @@ items:
           title: Observed Power
           type: number
 
-    - name: sensPlot
-      title: Sensitivity Analysis
+
+    - name: plotHTE
+      title: Sensitivity - Hypothesized True Effect
       type: Image
+      visible: (sensHyp)
       width:  800
       height: 600
-      renderFun: .plot
+      renderFun: .plotHTE
+
+    - name: plotN
+      title: Sensitivity - Sample Size
+      type: Image
+      visible: (sensN)
+      width:  800
+      height: 600
+      renderFun: .plotN
+
+    - name: plotSE
+      title: Sensitivity - Standard Error
+      type: Image
+      visible: (sensSE)
+      width:  800
+      height: 600
+      renderFun: .plotSE
 
 ...
