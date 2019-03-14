@@ -56,3 +56,8 @@ children:
         name: sensHyp
       - type: CheckBox
         name: sensN
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: ComboBox
+        name: corType

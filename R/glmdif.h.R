@@ -14,6 +14,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             difFlagScale = NULL,
             designAnalysis = FALSE,
             designAnalysisSigOnly = TRUE,
+            bootSims = 1000,
             power = FALSE,
             D = "",
             type = "both",
@@ -81,6 +82,10 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "designAnalysisSigOnly",
                 designAnalysisSigOnly,
                 default=TRUE)
+            private$..bootSims <- jmvcore::OptionNumber$new(
+                "bootSims",
+                bootSims,
+                default=1000)
             private$..power <- jmvcore::OptionBool$new(
                 "power",
                 power,
@@ -139,6 +144,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..difFlagScale)
             self$.addOption(private$..designAnalysis)
             self$.addOption(private$..designAnalysisSigOnly)
+            self$.addOption(private$..bootSims)
             self$.addOption(private$..power)
             self$.addOption(private$..D)
             self$.addOption(private$..type)
@@ -158,6 +164,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         difFlagScale = function() private$..difFlagScale$value,
         designAnalysis = function() private$..designAnalysis$value,
         designAnalysisSigOnly = function() private$..designAnalysisSigOnly$value,
+        bootSims = function() private$..bootSims$value,
         power = function() private$..power$value,
         D = function() private$..D$value,
         type = function() private$..type$value,
@@ -176,6 +183,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..difFlagScale = NA,
         ..designAnalysis = NA,
         ..designAnalysisSigOnly = NA,
+        ..bootSims = NA,
         ..power = NA,
         ..D = NA,
         ..type = NA,
@@ -361,6 +369,7 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param difFlagScale .
 #' @param designAnalysis .
 #' @param designAnalysisSigOnly .
+#' @param bootSims .
 #' @param power .
 #' @param D .
 #' @param type a character string specifying which DIF effects must be tested.
@@ -402,6 +411,7 @@ glmDIF <- function(
     difFlagScale,
     designAnalysis = FALSE,
     designAnalysisSigOnly = TRUE,
+    bootSims = 1000,
     power = FALSE,
     D = "",
     type = "both",
@@ -439,6 +449,7 @@ glmDIF <- function(
         difFlagScale = difFlagScale,
         designAnalysis = designAnalysis,
         designAnalysisSigOnly = designAnalysisSigOnly,
+        bootSims = bootSims,
         power = power,
         D = D,
         type = type,

@@ -114,3 +114,9 @@ children:
               - type: VariablesListBox
                 name: plotVarsICC
                 isTarget: true
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: TextBox
+        name: bootSims
+        format: number

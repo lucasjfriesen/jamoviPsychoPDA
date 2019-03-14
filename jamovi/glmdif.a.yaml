@@ -106,6 +106,10 @@ options:
       title: Flagged items only
       default: true
 
+    - name: bootSims
+      type: Number
+      default: 1000
+
     - name: power
       type: Bool
       title: Observed Power

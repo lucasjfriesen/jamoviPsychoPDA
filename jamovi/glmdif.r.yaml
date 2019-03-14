@@ -121,6 +121,9 @@ items:
         - name: hypTrueEff
           title: Hyp. True Effect
           type: text
+       # - name: typeS
+       #   title: Type-S
+       #   type: number  
         - name: typeM
           title: Type-M
           type: number

@@ -46,16 +46,11 @@ ttestCorClass <- if (requireNamespace('jmvcore'))
         if (!is.null(self$options$observedSE)) {
           observedSE <- jmvcore::toNumeric(data[, self$options$observedSE])
         } else {
-          # PEARSON'S RHO
-          # observedSE <- sqrt((1 - observedCor^2)/df)
-          # SPEARMAN'S RHO SMALL: ftp://biostat.wisc.edu/pub/chappell/800/hw/spearman.pdf
-          observedSE <- ((1 - (observedCor ^ 2)) / (df)) ^ 0.5
-          # SPEARMAN'S RHO LARGE: ftp://biostat.wisc.edu/pub/chappell/800/hw/spearman.pdf
-          # zRho <- 0.5*log((1+observedCor)/(1-observedCor))
-          # zRhoSE <- ((1.060)(n - 3))^.05
-          # observedSE <- exp(zRhoSE)
-          # SPEARMAN'S RHO: https://en.wikipedia.org/wiki/Spearman%27s_rank_correlation_coefficient
-          # observedSE <- 0.6325/(sqrt(n-1))
+          observedSE <- switch(self$options$corTpe,
+                               # PEARSON'S RHO
+                               pearson = sqrt((1 - observedCor^2)/df),
+                               # SPEARMAN'S RHO SMALL: ftp://biostat.wisc.edu/pub/chappell/800/hw/spearman.pdf
+                               spearman = ((1 - (observedCor ^ 2)) / (df)) ^ 0.5)
         }
         
         D <- (observedCor - hypTrueCor) / observedSE

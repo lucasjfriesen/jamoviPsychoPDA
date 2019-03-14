@@ -63,4 +63,13 @@ options:
       type: Bool
       default: TRUE
 
+    - name: corType
+      title: Correlation Type
+      type: List
+      options:
+        - name: pearson
+          title: Pearson
+        - name: spearman
+          title: Spearman
+
 ...

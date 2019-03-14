@@ -13,7 +13,8 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             n = NULL,
             alpha = 0.05,
             sensHyp = TRUE,
-            sensN = TRUE, ...) {
+            sensN = TRUE,
+            corType = NULL, ...) {
 
             super$initialize(
                 package='psychoPDA',
@@ -66,6 +67,12 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "sensN",
                 sensN,
                 default=TRUE)
+            private$..corType <- jmvcore::OptionList$new(
+                "corType",
+                corType,
+                options=list(
+                    "pearson",
+                    "spearman"))
 
             self$.addOption(private$..labelVar)
             self$.addOption(private$..hypTrueCor)
@@ -75,6 +82,7 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..alpha)
             self$.addOption(private$..sensHyp)
             self$.addOption(private$..sensN)
+            self$.addOption(private$..corType)
         }),
     active = list(
         labelVar = function() private$..labelVar$value,
@@ -84,7 +92,8 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         n = function() private$..n$value,
         alpha = function() private$..alpha$value,
         sensHyp = function() private$..sensHyp$value,
-        sensN = function() private$..sensN$value),
+        sensN = function() private$..sensN$value,
+        corType = function() private$..corType$value),
     private = list(
         ..labelVar = NA,
         ..hypTrueCor = NA,
@@ -93,7 +102,8 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..n = NA,
         ..alpha = NA,
         ..sensHyp = NA,
-        ..sensN = NA)
+        ..sensN = NA,
+        ..corType = NA)
 )
 
 ttestCorResults <- if (requireNamespace('jmvcore')) R6::R6Class(
@@ -218,6 +228,7 @@ ttestCorBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param alpha .
 #' @param sensHyp .
 #' @param sensN .
+#' @param corType .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
@@ -243,7 +254,8 @@ ttestCor <- function(
     n,
     alpha = 0.05,
     sensHyp = TRUE,
-    sensN = TRUE) {
+    sensN = TRUE,
+    corType) {
 
     if ( ! requireNamespace('jmvcore'))
         stop('ttestCor requires jmvcore to be installed (restart may be required)')
@@ -271,7 +283,8 @@ ttestCor <- function(
         n = n,
         alpha = alpha,
         sensHyp = sensHyp,
-        sensN = sensN)
+        sensN = sensN,
+        corType = corType)
 
     results <- ttestCorResults$new(
         options = options)
