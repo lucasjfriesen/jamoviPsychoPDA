@@ -74,17 +74,23 @@ rdTTestClass <- if (requireNamespace('jmvcore'))
           power <- p.hi + p.lo
           typeS <- p.lo / power
           lambda <- D / observedSE
-          typeM <-
+          if (self$options$scatterViz){
+            estimate <- D + observedSE * rt(nSims, df)
+            significant <- abs(estimate) > observedSE * z
+            typeM <- mean(abs(estimate)[significant]) / D
+          } else {
+             typeM <-
             (dt(lambda + z, df = df) + dt(lambda - z, df = df) +
                lambda * (pt(lambda + z, df = df) + pt(lambda - z, df = df) - 1)) /
             (lambda * (1 - pt(lambda + z, df = df) + pt(lambda - z, df = df)))
-          # estimate <- D + observedSE * rt(nSims, df)
-          # significant <- abs(estimate) > observedSE * z
-          # typeM <- mean(abs(estimate)[significant]) / D
+             estimate <- NULL
+          }
+
           return(list(
             power = power,
             typeS = typeS,
-            typeM = typeM
+            typeM = typeM,
+            estimate = estimate
           ))
         }
         
@@ -110,7 +116,7 @@ rdTTestClass <- if (requireNamespace('jmvcore'))
         if (self$options$sensHyp) {
           sensRange <- seq(-2, 2, length.out = 500)
           sensRes <-
-            matrix(ncol = 5,
+            matrix(ncol = 6,
                    nrow = nrow(data) * length(sensRange))
           
           for (i in 1:nrow(data)) {
@@ -125,7 +131,7 @@ rdTTestClass <- if (requireNamespace('jmvcore'))
                 hypTrueEff[i]
               sensRes[((i - 1) * length(sensRange)) + j, 2] <-
                 hypTrueEffSens[j]
-              sensRes[((i - 1) * length(sensRange)) + j, 3:5] <-
+              sensRes[((i - 1) * length(sensRange)) + j, 3:6] <-
                 unlist(res)
             }
           }
@@ -139,9 +145,13 @@ rdTTestClass <- if (requireNamespace('jmvcore'))
               "sensVar",
               "power",
               "typeS",
-              "typeM")
+              "typeM",
+              "estimate")
+          
           imageHTE <- self$results$plotHTE
-          imageHTE$setState(plotData)
+          imageHTE$setState(plotData[,1:6])
+          imageHTEViz <- self$results$HTEViz
+          imageHTEViz$setState(plotData[,7])
         }
         
         # Proposed N ----
@@ -330,6 +340,10 @@ rdTTestClass <- if (requireNamespace('jmvcore'))
         print(plot)
         # ggplotly(plot)
         TRUE
+      },
+      .plotHTEViz = function(imageHTEViz, ...)
+        {
+        
       }
     )
   )

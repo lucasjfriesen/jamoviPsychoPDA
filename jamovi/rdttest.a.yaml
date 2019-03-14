@@ -71,6 +71,11 @@ options:
       type: Bool
       default: TRUE
 
+    - name: sensScatter
+      title: Sensitivity - Scatter Viz
+      type: Bool
+      default: TRUE
+
 
 #    - name: df
 #      type: Number

@@ -615,7 +615,8 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           rdRes[1,1] <- myBoot$t0
           # se of emp. dist.
           observedSE <- print.bootSE(myBoot)[[3]]
-          D <- myBoot$t0
+          # D <- myBoot$t0
+          D <- abs(myBoot$t0 - hypTrueEff)
           # Quantile matching the upper 1 - alpha in the emp. dist.
           empFn <- ecdf(myBoot$t)
           qUpper <- quantile(empFn,  1 - (alpha))
@@ -652,38 +653,38 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         # retroDesignSE ----
         # retroDesign <- function(hypTrueEff, myBoot){
         #   alpha <- self$options$alpha
-        #   rdRes <- matrix(0, nrow = 1, ncol = 4)
+        #   rdRes <- matrix(0, nrow = 1, ncol = 3)
         #   rdRes[1,1] <- myBoot$t0
         #   # se of emp. dist.
         #   observedSE <- print.bootSE(myBoot)[[3]]
-        #   
-        #   D <- abs(myBoot$t0 - hypTrueEff)/observedSE
+        # 
+        #   D <- abs(myBoot$t0 - hypTrueEff/observedSE)
         #   # Quantile matching the upper 1 - alpha in the emp. dist.
         #   empFn <- ecdf(myBoot$t)
-        #   z <- quantile(empFn,  1 - (alpha))
+        #   z <- quantile(empFn,  1 - (alpha)/2)
+        # 
+        #   p.hi <- 1 - pEmp(empFn,  (z - D / observedSE))
+        #   p.lo <- pEmp(empFn,  (-z - D / observedSE))
         #   
-        #   p.hi <- pEmp(empFn,  (z - D / observedSE))
-        #   p.lo <- 1 -  pEmp(empFn,  (-z - D / observedSE))
-        #   ## shifts distribution by the difference between the observed effect size and the empirical effect size
         #   powerR = p.lo + p.hi
         #   typeS <- p.lo/powerR
-        #   rdRes[1,4] <- typeS
+        #   # rdRes[1, 4] <- typeS
         #   rdRes[1, 3] <- powerR
         #   # typeM error rate
-        #   lambda <- D/observedSE  
+        #   lambda <- D/observedSE
         # 
         #   empFn <- ecdf(myBoot$t)
         #   z <- quantile(empFn,  1 - (alpha))
-        #   
+        # 
         #   exp1 <- dEmp(empFn, qEmp, lambda + z, myBoot$t)
         #   exp2 <- dEmp(empFn, qEmp,lambda - z, myBoot$t)
         #   exp3 <- pEmp(empFn, lambda + z)
         #   exp4 <- pEmp(empFn, lambda - z)
-        #   
-        #   typeM <- (exp1 + exp1 +
+        # 
+        #   typeM <- (exp1 + exp2 +
         #                 lambda*(exp3 + exp4 - 1))/
         #                     (lambda*(1 - exp3 + exp4))
-        #   
+        # 
         #   rdRes[1, 2] <- typeM
         #   return(rdRes)
         # }

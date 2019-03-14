@@ -15,7 +15,8 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             nSims = 10000,
             sensHyp = TRUE,
             sensN = TRUE,
-            sensSE = TRUE, ...) {
+            sensSE = TRUE,
+            sensScatter = TRUE, ...) {
 
             super$initialize(
                 package='psychoPDA',
@@ -74,6 +75,10 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "sensSE",
                 sensSE,
                 default=TRUE)
+            private$..sensScatter <- jmvcore::OptionBool$new(
+                "sensScatter",
+                sensScatter,
+                default=TRUE)
 
             self$.addOption(private$..labelVar)
             self$.addOption(private$..hypTrueEff)
@@ -85,6 +90,7 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..sensHyp)
             self$.addOption(private$..sensN)
             self$.addOption(private$..sensSE)
+            self$.addOption(private$..sensScatter)
         }),
     active = list(
         labelVar = function() private$..labelVar$value,
@@ -96,7 +102,8 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         nSims = function() private$..nSims$value,
         sensHyp = function() private$..sensHyp$value,
         sensN = function() private$..sensN$value,
-        sensSE = function() private$..sensSE$value),
+        sensSE = function() private$..sensSE$value,
+        sensScatter = function() private$..sensScatter$value),
     private = list(
         ..labelVar = NA,
         ..hypTrueEff = NA,
@@ -107,7 +114,8 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..nSims = NA,
         ..sensHyp = NA,
         ..sensN = NA,
-        ..sensSE = NA)
+        ..sensSE = NA,
+        ..sensScatter = NA)
 )
 
 rdTTestResults <- if (requireNamespace('jmvcore')) R6::R6Class(
@@ -117,6 +125,7 @@ rdTTestResults <- if (requireNamespace('jmvcore')) R6::R6Class(
         instructions = function() private$.items[["instructions"]],
         rdTTest = function() private$.items[["rdTTest"]],
         plotHTE = function() private$.items[["plotHTE"]],
+        plotHTEViz = function() private$.items[["plotHTEViz"]],
         plotN = function() private$.items[["plotN"]],
         plotSE = function() private$.items[["plotSE"]]),
     private = list(),
@@ -177,6 +186,14 @@ rdTTestResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 renderFun=".plotHTE"))
             self$add(jmvcore::Image$new(
                 options=options,
+                name="plotHTEViz",
+                title="Sensitivity - Viz",
+                visible="(sensScatter)",
+                width=800,
+                height=600,
+                renderFun=".plotHTEViz"))
+            self$add(jmvcore::Image$new(
+                options=options,
                 name="plotN",
                 title="Sensitivity - Sample Size",
                 visible="(sensN)",
@@ -225,12 +242,14 @@ rdTTestBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param sensHyp .
 #' @param sensN .
 #' @param sensSE .
+#' @param sensScatter .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$rdTTest} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$plotHTE} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$plotHTEViz} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$plotN} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$plotSE} \tab \tab \tab \tab \tab an image \cr
 #' }
@@ -253,7 +272,8 @@ rdTTest <- function(
     nSims = 10000,
     sensHyp = TRUE,
     sensN = TRUE,
-    sensSE = TRUE) {
+    sensSE = TRUE,
+    sensScatter = TRUE) {
 
     if ( ! requireNamespace('jmvcore'))
         stop('rdTTest requires jmvcore to be installed (restart may be required)')
@@ -283,7 +303,8 @@ rdTTest <- function(
         nSims = nSims,
         sensHyp = sensHyp,
         sensN = sensN,
-        sensSE = sensSE)
+        sensSE = sensSE,
+        sensScatter = sensScatter)
 
     results <- rdTTestResults$new(
         options = options)

@@ -64,3 +64,5 @@ children:
         name: sensN
       - type: CheckBox
         name: sensSE
+      - type: CheckBox
+        name: sensScatter

@@ -49,6 +49,14 @@ items:
       height: 600
       renderFun: .plotHTE
 
+    - name: plotHTEViz
+      title: Sensitivity - Viz
+      type: Image
+      visible: (sensScatter)
+      width:  800
+      height: 600
+      renderFun: .plotHTEViz
+
     - name: plotN
       title: Sensitivity - Sample Size
       type: Image
