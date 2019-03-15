@@ -71,10 +71,10 @@ options:
       type: Bool
       default: TRUE
 
-    - name: sensScatter
-      title: Sensitivity - Scatter Viz
+    - name: HTEViz
+      title: Sensitivity - Scatter Viz HTE
       type: Bool
-      default: TRUE
+      default: FALSE
 
 
 #    - name: df

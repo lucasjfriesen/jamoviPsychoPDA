@@ -71,7 +71,7 @@ items:
           format: zto,pvalue
 
         - name: chiSquare
-          title: Chi^2 Stat.
+          title: Chi "\u00B2" Stat.
           type: number
 
         - name: effSize
@@ -118,6 +118,9 @@ items:
         - name: obsEff
           title: Obs. Effect
           type: text
+        - name: bootSE
+          title: Bootstrap SE
+          type: number
         - name: hypTrueEff
           title: Hyp. True Effect
           type: text

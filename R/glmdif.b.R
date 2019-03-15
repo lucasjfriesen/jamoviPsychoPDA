@@ -565,125 +565,80 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           }
           return(myBoot)
         }
-        # ORIGINAL
-        # retroDesign <- function(hypTrueEff, myBoot){
-        #   alpha <- self$options$alpha
-        #   rdRes <- matrix(0, nrow = 1, ncol = 3)
-        #   rdRes[1,1] <- myBoot$t0
-        #   # se of emp. dist.
-        #   observedSE <- print.bootSE(myBoot)[[3]]
-        #   # D <- myBoot$t0
-        #   D <- abs(myBoot$t0 - hypTrueEff)
-        #   # Quantile matching the upper 1 - alpha in the emp. dist.
-        #   qUpper <- ecdf(myBoot$t)
-        #   qUpper <- quantile(qUpper,  1 - (alpha))
-        #   ## shifts distribution by the difference between the observed effect size and the empirical effect size
-        #   myBoot.Shifted <- ecdf(myBoot$t + D)
-        #   powerR = 1 - myBoot.Shifted(qUpper)
-        #   rdRes[1, 3] <- powerR
-        #   # typeM error rate
-        #   estimate <- 
-        #     D + sample(myBoot$t, replace = T, size = 10000)
-        #   significant <- estimate > qUpper
-        #   
-        #   typeMError <-
-        #     round(mean(estimate[significant]) / D, 3)
-        #   
-        #   rdRes[1, 2] <- typeMError
-        #   return(rdRes)
-        # }
-        
-        qEmp <- function(empFn, x){
-            quantile(empFn, x)
-          }
-          
-          pEmp <- function(empFn, x){
-              empFn(x)
-          }
-          
-          dEmp <- function(empFn, qEmp, dPoint, values){
-            dens <- density(values)
-            i <- dens$x[which.min(abs(dens$x - dPoint))]
-            dens_x <- dens$y[dens$x == i]
-            dens_x
-          }
-        # Raw version
+        # retroDesignOG ----
         retroDesign <- function(hypTrueEff, myBoot){
-          # Alpha for sig. I think that this needs to be adjusted for calculations on non-sig results.
           alpha <- self$options$alpha
-          rdRes <- matrix(0, nrow = 1, ncol = 3)
+          rdRes <- matrix(0, nrow = 1, ncol = 4)
           rdRes[1,1] <- myBoot$t0
-          # se of emp. dist.
-          observedSE <- print.bootSE(myBoot)[[3]]
-          # D <- myBoot$t0
-          D <- abs(myBoot$t0 - hypTrueEff)
+          # se of empirical distribution
+          rdRes[1,4] <- observedSE <- print.bootSE(myBoot)[[3]]
+          D <- myBoot$t0
+          # D <- abs(myBoot$t0 - hypTrueEff)
+
           # Quantile matching the upper 1 - alpha in the emp. dist.
-          empFn <- ecdf(myBoot$t)
-          qUpper <- quantile(empFn,  1 - (alpha))
+          qUpper <- ecdf(myBoot$t)
+          qUpper <- quantile(qUpper,  1 - (alpha))
+
           ## shifts distribution by the difference between the observed effect size and the empirical effect size
-          myBoot.Shifted <- ecdf(myBoot$t + D)
-          powerR = 1 - myBoot.Shifted(qUpper)
-          rdRes[1, 3] <- powerR
-          # typeM error rate
-          # Via estimation
+          myBoot.Shifted <- ecdf(myBoot$t + hypTrueEff)
+          rdRes[1, 3] <- power <- 1 - myBoot.Shifted(qUpper)
+          # typeM error rate VIA Estimation
           estimate <-
-            D +  sample(myBoot$t, size = 10000, replace = TRUE)
+            D + sample(myBoot$t, replace = T, size = 10000)
           significant <- estimate > qUpper
-          typeM <-
-            mean(estimate[significant]) / D
-          # Via formula
-          # lambda <- D/observedSE
-
-          # empFn <- ecdf(myBoot$t)
-          # z <- quantile(empFn,  1 - (alpha))
-
-          # exp1 <- dEmp(empFn, qEmp, lambda + qUpper, myBoot$t)
-          # exp2 <- dEmp(empFn, qEmp,lambda - qUpper, myBoot$t)
-          # exp3 <- pEmp(empFn, lambda + qUpper)
-          # exp4 <- pEmp(empFn, lambda - qUpper)
-
-          # typeM <- (exp1 + exp1 +
-          #             lambda*(exp3 + exp4 - 1))/
-          #                (lambda*(1 - exp3 + exp4))
-
-          rdRes[1, 2] <- typeM
+          rdRes[1, 2] <- typeMError <- mean(estimate[significant]) / D
           return(rdRes)
         }
-        
-        # retroDesignSE ----
+
+        # qEmp <- function(empFn, x) {
+        #   quantile(empFn, x)
+        # }
+        # 
+        # pEmp <- function(empFn, x) {
+        #   empFn(x)
+        # }
+        # 
+        # dEmp <- function(empFn, qEmp, dPoint, values) {
+        #   dens <- density(values)
+        #   i <- dens$x[which.min(abs(dens$x - dPoint))]
+        #   dens_x <- dens$y[dens$x == i]
+        #   dens_x
+        # }
+        #  
+        # # retroDesignSE ----
         # retroDesign <- function(hypTrueEff, myBoot){
         #   alpha <- self$options$alpha
-        #   rdRes <- matrix(0, nrow = 1, ncol = 3)
+        #   rdRes <- matrix(0, nrow = 1, ncol = 4)
         #   rdRes[1,1] <- myBoot$t0
         #   # se of emp. dist.
-        #   observedSE <- print.bootSE(myBoot)[[3]]
-        # 
-        #   D <- abs(myBoot$t0 - hypTrueEff/observedSE)
-        #   # Quantile matching the upper 1 - alpha in the emp. dist.
-        #   empFn <- ecdf(myBoot$t)
-        #   z <- quantile(empFn,  1 - (alpha)/2)
-        # 
-        #   p.hi <- 1 - pEmp(empFn,  (z - D / observedSE))
-        #   p.lo <- pEmp(empFn,  (-z - D / observedSE))
         #   
-        #   powerR = p.lo + p.hi
-        #   typeS <- p.lo/powerR
-        #   # rdRes[1, 4] <- typeS
-        #   rdRes[1, 3] <- powerR
-        #   # typeM error rate
+        #   observedSE <- print.bootSE(myBoot)[[3]]
+        #   rdRes[1,4] <- observedSE
+        #   
+        #   # D <- abs(myBoot$t0 - hypTrueEff/observedSE)
+        #   D <- abs(myBoot$t0 - hypTrueEff)
         #   lambda <- D/observedSE
-        # 
+        #   # Quantile matching the upper 1 - alpha in the emp. dist.
         #   empFn <- ecdf(myBoot$t)
         #   z <- quantile(empFn,  1 - (alpha))
         # 
-        #   exp1 <- dEmp(empFn, qEmp, lambda + z, myBoot$t)
-        #   exp2 <- dEmp(empFn, qEmp,lambda - z, myBoot$t)
-        #   exp3 <- pEmp(empFn, lambda + z)
-        #   exp4 <- pEmp(empFn, lambda - z)
+        #   exp1P <- pEmp(empFn, -z - lambda)
+        #   exp2P <- pEmp(empFn, z - lambda)
         # 
-        #   typeM <- (exp1 + exp2 +
-        #                 lambda*(exp3 + exp4 - 1))/
-        #                     (lambda*(1 - exp3 + exp4))
+        #   power <- exp1P + 1 - exp2P
+        #   typeS <- exp1P/(exp1P + 1 - exp2P)
+        #   # rdRes[1, 4] <- typeS
+        #   rdRes[1, 3] <- power
+        # 
+        #   # typeM error rate
+        #   exp1M <- dEmp(empFn, qEmp, lambda + z, myBoot$t)
+        #   exp2M <- dEmp(empFn, qEmp,lambda - z, myBoot$t)
+        #   exp3M <- pEmp(empFn, lambda + z)
+        #   exp4M <- pEmp(empFn, lambda - z)
+        # 
+        #   typeM <- (exp1M + exp2M +
+        #                 lambda*(exp3M + exp4M - 1))/
+        #                     (lambda*(1 - exp3M + exp4M))
         # 
         #   rdRes[1, 2] <- typeM
         #   return(rdRes)
@@ -712,9 +667,10 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               data.frame("item" = rep(as.character(), times = length(designList)*length(hypTrueEff)),
                          "obsEff" = rep(as.numeric(), times = length(designList)*length(hypTrueEff)),
                          "hypTrueEff"= rep(as.numeric(), times = length(designList)*length(hypTrueEff)),
-                         "typeM"= rep(as.numeric(), times = length(designList)*length(hypTrueEff)),
-                         "power"= rep(as.numeric(), times = length(designList)*length(hypTrueEff)),
-                         # "typeS"= rep(as.numeric(), times = length(designList)*length(hypTrueEff)),
+                         "typeM" = rep(as.numeric(), times = length(designList)*length(hypTrueEff)),
+                         "power" = rep(as.numeric(), times = length(designList)*length(hypTrueEff)),
+                         # "typeS" = rep(as.numeric(), times = length(designList)*length(hypTrueEff)),
+                         "bootSE" = rep(as.numeric(), times = length(designList)*length(hypTrueEff)),
                          stringsAsFactors = FALSE)
             
           for (item in 1:length(designList)) {
@@ -732,7 +688,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               private$.checkpoint()
               GC[item*length(hypTrueEff) - tick, 1] <- designList[item]
               GC[item*length(hypTrueEff) - tick, 2] <- as.character((hypTrueEff[hypInd]))
-              GC[item*length(hypTrueEff) - tick, 3:5] <- as.numeric(retroDesign(hypTrueEff = hypTrueEff[hypInd],myBoot))
+              GC[item*length(hypTrueEff) - tick, 3:6] <- as.numeric(retroDesign(hypTrueEff = hypTrueEff[hypInd],myBoot))
               tick <- tick - 1
               }
           }
@@ -749,6 +705,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 values = list(
                   itemName = GC[item, 1],
                   obsEff = GC[item, 3],
+                  bootSE = GC[item, 6],
                   hypTrueEff = GC[item, 2],
                     # ifelse(
                     # self$options$D == "",

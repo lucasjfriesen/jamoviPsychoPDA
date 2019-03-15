@@ -107,6 +107,7 @@ options:
       default: true
 
     - name: bootSims
+      title: Bootstrap N
       type: Number
       default: 1000
 

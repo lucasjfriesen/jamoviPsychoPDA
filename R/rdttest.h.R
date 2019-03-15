@@ -16,7 +16,7 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             sensHyp = TRUE,
             sensN = TRUE,
             sensSE = TRUE,
-            sensScatter = TRUE, ...) {
+            HTEViz = FALSE, ...) {
 
             super$initialize(
                 package='psychoPDA',
@@ -75,10 +75,10 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "sensSE",
                 sensSE,
                 default=TRUE)
-            private$..sensScatter <- jmvcore::OptionBool$new(
-                "sensScatter",
-                sensScatter,
-                default=TRUE)
+            private$..HTEViz <- jmvcore::OptionBool$new(
+                "HTEViz",
+                HTEViz,
+                default=FALSE)
 
             self$.addOption(private$..labelVar)
             self$.addOption(private$..hypTrueEff)
@@ -90,7 +90,7 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..sensHyp)
             self$.addOption(private$..sensN)
             self$.addOption(private$..sensSE)
-            self$.addOption(private$..sensScatter)
+            self$.addOption(private$..HTEViz)
         }),
     active = list(
         labelVar = function() private$..labelVar$value,
@@ -103,7 +103,7 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         sensHyp = function() private$..sensHyp$value,
         sensN = function() private$..sensN$value,
         sensSE = function() private$..sensSE$value,
-        sensScatter = function() private$..sensScatter$value),
+        HTEViz = function() private$..HTEViz$value),
     private = list(
         ..labelVar = NA,
         ..hypTrueEff = NA,
@@ -115,7 +115,7 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..sensHyp = NA,
         ..sensN = NA,
         ..sensSE = NA,
-        ..sensScatter = NA)
+        ..HTEViz = NA)
 )
 
 rdTTestResults <- if (requireNamespace('jmvcore')) R6::R6Class(
@@ -188,7 +188,7 @@ rdTTestResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="plotHTEViz",
                 title="Sensitivity - Viz",
-                visible="(sensScatter)",
+                visible="(HTEViz)",
                 width=800,
                 height=600,
                 renderFun=".plotHTEViz"))
@@ -242,7 +242,7 @@ rdTTestBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param sensHyp .
 #' @param sensN .
 #' @param sensSE .
-#' @param sensScatter .
+#' @param HTEViz .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
@@ -273,7 +273,7 @@ rdTTest <- function(
     sensHyp = TRUE,
     sensN = TRUE,
     sensSE = TRUE,
-    sensScatter = TRUE) {
+    HTEViz = FALSE) {
 
     if ( ! requireNamespace('jmvcore'))
         stop('rdTTest requires jmvcore to be installed (restart may be required)')
@@ -304,7 +304,7 @@ rdTTest <- function(
         sensHyp = sensHyp,
         sensN = sensN,
         sensSE = sensSE,
-        sensScatter = sensScatter)
+        HTEViz = HTEViz)
 
     results <- rdTTestResults$new(
         options = options)

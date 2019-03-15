@@ -68,13 +68,13 @@ ttestCorClass <- if (requireNamespace('jmvcore'))
           power <- p.hi + p.lo
           typeS <- p.lo / power
           lambda <- D / observedSE
-          typeM <-
-            (dt(lambda + z, df = df) + dt(lambda - z, df = df) +
-               lambda * (pt(lambda + z, df = df) + pt(lambda - z, df = df) - 1)) /
-            (lambda * (1 - pt(lambda + z, df = df) + pt(lambda - z, df = df)))
-          # estimate <- D + observedSE * rt(nSims, df)
-          # significant <- abs(estimate) > observedSE * z
-          # typeM <- mean(abs(estimate)[significant]) / D
+          # typeM <-
+          #   (dt(lambda + z, df = df) + dt(lambda - z, df = df) +
+          #      lambda * (pt(lambda + z, df = df) + pt(lambda - z, df = df) - 1)) /
+          #   (lambda * (1 - pt(lambda + z, df = df) + pt(lambda - z, df = df)))
+          estimate <- D + observedSE * rt(nSims, df)
+          significant <- abs(estimate) > observedSE * z
+          typeM <- mean(abs(estimate)[significant]) / D
           return(list(
             typeS = typeS,
             typeM = typeM,

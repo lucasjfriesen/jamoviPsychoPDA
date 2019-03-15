@@ -65,4 +65,4 @@ children:
       - type: CheckBox
         name: sensSE
       - type: CheckBox
-        name: sensScatter
+        name: HTEViz

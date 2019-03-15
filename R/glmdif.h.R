@@ -290,6 +290,10 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `title`="Obs. Effect", 
                         `type`="text"),
                     list(
+                        `name`="bootSE", 
+                        `title`="Bootstrap SE", 
+                        `type`="number"),
+                    list(
                         `name`="hypTrueEff", 
                         `title`="Hyp. True Effect", 
                         `type`="text"),
