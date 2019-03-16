@@ -184,14 +184,18 @@ rdTTestResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 width=800,
                 height=600,
                 renderFun=".plotHTE"))
-            self$add(jmvcore::Image$new(
+            self$add(jmvcore::Array$new(
                 options=options,
                 name="plotHTEViz",
                 title="Sensitivity - Viz",
-                visible="(HTEViz)",
-                width=800,
-                height=600,
-                renderFun=".plotHTEViz"))
+                items="(hypTrueEff)",
+                template=jmvcore::Image$new(
+                    options=options,
+                    width=800,
+                    height=600,
+                    renderFun=".plotHTEViz",
+                    visible="(HTEViz)",
+                    requiresData=TRUE)))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="plotN",
@@ -249,7 +253,7 @@ rdTTestBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$rdTTest} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$plotHTE} \tab \tab \tab \tab \tab an image \cr
-#'   \code{results$plotHTEViz} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$plotHTEViz} \tab \tab \tab \tab \tab an array of images \cr
 #'   \code{results$plotN} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$plotSE} \tab \tab \tab \tab \tab an image \cr
 #' }

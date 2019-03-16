@@ -69,4 +69,16 @@ items:
       height: 600
       renderFun: .plotN
 
+    - name: plotHTEViz
+      title: Sensitivity - Viz
+      type: Array
+      items: (hypTrueCor)
+      template:
+        type: Image
+        width:  800
+        height: 600
+        renderFun: .plotHTEViz
+        visible: (HTEViz)
+        requiresData: TRUE
+
 ...

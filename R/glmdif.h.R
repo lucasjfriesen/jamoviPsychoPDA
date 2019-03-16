@@ -253,7 +253,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `format`="zto,pvalue"),
                     list(
                         `name`="chiSquare", 
-                        `title`="Chi^2 Stat.", 
+                        `title`="Chi \"\\u00B2\" Stat.", 
                         `type`="number"),
                     list(
                         `name`="effSize", 

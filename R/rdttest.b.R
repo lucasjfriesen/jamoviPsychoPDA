@@ -93,7 +93,7 @@ rdTTestClass <- if (requireNamespace('jmvcore'))
                                 nSims) {
           z <- qt(1 - alpha / 2, df)
           estimate <- D + observedSE * rt(nSims, df)
-          return(list(estimate, rep(z, times = nSims), rep(observedSE, times = nSims)))
+          return(list(estimate, rep(D, times = nSims), rep(z, times = nSims), rep(observedSE, times = nSims)))
         }  
           
         # Sensitivity ----
@@ -172,19 +172,28 @@ rdTTestClass <- if (requireNamespace('jmvcore'))
         }
         
        if (self$options$HTEViz) {
-          resultsHTEViz <- matrix(ncol = 3, nrow = nrow(data)*nSims, names = c("estimate", "observedSE", "z"))
+         for (i in 1:length(hypTrueEff)){
+          self$results$plotHTEViz$addItem(i)
+         }
+          resultsHTEViz <- data.frame("estimate" = as.numeric(), "D" = as.numeric(),"observedSE" = as.numeric(), "z" = as.numeric())
+          # c("estimate", "observedSE", "z")
           
           for (i in 1:nrow(data)) {
-            resultsHTEViz[nSims*(i-1):nSims*i,] <- retroDesignEmp(abs(hypTrueEff[i]),
+            resultsHTEViz <- retroDesignEmp(hypTrueEff[i],
                                       observedSE[i],
                                       alpha,
                                       df[i],
                                       nSims)
+            
+            # self$results$debug$setContent(self$results$plotHTEViz$length.)
+            resultsHTEViz <- as.data.frame(resultsHTEViz)
+            
+            colnames(resultsHTEViz) = c("estimate", "D","observedSE", "z")
+            
+            imageHTEViz <- self$results$plotHTEViz$get(index = i)
+            imageHTEViz$setState(resultsHTEViz)
           }
-          self$results$debug$setContent(resultsHTEViz)
 
-          imageHTEViz <- self$results$plotHTEViz
-          imageHTEViz$setState(resultsHTEViz)
         }
         
         # Proposed N ----
@@ -363,27 +372,28 @@ rdTTestClass <- if (requireNamespace('jmvcore'))
       },
       .plotHTEViz = function(imageHTEViz, ...)
       {
-        return()
+        
         plotData <- imageHTEViz$state
-
+        
         plot <- ggplot(plotData, aes(x = seq_along(estimate), y = estimate)) +
-        geom_point(pch = ifelse((estimate > observedSE * z) &
-                                  (!estimate < -observedSE * z),
+        geom_point(pch = ifelse((plotData$estimate > plotData$observedSE * plotData$z) &
+                                  (!plotData$estimate < -plotData$observedSE * plotData$z),
                                 15,
-                                ifelse((!estimate > observedSE * z) &
-                                         (estimate < -observedSE * z), 17,
-                                       ifelse((!estimate > observedSE * z) &
-                                                (!estimate < -observedSE * z), 16, 16
+                                ifelse((!plotData$estimate > plotData$observedSE * plotData$z) &
+                                         (plotData$estimate < -plotData$observedSE * plotData$z), 17,
+                                       ifelse((!plotData$estimate > plotData$observedSE * plotData$z) &
+                                                (!plotData$estimate < -plotData$observedSE * plotData$z), 16, 16
                                        ))
         ),
-        col = ifelse((!estimate > observedSE * z) &
-                       (!estimate < -observedSE * z), "grey", "black")) +
-        geom_hline(yintercept = observedSE * z, size = 1) +
-        geom_hline(yintercept = -observedSE * z, size = 1) +
-        geom_hline(yintercept = A,
+        col = ifelse((!plotData$estimate > plotData$observedSE * plotData$z) &
+                       (!plotData$estimate < -plotData$observedSE * plotData$z), "grey", "black")) +
+        geom_hline(yintercept = plotData$observedSE * plotData$z, size = 1) +
+        geom_hline(yintercept = -plotData$observedSE * plotData$z, size = 1) +
+        geom_hline(yintercept = plotData$D,
                    linetype = "dashed",
                    size = 1) +
-        xlab("n")
+        xlab("n") +
+          ggtitle(unique(plotData$D))
 
         print(plot)
         TRUE

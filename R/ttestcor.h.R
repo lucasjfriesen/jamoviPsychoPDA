@@ -14,6 +14,8 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             alpha = 0.05,
             sensHyp = TRUE,
             sensN = TRUE,
+            HTEViz = FALSE,
+            bootSims = 10000,
             corType = NULL, ...) {
 
             super$initialize(
@@ -67,6 +69,14 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "sensN",
                 sensN,
                 default=TRUE)
+            private$..HTEViz <- jmvcore::OptionBool$new(
+                "HTEViz",
+                HTEViz,
+                default=FALSE)
+            private$..bootSims <- jmvcore::OptionNumber$new(
+                "bootSims",
+                bootSims,
+                default=10000)
             private$..corType <- jmvcore::OptionList$new(
                 "corType",
                 corType,
@@ -82,6 +92,8 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..alpha)
             self$.addOption(private$..sensHyp)
             self$.addOption(private$..sensN)
+            self$.addOption(private$..HTEViz)
+            self$.addOption(private$..bootSims)
             self$.addOption(private$..corType)
         }),
     active = list(
@@ -93,6 +105,8 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         alpha = function() private$..alpha$value,
         sensHyp = function() private$..sensHyp$value,
         sensN = function() private$..sensN$value,
+        HTEViz = function() private$..HTEViz$value,
+        bootSims = function() private$..bootSims$value,
         corType = function() private$..corType$value),
     private = list(
         ..labelVar = NA,
@@ -103,6 +117,8 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..alpha = NA,
         ..sensHyp = NA,
         ..sensN = NA,
+        ..HTEViz = NA,
+        ..bootSims = NA,
         ..corType = NA)
 )
 
@@ -113,7 +129,8 @@ ttestCorResults <- if (requireNamespace('jmvcore')) R6::R6Class(
         instructions = function() private$.items[["instructions"]],
         rdTTestCor = function() private$.items[["rdTTestCor"]],
         plotHTE = function() private$.items[["plotHTE"]],
-        plotN = function() private$.items[["plotN"]]),
+        plotN = function() private$.items[["plotN"]],
+        plotHTEViz = function() private$.items[["plotHTEViz"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -195,7 +212,19 @@ ttestCorResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 visible="(sensN)",
                 width=800,
                 height=600,
-                renderFun=".plotN"))}))
+                renderFun=".plotN"))
+            self$add(jmvcore::Array$new(
+                options=options,
+                name="plotHTEViz",
+                title="Sensitivity - Viz",
+                items="(hypTrueCor)",
+                template=jmvcore::Image$new(
+                    options=options,
+                    width=800,
+                    height=600,
+                    renderFun=".plotHTEViz",
+                    visible="(HTEViz)",
+                    requiresData=TRUE)))}))
 
 ttestCorBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     "ttestCorBase",
@@ -228,6 +257,8 @@ ttestCorBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param alpha .
 #' @param sensHyp .
 #' @param sensN .
+#' @param HTEViz .
+#' @param bootSims .
 #' @param corType .
 #' @return A results object containing:
 #' \tabular{llllll}{
@@ -236,6 +267,7 @@ ttestCorBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'   \code{results$rdTTestCor} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$plotHTE} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$plotN} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$plotHTEViz} \tab \tab \tab \tab \tab an array of images \cr
 #' }
 #'
 #' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
@@ -255,6 +287,8 @@ ttestCor <- function(
     alpha = 0.05,
     sensHyp = TRUE,
     sensN = TRUE,
+    HTEViz = FALSE,
+    bootSims = 10000,
     corType) {
 
     if ( ! requireNamespace('jmvcore'))
@@ -284,6 +318,8 @@ ttestCor <- function(
         alpha = alpha,
         sensHyp = sensHyp,
         sensN = sensN,
+        HTEViz = HTEViz,
+        bootSims = bootSims,
         corType = corType)
 
     results <- ttestCorResults$new(

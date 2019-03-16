@@ -43,10 +43,12 @@ ttestCorClass <- if (requireNamespace('jmvcore'))
         n <- jmvcore::toNumeric(data[, self$options$n])
         df <- n - 2
         
+        nSims <- self$options$bootSims
+        
         if (!is.null(self$options$observedSE)) {
           observedSE <- jmvcore::toNumeric(data[, self$options$observedSE])
         } else {
-          observedSE <- switch(self$options$corTpe,
+          observedSE <- switch(self$options$corType,
                                # PEARSON'S RHO
                                pearson = sqrt((1 - observedCor^2)/df),
                                # SPEARMAN'S RHO SMALL: ftp://biostat.wisc.edu/pub/chappell/800/hw/spearman.pdf
@@ -61,26 +63,36 @@ ttestCorClass <- if (requireNamespace('jmvcore'))
                                 observedSE,
                                 alpha,
                                 df,
-                                nSims = 10000) {
+                                nSims) {
           z <- qt(1 - alpha / 2, df)
           p.hi <- 1 - pt(z - D / observedSE, df)
           p.lo <- pt(-z - D / observedSE, df)
           power <- p.hi + p.lo
           typeS <- p.lo / power
           lambda <- D / observedSE
-          # typeM <-
-          #   (dt(lambda + z, df = df) + dt(lambda - z, df = df) +
-          #      lambda * (pt(lambda + z, df = df) + pt(lambda - z, df = df) - 1)) /
-          #   (lambda * (1 - pt(lambda + z, df = df) + pt(lambda - z, df = df)))
-          estimate <- D + observedSE * rt(nSims, df)
-          significant <- abs(estimate) > observedSE * z
-          typeM <- mean(abs(estimate)[significant]) / D
+          typeM <-
+            (dt(lambda + z, df = df) + dt(lambda - z, df = df) +
+               lambda * (pt(lambda + z, df = df) + pt(lambda - z, df = df) - 1)) /
+            (lambda * (1 - pt(lambda + z, df = df) + pt(lambda - z, df = df)))
+          # estimate <- D + observedSE * rt(nSims, df)
+          # significant <- abs(estimate) > observedSE * z
+          # typeM <- mean(abs(estimate)[significant]) / D
           return(list(
             typeS = typeS,
             typeM = typeM,
             power = power
           ))
         }
+        
+        retroDesignEmp <- function(D,
+                                observedSE,
+                                alpha,
+                                df,
+                                nSims) {
+          z <- qt(1 - alpha / 2, df)
+          estimate <- D + observedSE * rt(nSims, df)
+          return(list(estimate, rep(D, times = nSims), rep(z, times = nSims), rep(observedSE, times = nSims)))
+        } 
         
         results <- matrix(ncol = 4, nrow = nrow(data))
         colnames(results) <- c("D", "typeS", "typeM", "power")
@@ -90,7 +102,7 @@ ttestCorClass <- if (requireNamespace('jmvcore'))
                                     observedSE[i],
                                     alpha,
                                     df[i],
-                                    nSims = 10000)
+                                    nSims = nSims)
           results[i, 1] <- D[i]
           results[i, 2] <- resultsRow$typeS
           results[i, 3] <- resultsRow$typeM
@@ -128,9 +140,31 @@ ttestCorClass <- if (requireNamespace('jmvcore'))
           colnames(plotDataHTE) <-
             c("sensVar", "hypTrueGroup", "proposedCor","typeS", "typeM", "power")
           plotDataHTE <- plotDataHTE[plotDataHTE$power != 1, ]
-          # self$results$debug$setContent(plotDataHTE)
           imageHTE <- self$results$plotHTE
           imageHTE$setState(plotDataHTE)
+        }
+        
+        if (self$options$HTEViz) {
+         for (i in 1:length(hypTrueCor)){
+          self$results$plotHTEViz$addItem(i)
+         }
+          resultsHTEViz <- data.frame("estimate" = as.numeric(), "D" = as.numeric(),"observedSE" = as.numeric(), "z" = as.numeric())
+          
+          for (i in 1:nrow(data)) {
+            resultsHTEViz <- retroDesignEmp(hypTrueCor[i],
+                                      observedSE[i],
+                                      alpha,
+                                      df[i],
+                                      nSims = nSims)
+            
+            resultsHTEViz <- as.data.frame(resultsHTEViz)
+            
+            colnames(resultsHTEViz) = c("estimate", "D","observedSE", "z")
+            # self$results$debug$setContent(resultsHTEViz)
+            imageHTEViz <- self$results$plotHTEViz$get(index = i)
+            imageHTEViz$setState(resultsHTEViz)
+          }
+
         }
         
         # Proposed N ----
@@ -192,13 +226,13 @@ ttestCorClass <- if (requireNamespace('jmvcore'))
         }
       },
       .plotHTE = function(imageHTE, ...) {
-        # if (is.null(self$options$labelVar) |
-        #     is.null(self$options$hypTrueCor) |
-        #     is.null(self$options$n) |
-        #     (is.null(self$options$observedCor) &
-        #      is.null(self$options$observedSE))) {
-        #   return()
-        # }
+ if (is.null(self$options$labelVar) |
+            is.null(self$options$hypTrueCor) |
+            is.null(self$options$n) |
+            (is.null(self$options$observedCor) &
+             is.null(self$options$observedSE))){
+   return()
+ }
 
         plotData <- imageHTE$state
         
@@ -224,11 +258,13 @@ ttestCorClass <- if (requireNamespace('jmvcore'))
         TRUE
       },
       .plotN = function(imageN, ...) {
-          # if (is.null(self$options$labelVar) |
-          #     is.null(self$options$hypTrueCor) |
-          #     (is.null(self$options$observedSE))) {
-          #   return()
-          # }
+   if (is.null(self$options$labelVar) |
+            is.null(self$options$hypTrueCor) |
+            is.null(self$options$n) |
+            (is.null(self$options$observedCor) &
+             is.null(self$options$observedSE))){
+   return()
+ }
           plotData <- imageN$state
 
         plot <- ggplot(plotData) +
@@ -250,6 +286,40 @@ ttestCorClass <- if (requireNamespace('jmvcore'))
 
         print(plot)
         # ggplotly(plot)
+        TRUE
+      },
+      .plotHTEViz = function(imageHTEViz, ...)
+      {
+         if (is.null(self$options$labelVar) |
+            is.null(self$options$hypTrueCor) |
+            is.null(self$options$n) |
+            (is.null(self$options$observedCor) &
+             is.null(self$options$observedSE))){
+   return()
+ }
+        plotData <- imageHTEViz$state
+        
+        plot <- ggplot(plotData, aes(x = seq_along(estimate), y = estimate)) +
+        geom_point(pch = ifelse((plotData$estimate > plotData$observedSE * plotData$z) &
+                                  (!plotData$estimate < -plotData$observedSE * plotData$z),
+                                15,
+                                ifelse((!plotData$estimate > plotData$observedSE * plotData$z) &
+                                         (plotData$estimate < -plotData$observedSE * plotData$z), 17,
+                                       ifelse((!plotData$estimate > plotData$observedSE * plotData$z) &
+                                                (!plotData$estimate < -plotData$observedSE * plotData$z), 16, 16
+                                       ))
+        ),
+        col = ifelse((!plotData$estimate > plotData$observedSE * plotData$z) &
+                       (!plotData$estimate < -plotData$observedSE * plotData$z), "grey", "black")) +
+        geom_hline(yintercept = plotData$observedSE * plotData$z, size = 1) +
+        geom_hline(yintercept = -plotData$observedSE * plotData$z, size = 1) +
+        geom_hline(yintercept = plotData$D,
+                   linetype = "dashed",
+                   size = 1) +
+        xlab("n") +
+          ggtitle(unique(plotData$D))
+
+        print(plot)
         TRUE
       }
     )

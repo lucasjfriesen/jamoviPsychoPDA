@@ -63,6 +63,16 @@ options:
       type: Bool
       default: TRUE
 
+    - name: HTEViz
+      title: Sensitivity - Scatter Viz HTE
+      type: Bool
+      default: FALSE
+
+    - name: bootSims
+      type: Number
+      title: Number of Simulations
+      default: 10000
+
     - name: corType
       title: Correlation Type
       type: List
@@ -71,5 +81,7 @@ options:
           title: Pearson
         - name: spearman
           title: Spearman
+
+
 
 ...
