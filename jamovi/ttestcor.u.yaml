@@ -57,12 +57,20 @@ children:
       - type: CheckBox
         name: sensN
       - type: CheckBox
+        name: sensObs
+      - type: CheckBox
         name: HTEViz
   - type: LayoutBox
     margin: large
     children:
       - type: TextBox
         name: bootSims
+        format: number
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: TextBox
+        name: lengthOut
         format: number
   - type: LayoutBox
     margin: large

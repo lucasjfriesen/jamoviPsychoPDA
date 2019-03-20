@@ -231,6 +231,23 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 name="DESCtable",
                 title="Procedure Notes",
                 rows=0,
+                clearWith=list(
+                    "item",
+                    "group",
+                    "matchVar",
+                    "anchor",
+                    "groupType",
+                    "difFlagScale",
+                    "type",
+                    "criterion",
+                    "alpha",
+                    "nIter",
+                    "purify",
+                    "pAdjustMethod",
+                    "designAnalysis",
+                    "designAnalysisSigOnly",
+                    "bootSims",
+                    "D"),
                 columns=list(
                     list(
                         `name`="bob", 
@@ -241,6 +258,19 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 name="DIFtable",
                 title="Differential Item Functioning Analysis",
                 rows="(item)",
+                clearWith=list(
+                    "item",
+                    "group",
+                    "matchVar",
+                    "anchor",
+                    "groupType",
+                    "difFlagScale",
+                    "type",
+                    "criterion",
+                    "alpha",
+                    "nIter",
+                    "purify",
+                    "pAdjustMethod"),
                 columns=list(
                     list(
                         `name`="item", 
@@ -253,7 +283,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `format`="zto,pvalue"),
                     list(
                         `name`="chiSquare", 
-                        `title`="Chi \"\\u00B2\" Stat.", 
+                        `title`="Chi \\u00B2 Stat.", 
                         `type`="number"),
                     list(
                         `name`="effSize", 
@@ -280,6 +310,23 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 title="Design Analysis",
                 rows=0,
                 visible="(designAnalysis)",
+                clearWith=list(
+                    "item",
+                    "group",
+                    "matchVar",
+                    "anchor",
+                    "groupType",
+                    "difFlagScale",
+                    "type",
+                    "criterion",
+                    "alpha",
+                    "nIter",
+                    "purify",
+                    "pAdjustMethod",
+                    "designAnalysis",
+                    "designAnalysisSigOnly",
+                    "bootSims",
+                    "D"),
                 columns=list(
                     list(
                         `name`="itemName", 
@@ -324,13 +371,14 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         "group",
                         "matchVar",
                         "anchor",
-                        "focal",
                         "groupType",
+                        "difFlagScale",
                         "type",
                         "criterion",
                         "alpha",
                         "nIter",
-                        "purify"))))}))
+                        "purify",
+                        "pAdjustMethod"))))}))
 
 glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     "glmDIFBase",

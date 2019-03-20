@@ -69,10 +69,18 @@ items:
       height: 600
       renderFun: .plotN
 
+    - name: plotObs
+      title: Sensitivity - Observed Correlation
+      type: Image
+      visible: (sensObs)
+      width:  800
+      height: 600
+      renderFun: .plotObs
+
     - name: plotHTEViz
       title: Sensitivity - Viz
       type: Array
-      items: (hypTrueCor)
+      items: 0
       template:
         type: Image
         width:  800

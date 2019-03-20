@@ -14,8 +14,10 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             alpha = 0.05,
             sensHyp = TRUE,
             sensN = TRUE,
+            sensObs = TRUE,
             HTEViz = FALSE,
             bootSims = 10000,
+            lengthOut = 1000,
             corType = NULL, ...) {
 
             super$initialize(
@@ -69,6 +71,10 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "sensN",
                 sensN,
                 default=TRUE)
+            private$..sensObs <- jmvcore::OptionBool$new(
+                "sensObs",
+                sensObs,
+                default=TRUE)
             private$..HTEViz <- jmvcore::OptionBool$new(
                 "HTEViz",
                 HTEViz,
@@ -77,6 +83,10 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "bootSims",
                 bootSims,
                 default=10000)
+            private$..lengthOut <- jmvcore::OptionNumber$new(
+                "lengthOut",
+                lengthOut,
+                default=1000)
             private$..corType <- jmvcore::OptionList$new(
                 "corType",
                 corType,
@@ -92,8 +102,10 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..alpha)
             self$.addOption(private$..sensHyp)
             self$.addOption(private$..sensN)
+            self$.addOption(private$..sensObs)
             self$.addOption(private$..HTEViz)
             self$.addOption(private$..bootSims)
+            self$.addOption(private$..lengthOut)
             self$.addOption(private$..corType)
         }),
     active = list(
@@ -105,8 +117,10 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         alpha = function() private$..alpha$value,
         sensHyp = function() private$..sensHyp$value,
         sensN = function() private$..sensN$value,
+        sensObs = function() private$..sensObs$value,
         HTEViz = function() private$..HTEViz$value,
         bootSims = function() private$..bootSims$value,
+        lengthOut = function() private$..lengthOut$value,
         corType = function() private$..corType$value),
     private = list(
         ..labelVar = NA,
@@ -117,8 +131,10 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..alpha = NA,
         ..sensHyp = NA,
         ..sensN = NA,
+        ..sensObs = NA,
         ..HTEViz = NA,
         ..bootSims = NA,
+        ..lengthOut = NA,
         ..corType = NA)
 )
 
@@ -130,6 +146,7 @@ ttestCorResults <- if (requireNamespace('jmvcore')) R6::R6Class(
         rdTTestCor = function() private$.items[["rdTTestCor"]],
         plotHTE = function() private$.items[["plotHTE"]],
         plotN = function() private$.items[["plotN"]],
+        plotObs = function() private$.items[["plotObs"]],
         plotHTEViz = function() private$.items[["plotHTEViz"]]),
     private = list(),
     public=list(
@@ -213,11 +230,19 @@ ttestCorResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 width=800,
                 height=600,
                 renderFun=".plotN"))
+            self$add(jmvcore::Image$new(
+                options=options,
+                name="plotObs",
+                title="Sensitivity - Observed Correlation",
+                visible="(sensObs)",
+                width=800,
+                height=600,
+                renderFun=".plotObs"))
             self$add(jmvcore::Array$new(
                 options=options,
                 name="plotHTEViz",
                 title="Sensitivity - Viz",
-                items="(hypTrueCor)",
+                items=0,
                 template=jmvcore::Image$new(
                     options=options,
                     width=800,
@@ -257,8 +282,10 @@ ttestCorBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param alpha .
 #' @param sensHyp .
 #' @param sensN .
+#' @param sensObs .
 #' @param HTEViz .
 #' @param bootSims .
+#' @param lengthOut .
 #' @param corType .
 #' @return A results object containing:
 #' \tabular{llllll}{
@@ -267,6 +294,7 @@ ttestCorBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'   \code{results$rdTTestCor} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$plotHTE} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$plotN} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$plotObs} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$plotHTEViz} \tab \tab \tab \tab \tab an array of images \cr
 #' }
 #'
@@ -287,8 +315,10 @@ ttestCor <- function(
     alpha = 0.05,
     sensHyp = TRUE,
     sensN = TRUE,
+    sensObs = TRUE,
     HTEViz = FALSE,
     bootSims = 10000,
+    lengthOut = 1000,
     corType) {
 
     if ( ! requireNamespace('jmvcore'))
@@ -318,8 +348,10 @@ ttestCor <- function(
         alpha = alpha,
         sensHyp = sensHyp,
         sensN = sensN,
+        sensObs = sensObs,
         HTEViz = HTEViz,
         bootSims = bootSims,
+        lengthOut = lengthOut,
         corType = corType)
 
     results <- ttestCorResults$new(

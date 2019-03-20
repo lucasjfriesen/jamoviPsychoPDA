@@ -22,20 +22,23 @@ items:
       title: Procedure Notes
       type:  Table
       rows: 0
-     # clearWith: 
-     #     - item
-     #     - group
-     #     - matchVar
-     #     - anchor
-     #     - focal
-     #     - groupType
-     #     - type
-     #     - criterion
-     #     - alpha
-     #     - nIter
-     #     - purify
-     #     - pAdjustMethod
-     #     - designAnalysis
+      clearWith: 
+          - item
+          - group
+          - matchVar
+          - anchor
+          - groupType
+          - difFlagScale
+          - type
+          - criterion
+          - alpha
+          - nIter
+          - purify
+          - pAdjustMethod
+          - designAnalysis
+          - designAnalysisSigOnly
+          - bootSims
+          - D
            
       columns: 
         - name: bob
@@ -46,20 +49,20 @@ items:
       title: Differential Item Functioning Analysis
       type: Table
       rows:  (item)
-      #clearWith: 
-      #    - item
-      #    - group
-      #    - matchVar
-      #    - anchor
-      #    - focal
-      #    - groupType
-      #    - type
-      #    - criterion
-      #    - alpha
-      #    - nIter
-      #    - purify
-      #    - pAdjustMethod
-      #    - onlyDIF
+      clearWith: 
+          - item
+          - group
+          - matchVar
+          - anchor
+          - groupType
+          - difFlagScale
+          - type
+          - criterion
+          - alpha
+          - nIter
+          - purify
+          - pAdjustMethod
+
       columns:
         - name: item
           title: Item
@@ -71,7 +74,7 @@ items:
           format: zto,pvalue
 
         - name: chiSquare
-          title: Chi "\u00B2" Stat.
+          title: Chi \u00B2 Stat.
           type: number
 
         - name: effSize
@@ -98,19 +101,23 @@ items:
       type: Table
       rows: 0
       visible: (designAnalysis)
-      #clearWith: 
-      #    - item
-      #    - group
-      #    - matchVar
-      #    - anchor
-      #    - focal
-      #    - groupType
-      #    - type
-      #    - criterion
-      #    - alpha
-      #    - nIter
-      #    - purify
-      #    - pAdjustMethod
+      clearWith: 
+          - item
+          - group
+          - matchVar
+          - anchor
+          - groupType
+          - difFlagScale
+          - type
+          - criterion
+          - alpha
+          - nIter
+          - purify
+          - pAdjustMethod
+          - designAnalysis
+          - designAnalysisSigOnly
+          - bootSims
+          - D
       columns:
         - name: itemName
           title: Item
@@ -123,10 +130,7 @@ items:
           type: number
         - name: hypTrueEff
           title: Hyp. True Effect
-          type: text
-       # - name: typeS
-       #   title: Type-S
-       #   type: number  
+          type: text 
         - name: typeM
           title: Type-M
           type: number
@@ -147,17 +151,18 @@ items:
           renderFun: .plotICC
           visible: (plotVarsICC)
           requiresData: TRUE
-          clearWith:
+          clearWith: 
               - item
               - group
               - matchVar
               - anchor
-              - focal
               - groupType
+              - difFlagScale
               - type
               - criterion
               - alpha
               - nIter
               - purify
+              - pAdjustMethod
 
 ...
