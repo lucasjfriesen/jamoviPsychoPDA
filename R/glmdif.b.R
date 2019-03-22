@@ -545,6 +545,21 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           return(deltaNagR2)
         }
         
+        qEmp <- function(empFn, x) {
+          quantile(empFn, x)
+        }
+
+        pEmp <- function(empFn, x) {
+          empFn(x)
+        }
+
+        dEmp <- function(empFn, qEmp, dPoint, values) {
+          dens <- density(values)
+          i <- dens$x[which.min(abs(dens$x - dPoint))]
+          dens_x <- dens$y[dens$x == i]
+          dens_x
+        }
+        
         empDist <- function(DATA, R = 1000) {
           # Get bootstrapped distribution
           myBoot <- boot(DATA, NagR2, R = self$options$bootSims)
@@ -572,12 +587,18 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           rdRes[1,1] <- myBoot$t0
           # se of empirical distribution
           rdRes[1,4] <- observedSE <- print.bootSE(myBoot)[[3]]
+          # Observed R^2
           D <- myBoot$t0
-          # D <- abs(myBoot$t0 - hypTrueEff)
-
-          # Quantile matching the upper 1 - alpha in the emp. dist.
+          
+          # Empirical cumulative density function on the bootstrapped data
           qUpper <- ecdf(myBoot$t)
-          qUpper <- quantile(qUpper,  1 - (alpha))
+          if (self$options$designAnalysisSigOnly) {
+            # Quantile matching the upper 1 - alpha in the emp. dist.
+            qUpper <- quantile(qUpper,  1 - (alpha))
+          } else {
+            # Quantile matching the observed value
+            qUpper <- qEmp(qUpper, pEmp(qUpper, D))
+          }
 
           ## shifts distribution by the difference between the observed effect size and the empirical effect size
           myBoot.Shifted <- ecdf(myBoot$t + hypTrueEff)
@@ -589,21 +610,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           rdRes[1, 2] <- typeMError <- mean(estimate[significant]) / D
           return(rdRes)
         }
-
-        # qEmp <- function(empFn, x) {
-        #   quantile(empFn, x)
-        # }
-        # 
-        # pEmp <- function(empFn, x) {
-        #   empFn(x)
-        # }
-        # 
-        # dEmp <- function(empFn, qEmp, dPoint, values) {
-        #   dens <- density(values)
-        #   i <- dens$x[which.min(abs(dens$x - dPoint))]
-        #   dens_x <- dens$y[dens$x == i]
-        #   dens_x
-        # }
         #  
         # # retroDesignSE ----
         # retroDesign <- function(hypTrueEff, myBoot){
@@ -696,6 +702,48 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             return(GC)
           }
         
+        designAnalysisSensitivity <- function(designList, Data, group, match, nMin, nMax, points) {
+          nList <- seq(nMin, nMax, length.out = points)
+          if (self$options$D == "") {
+            if (self$options$difFlagScale == "zt") {
+              hypTrueEff <- c(0, 0.13, 0.26)
+            } else {
+              hypTrueEff <- c(0, 0.035, 0.07)
+            }
+          } else {
+            hypTrueEff <- as.numeric(self$options$D)
+          }
+          
+          sensMatrix <- matrix(nrow = points*length(designList)*length(hypTrueEff), ncol = 7)
+          for (i in nList){
+            nListTick <- length(nList) - 1
+            # Sample i rows from Data with replacement
+            Data <- Data[sample(nrow(Data), round(i), replace = TRUE),]
+            for (item in 1:length(designList)) {
+              curItem <- designList[item]
+              if (is.na(curItem)) {
+                stop("No items have been flagged for DIF")
+                return()
+              }
+              empDATA <- cbind(Item = jmvcore::toNumeric(Data[, curItem]), jmvcore::toNumeric(group), match)
+              colnames(empDATA) <-
+                c(colnames(Data)[item], "GROUP", "SCORES")
+              myBoot <- empDist(empDATA)
+              tick <- length(hypTrueEff) - 1
+              for (hypInd in 1:length(hypTrueEff)) {
+                private$.checkpoint()
+                sensMatrix[length(nList) - nListTick * item * length(hypTrueEff) - tick, 1] <- i
+                sensMatrix[length(nList) - nListTick * item * length(hypTrueEff) - tick, 2] <- designList[item]
+                sensMatrix[length(nList) - nListTick * item * length(hypTrueEff) - tick, 3] <- as.character((hypTrueEff[hypInd]))
+                sensMatrix[length(nList) - nListTick * item * length(hypTrueEff) - tick, 4:7] <- as.numeric(retroDesign(hypTrueEff = hypTrueEff[hypInd],myBoot))
+                tick <- tick - 1
+                }
+            }
+              nListTick <- nListTick - 1
+          }
+          return(sensMatrix)
+        }
+          
         buildGC <- function(GC) {
           table <- self$results$gcTable
           for (item in 1:nrow(GC)){

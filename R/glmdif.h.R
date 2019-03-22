@@ -409,33 +409,43 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @examples
 #' \dontrun{
 #' data('verbal')}
-#' @param data the data as a data frame
-#' @param item a vector of strings naming the item columns from \code{data}
-#' @param group a string naming the grouping variable from \code{data}
-#' @param matchVar a string naming the matching variable from \code{data}
+#' @param data The raw data with rows as test takers and item, grouping, and
+#'   matching variables as columns
+#' @param item A vector of strings naming the item columns from \code{data}
+#'   which are to be assessed for DIF
+#' @param group A string naming the grouping variable from \code{data}
+#' @param matchVar A string naming the matching variable from \code{data}
 #' @param anchor a vector of strings naming the anchor item columns from
-#'   \code{data}
-#' @param groupType either "discrete" (default) to specify that group
+#'   \code{data} for use in purification. This will be ignored if an external
+#'   matching variable is supplied
+#' @param groupType Either "discrete" (default) to specify that group
 #'   membership is made of two (or more than two) groups, or "continuous" to
 #'   indicate that group membership is based on a continuous criterion.
-#' @param difFlagScale .
-#' @param designAnalysis .
-#' @param designAnalysisSigOnly .
-#' @param bootSims .
-#' @param power .
-#' @param D .
-#' @param type a character string specifying which DIF effects must be tested.
+#' @param difFlagScale The effect size criterion scale to be used in assigning
+#'   'level' to flagged items
+#' @param designAnalysis True/False, perform a design analysis. NB:
+#'   Computationally intensive
+#' @param designAnalysisSigOnly True/False, should only items which have been
+#'   flagged for exhibitting DIF be considered in the Design Analysis?
+#' @param bootSims Number of bootstrap simulations to perform
+#' @param power True/False, display the empirical observed power
+#' @param D A character string indicating the hypothesized True Effect to be
+#'   used in Design Analysis. Left blank will default to the category thresholds
+#'   of the DIF scale selected
+#' @param type A character string specifying which DIF effects must be tested.
 #'   Possible values are "both" (default), "udif" and "nudif"
-#' @param criterion a character string specifying which DIF statistic is
+#' @param criterion A character string specifying which DIF statistic is
 #'   computed. Possible values are "LRT" (default) or "Wald"
-#' @param alpha significance level
-#' @param purify should the method be used iteratively to purify the set of
-#'   anchor items? (default is FALSE). Ignored if match is not "score"
-#' @param nIter the maximal number of iterations in the item purification
+#' @param alpha Significance level
+#' @param purify Should the method be used iteratively to purify the set of
+#'   anchor items? (default is FALSE). Ignored if an external matching variable
+#'   is supplied
+#' @param nIter The maximal number of iterations in the item purification
 #'   process. (default is 10)
-#' @param pAdjustMethod either NULL (default) or the acronym of the method for
-#'   p-value adjustment for multiple comparisons
-#' @param plotVarsICC .
+#' @param pAdjustMethod Either BH (default) or the acronym of the method for
+#'   p-value adjustment for multiple comparisons.
+#' @param plotVarsICC A vector of strings naming the item columns for plotting
+#'   Item Characteristic Curves
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
