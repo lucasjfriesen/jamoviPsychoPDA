@@ -68,6 +68,20 @@ items:
           title: Item
           type: text
 
+        - name: ZT
+          title: Zumbo-Thomas
+          type: text
+          visible: (difFlagScale:zt)
+
+        - name: JG
+          title: Jodoin-Gierl
+          type: text
+          visible: (difFlagScale:jg)
+
+        #- name: difType
+        #  title: Result
+        #  type: text
+
         - name: p
           title: P-value
           type: number
@@ -81,23 +95,21 @@ items:
           title: "Naeglekirke R\u00B2"
           type: number
           format: zto,pvalue
+          visible: (nagEff)
 
-        - name: difType
-          title: Type
-          type: text
+        - name: coeffMain
+          title: Main Effect
+          type: number
+          visible: (coeffEff)
 
-        - name: ZT
-          title: Zumbo-Thomas
-          type: text
-          visible: (difFlagScale:zt)
+        - name: coeffInteraction
+          title: Interaction Effect
+          type: number
+          visible: (coeffEff)
 
-        - name: JG
-          title: Jodoin-Gierl
-          type: text
-          visible: (difFlagScale:jg)
 
     - name: gcTable
-      title: Design Analysis
+      title: "Design Analysis - Naeglekirke R\u00B2"
       type: Table
       rows: 0
       visible: (designAnalysis)
@@ -136,6 +148,69 @@ items:
           type: number
         - name: power
           title: Empirical Observed Power
+          type: number
+          format: (zto)
+          visible: (power)
+
+    - name: gcTableCoefficients
+      title: "Design Analysis - Regression Coefficients"
+      type: Table
+      rows: 0
+      visible: (designAnalysisCoefficients)
+      clearWith: 
+          - item
+          - group
+          - matchVar
+          - anchor
+          - groupType
+          - difFlagScale
+          - type
+          - criterion
+          - alpha
+          - nIter
+          - purify
+          - pAdjustMethod
+          - designAnalysis
+          - designAnalysisSigOnly
+          - bootSims
+          - D
+      columns:
+        - name: itemName
+          title: Item
+          type: text
+        - name: obsMain
+          title: Obs. Main
+          type: text
+        - name: obsInt
+          title: Obs. Interaction
+          type: text
+        - name: obsMainSE
+          title: Obs. Main SE
+        - name: typeM
+          title: Type-M Main
+          type: number
+        - name: typeS
+          title: Type-S Main
+          type: number
+        - name: powerMain
+          title: Observed Power Main
+          type: number
+          format: (zto)
+          visible: (power)
+        - name: obsIntSE
+          title: Obs. Interaction SE
+          type: number
+        - name: hypTrueEff
+          title: Hyp. True Effect
+          type: text 
+        - name: typeM
+          title: Type-M Int
+          type: number
+        - name: typeS
+          title: Type-S Int
+          type: number
+        - name: powerInt
+          title: Observed Power Int
           type: number
           format: (zto)
           visible: (power)

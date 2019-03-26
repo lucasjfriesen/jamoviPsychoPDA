@@ -13,12 +13,15 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             groupType = NULL,
             difFlagScale = NULL,
             designAnalysis = FALSE,
+            designAnalysisCoefficients = FALSE,
             designAnalysisSigOnly = TRUE,
             bootSims = 1000,
             power = FALSE,
             D = "",
             type = "both",
             criterion = NULL,
+            nagEff = TRUE,
+            coeffEff = FALSE,
             alpha = 0.05,
             purify = FALSE,
             nIter = 10,
@@ -78,6 +81,10 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "designAnalysis",
                 designAnalysis,
                 default=FALSE)
+            private$..designAnalysisCoefficients <- jmvcore::OptionBool$new(
+                "designAnalysisCoefficients",
+                designAnalysisCoefficients,
+                default=FALSE)
             private$..designAnalysisSigOnly <- jmvcore::OptionBool$new(
                 "designAnalysisSigOnly",
                 designAnalysisSigOnly,
@@ -108,6 +115,14 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=list(
                     "Wald",
                     "LRT"))
+            private$..nagEff <- jmvcore::OptionBool$new(
+                "nagEff",
+                nagEff,
+                default=TRUE)
+            private$..coeffEff <- jmvcore::OptionBool$new(
+                "coeffEff",
+                coeffEff,
+                default=FALSE)
             private$..alpha <- jmvcore::OptionNumber$new(
                 "alpha",
                 alpha,
@@ -143,12 +158,15 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..groupType)
             self$.addOption(private$..difFlagScale)
             self$.addOption(private$..designAnalysis)
+            self$.addOption(private$..designAnalysisCoefficients)
             self$.addOption(private$..designAnalysisSigOnly)
             self$.addOption(private$..bootSims)
             self$.addOption(private$..power)
             self$.addOption(private$..D)
             self$.addOption(private$..type)
             self$.addOption(private$..criterion)
+            self$.addOption(private$..nagEff)
+            self$.addOption(private$..coeffEff)
             self$.addOption(private$..alpha)
             self$.addOption(private$..purify)
             self$.addOption(private$..nIter)
@@ -163,12 +181,15 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         groupType = function() private$..groupType$value,
         difFlagScale = function() private$..difFlagScale$value,
         designAnalysis = function() private$..designAnalysis$value,
+        designAnalysisCoefficients = function() private$..designAnalysisCoefficients$value,
         designAnalysisSigOnly = function() private$..designAnalysisSigOnly$value,
         bootSims = function() private$..bootSims$value,
         power = function() private$..power$value,
         D = function() private$..D$value,
         type = function() private$..type$value,
         criterion = function() private$..criterion$value,
+        nagEff = function() private$..nagEff$value,
+        coeffEff = function() private$..coeffEff$value,
         alpha = function() private$..alpha$value,
         purify = function() private$..purify$value,
         nIter = function() private$..nIter$value,
@@ -182,12 +203,15 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..groupType = NA,
         ..difFlagScale = NA,
         ..designAnalysis = NA,
+        ..designAnalysisCoefficients = NA,
         ..designAnalysisSigOnly = NA,
         ..bootSims = NA,
         ..power = NA,
         ..D = NA,
         ..type = NA,
         ..criterion = NA,
+        ..nagEff = NA,
+        ..coeffEff = NA,
         ..alpha = NA,
         ..purify = NA,
         ..nIter = NA,
@@ -203,6 +227,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
         DESCtable = function() private$.items[["DESCtable"]],
         DIFtable = function() private$.items[["DIFtable"]],
         gcTable = function() private$.items[["gcTable"]],
+        gcTableCoefficients = function() private$.items[["gcTableCoefficients"]],
         ICCplots = function() private$.items[["ICCplots"]]),
     private = list(),
     public=list(
@@ -218,7 +243,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$add(jmvcore::Table$new(
                 options=options,
                 name="instructions",
-                title="Instructions",
+                title="Procedure Notes",
                 rows=4,
                 visible=FALSE,
                 columns=list(
@@ -277,6 +302,16 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `title`="Item", 
                         `type`="text"),
                     list(
+                        `name`="ZT", 
+                        `title`="Zumbo-Thomas", 
+                        `type`="text", 
+                        `visible`="(difFlagScale:zt)"),
+                    list(
+                        `name`="JG", 
+                        `title`="Jodoin-Gierl", 
+                        `type`="text", 
+                        `visible`="(difFlagScale:jg)"),
+                    list(
                         `name`="p", 
                         `title`="P-value", 
                         `type`="number", 
@@ -289,25 +324,22 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `name`="effSize", 
                         `title`="Naeglekirke R\u00B2", 
                         `type`="number", 
-                        `format`="zto,pvalue"),
+                        `format`="zto,pvalue", 
+                        `visible`="(nagEff)"),
                     list(
-                        `name`="difType", 
-                        `title`="Type", 
-                        `type`="text"),
+                        `name`="coeffMain", 
+                        `title`="Main Effect", 
+                        `type`="number", 
+                        `visible`="(coeffEff)"),
                     list(
-                        `name`="ZT", 
-                        `title`="Zumbo-Thomas", 
-                        `type`="text", 
-                        `visible`="(difFlagScale:zt)"),
-                    list(
-                        `name`="JG", 
-                        `title`="Jodoin-Gierl", 
-                        `type`="text", 
-                        `visible`="(difFlagScale:jg)"))))
+                        `name`="coeffInteraction", 
+                        `title`="Interaction Effect", 
+                        `type`="number", 
+                        `visible`="(coeffEff)"))))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="gcTable",
-                title="Design Analysis",
+                title="Design Analysis - Naeglekirke R\u00B2",
                 rows=0,
                 visible="(designAnalysis)",
                 clearWith=list(
@@ -351,6 +383,81 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     list(
                         `name`="power", 
                         `title`="Empirical Observed Power", 
+                        `type`="number", 
+                        `format`="(zto)", 
+                        `visible`="(power)"))))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="gcTableCoefficients",
+                title="Design Analysis - Regression Coefficients",
+                rows=0,
+                visible="(designAnalysisCoefficients)",
+                clearWith=list(
+                    "item",
+                    "group",
+                    "matchVar",
+                    "anchor",
+                    "groupType",
+                    "difFlagScale",
+                    "type",
+                    "criterion",
+                    "alpha",
+                    "nIter",
+                    "purify",
+                    "pAdjustMethod",
+                    "designAnalysis",
+                    "designAnalysisSigOnly",
+                    "bootSims",
+                    "D"),
+                columns=list(
+                    list(
+                        `name`="itemName", 
+                        `title`="Item", 
+                        `type`="text"),
+                    list(
+                        `name`="obsMain", 
+                        `title`="Obs. Main", 
+                        `type`="text"),
+                    list(
+                        `name`="obsInt", 
+                        `title`="Obs. Interaction", 
+                        `type`="text"),
+                    list(
+                        `name`="obsMainSE", 
+                        `title`="Obs. Main SE"),
+                    list(
+                        `name`="typeM", 
+                        `title`="Type-M Main", 
+                        `type`="number"),
+                    list(
+                        `name`="typeS", 
+                        `title`="Type-S Main", 
+                        `type`="number"),
+                    list(
+                        `name`="powerMain", 
+                        `title`="Observed Power Main", 
+                        `type`="number", 
+                        `format`="(zto)", 
+                        `visible`="(power)"),
+                    list(
+                        `name`="obsIntSE", 
+                        `title`="Obs. Interaction SE", 
+                        `type`="number"),
+                    list(
+                        `name`="hypTrueEff", 
+                        `title`="Hyp. True Effect", 
+                        `type`="text"),
+                    list(
+                        `name`="typeM", 
+                        `title`="Type-M Int", 
+                        `type`="number"),
+                    list(
+                        `name`="typeS", 
+                        `title`="Type-S Int", 
+                        `type`="number"),
+                    list(
+                        `name`="powerInt", 
+                        `title`="Observed Power Int", 
                         `type`="number", 
                         `format`="(zto)", 
                         `visible`="(power)"))))
@@ -425,6 +532,8 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'   'level' to flagged items
 #' @param designAnalysis True/False, perform a design analysis. NB:
 #'   Computationally intensive
+#' @param designAnalysisCoefficients True/False, perform a design analysis.
+#'   NB: Computationally intensive
 #' @param designAnalysisSigOnly True/False, should only items which have been
 #'   flagged for exhibitting DIF be considered in the Design Analysis?
 #' @param bootSims Number of bootstrap simulations to perform
@@ -436,6 +545,8 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'   Possible values are "both" (default), "udif" and "nudif"
 #' @param criterion A character string specifying which DIF statistic is
 #'   computed. Possible values are "LRT" (default) or "Wald"
+#' @param nagEff .
+#' @param coeffEff .
 #' @param alpha Significance level
 #' @param purify Should the method be used iteratively to purify the set of
 #'   anchor items? (default is FALSE). Ignored if an external matching variable
@@ -453,6 +564,7 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'   \code{results$DESCtable} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$DIFtable} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$gcTable} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$gcTableCoefficients} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$ICCplots} \tab \tab \tab \tab \tab an array of images \cr
 #' }
 #'
@@ -472,12 +584,15 @@ glmDIF <- function(
     groupType,
     difFlagScale,
     designAnalysis = FALSE,
+    designAnalysisCoefficients = FALSE,
     designAnalysisSigOnly = TRUE,
     bootSims = 1000,
     power = FALSE,
     D = "",
     type = "both",
     criterion,
+    nagEff = TRUE,
+    coeffEff = FALSE,
     alpha = 0.05,
     purify = FALSE,
     nIter = 10,
@@ -510,12 +625,15 @@ glmDIF <- function(
         groupType = groupType,
         difFlagScale = difFlagScale,
         designAnalysis = designAnalysis,
+        designAnalysisCoefficients = designAnalysisCoefficients,
         designAnalysisSigOnly = designAnalysisSigOnly,
         bootSims = bootSims,
         power = power,
         D = D,
         type = type,
         criterion = criterion,
+        nagEff = nagEff,
+        coeffEff = coeffEff,
         alpha = alpha,
         purify = purify,
         nIter = nIter,

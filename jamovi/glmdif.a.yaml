@@ -123,7 +123,17 @@ options:
 
     - name: designAnalysis
       type: Bool
-      title: Design Analysis
+      title: "Design Analysis - Naeglekirke R\u00B2"
+      default: false
+      description:
+        ui: >
+          True/False, perform a design analysis. NB: Computationally intensive.
+        R: >
+          True/False, perform a design analysis. NB: Computationally intensive
+
+    - name: designAnalysisCoefficients
+      type: Bool
+      title: Design Analysis - Coefficients
       default: false
       description:
         ui: >
@@ -202,6 +212,16 @@ options:
           A character string specifying which DIF statistic is computed. Possible values are "LRT" (default) or "Wald".
         R: >
           A character string specifying which DIF statistic is computed. Possible values are "LRT" (default) or "Wald"
+
+    - name: nagEff
+      title: "Naeglekirke R\u00B2"
+      type: Bool
+      default: true
+
+    - name: coeffEff
+      title: Regression Coefficients
+      type: Bool
+      default: FALSE
 
     - name: alpha
       title: Alpha

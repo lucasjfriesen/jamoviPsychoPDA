@@ -75,6 +75,13 @@ children:
                     name: nIter
                     format: number
                     enable: (purify)
+          - type: LayoutBox
+            margin: large
+            children:
+              - type: CheckBox
+                name: nagEff
+              - type: CheckBox
+                name: coeffEff
   - type: CollapseBox
     label: Design Analysis
     margin: large
@@ -101,6 +108,11 @@ children:
               - type: TextBox
                 name: bootSims
                 format: number
+          - type: LayoutBox
+            margin: large
+            children:
+              - type: CheckBox
+                name: designAnalysisCoefficients
   - type: CollapseBox
     label: Item Characteristic Curves
     margin: large
