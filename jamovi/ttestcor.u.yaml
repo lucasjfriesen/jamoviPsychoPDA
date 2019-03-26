@@ -49,3 +49,31 @@ children:
       - type: TextBox
         name: alpha
         format: number
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: CheckBox
+        name: sensHyp
+      - type: CheckBox
+        name: sensN
+      - type: CheckBox
+        name: sensObs
+      - type: CheckBox
+        name: HTEViz
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: TextBox
+        name: bootSims
+        format: number
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: TextBox
+        name: lengthOut
+        format: number
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: ComboBox
+        name: corType

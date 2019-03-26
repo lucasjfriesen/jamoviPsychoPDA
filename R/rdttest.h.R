@@ -12,7 +12,11 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             observedP = NULL,
             n = NULL,
             alpha = 0.05,
-            nSims = 10000, ...) {
+            nSims = 10000,
+            sensHyp = TRUE,
+            sensN = TRUE,
+            sensSE = TRUE,
+            HTEViz = FALSE, ...) {
 
             super$initialize(
                 package='psychoPDA',
@@ -59,6 +63,22 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "nSims",
                 nSims,
                 default=10000)
+            private$..sensHyp <- jmvcore::OptionBool$new(
+                "sensHyp",
+                sensHyp,
+                default=TRUE)
+            private$..sensN <- jmvcore::OptionBool$new(
+                "sensN",
+                sensN,
+                default=TRUE)
+            private$..sensSE <- jmvcore::OptionBool$new(
+                "sensSE",
+                sensSE,
+                default=TRUE)
+            private$..HTEViz <- jmvcore::OptionBool$new(
+                "HTEViz",
+                HTEViz,
+                default=FALSE)
 
             self$.addOption(private$..labelVar)
             self$.addOption(private$..hypTrueEff)
@@ -67,6 +87,10 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..n)
             self$.addOption(private$..alpha)
             self$.addOption(private$..nSims)
+            self$.addOption(private$..sensHyp)
+            self$.addOption(private$..sensN)
+            self$.addOption(private$..sensSE)
+            self$.addOption(private$..HTEViz)
         }),
     active = list(
         labelVar = function() private$..labelVar$value,
@@ -75,7 +99,11 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         observedP = function() private$..observedP$value,
         n = function() private$..n$value,
         alpha = function() private$..alpha$value,
-        nSims = function() private$..nSims$value),
+        nSims = function() private$..nSims$value,
+        sensHyp = function() private$..sensHyp$value,
+        sensN = function() private$..sensN$value,
+        sensSE = function() private$..sensSE$value,
+        HTEViz = function() private$..HTEViz$value),
     private = list(
         ..labelVar = NA,
         ..hypTrueEff = NA,
@@ -83,15 +111,23 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..observedP = NA,
         ..n = NA,
         ..alpha = NA,
-        ..nSims = NA)
+        ..nSims = NA,
+        ..sensHyp = NA,
+        ..sensN = NA,
+        ..sensSE = NA,
+        ..HTEViz = NA)
 )
 
 rdTTestResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
+        debug = function() private$.items[["debug"]],
         instructions = function() private$.items[["instructions"]],
         rdTTest = function() private$.items[["rdTTest"]],
-        sensPlot = function() private$.items[["sensPlot"]]),
+        plotHTE = function() private$.items[["plotHTE"]],
+        plotHTEViz = function() private$.items[["plotHTEViz"]],
+        plotN = function() private$.items[["plotN"]],
+        plotSE = function() private$.items[["plotSE"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -99,6 +135,10 @@ rdTTestResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="T-Test")
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="debug",
+                title="debug"))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="instructions",
@@ -138,11 +178,40 @@ rdTTestResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `type`="number"))))
             self$add(jmvcore::Image$new(
                 options=options,
-                name="sensPlot",
-                title="Sensitivity Analysis",
+                name="plotHTE",
+                title="Sensitivity - Hypothesized True Effect",
+                visible="(sensHyp)",
                 width=800,
                 height=600,
-                renderFun=".plot"))}))
+                renderFun=".plotHTE"))
+            self$add(jmvcore::Array$new(
+                options=options,
+                name="plotHTEViz",
+                title="Sensitivity - Viz",
+                items="(hypTrueEff)",
+                template=jmvcore::Image$new(
+                    options=options,
+                    width=800,
+                    height=600,
+                    renderFun=".plotHTEViz",
+                    visible="(HTEViz)",
+                    requiresData=TRUE)))
+            self$add(jmvcore::Image$new(
+                options=options,
+                name="plotN",
+                title="Sensitivity - Sample Size",
+                visible="(sensN)",
+                width=800,
+                height=600,
+                renderFun=".plotN"))
+            self$add(jmvcore::Image$new(
+                options=options,
+                name="plotSE",
+                title="Sensitivity - Standard Error",
+                visible="(sensSE)",
+                width=800,
+                height=600,
+                renderFun=".plotSE"))}))
 
 rdTTestBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     "rdTTestBase",
@@ -174,11 +243,19 @@ rdTTestBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param n .
 #' @param alpha .
 #' @param nSims .
+#' @param sensHyp .
+#' @param sensN .
+#' @param sensSE .
+#' @param HTEViz .
 #' @return A results object containing:
 #' \tabular{llllll}{
+#'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$rdTTest} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$sensPlot} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$plotHTE} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$plotHTEViz} \tab \tab \tab \tab \tab an array of images \cr
+#'   \code{results$plotN} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$plotSE} \tab \tab \tab \tab \tab an image \cr
 #' }
 #'
 #' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
@@ -196,7 +273,11 @@ rdTTest <- function(
     observedP,
     n,
     alpha = 0.05,
-    nSims = 10000) {
+    nSims = 10000,
+    sensHyp = TRUE,
+    sensN = TRUE,
+    sensSE = TRUE,
+    HTEViz = FALSE) {
 
     if ( ! requireNamespace('jmvcore'))
         stop('rdTTest requires jmvcore to be installed (restart may be required)')
@@ -223,7 +304,11 @@ rdTTest <- function(
         observedP = observedP,
         n = n,
         alpha = alpha,
-        nSims = nSims)
+        nSims = nSims,
+        sensHyp = sensHyp,
+        sensN = sensN,
+        sensSE = sensSE,
+        HTEViz = HTEViz)
 
     results <- rdTTestResults$new(
         options = options)

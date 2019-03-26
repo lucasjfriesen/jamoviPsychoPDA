@@ -56,6 +56,27 @@ options:
       title: Number of Simulations
       default: 10000
 
+    - name: sensHyp
+      title: Sensitivity - Hypothesized True Effect
+      type: Bool
+      default: TRUE
+
+    - name: sensN
+      title: Sensitivity - Sample Size
+      type: Bool
+      default: TRUE
+
+    - name: sensSE
+      title: Sensitivity - Standard Error
+      type: Bool
+      default: TRUE
+
+    - name: HTEViz
+      title: Sensitivity - Scatter Viz HTE
+      type: Bool
+      default: FALSE
+
+
 #    - name: df
 #      type: Number
 #      title: Degrees of Freedom

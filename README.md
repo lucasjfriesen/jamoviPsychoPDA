@@ -52,7 +52,7 @@ jmvtools::install()
 
 ## While using the module
 
-TBD
+See https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/
 
 
 ## Installation

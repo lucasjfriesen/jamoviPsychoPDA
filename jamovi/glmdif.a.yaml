@@ -19,7 +19,10 @@ options:
     - name: data
       type: Data
       description:
-          R: the data as a data frame
+          ui: >
+            The raw data with rows as test takers and item, grouping, and matching variables as columns.
+          R: >
+            The raw data with rows as test takers and item, grouping, and matching variables as columns
 
     - name: item
       title: Items
@@ -29,7 +32,10 @@ options:
       permitted:
         - numeric
       description:
-          R: a vector of strings naming the item columns from `data`
+          ui: >
+            Items which are to be assessed for DIF.
+          R: >
+            A vector of strings naming the item columns from `data` which are to be assessed for DIF
 
     - name: group
       title: Grouping Variable
@@ -40,7 +46,10 @@ options:
         - factor
         - numeric
       description:
-          R: a string naming the grouping variable from `data`
+          ui: >
+            The grouping variable.
+          R: >
+            A string naming the grouping variable from `data`
 
     - name: matchVar
       title: Matching Variable
@@ -51,7 +60,10 @@ options:
         - factor
         - numeric
       description:
-          R: a string naming the matching variable from `data`
+          ui: >
+            The matching variable.
+          R: >
+            A string naming the matching variable from `data`
 
     - name: anchor
       title: Anchor Items
@@ -62,7 +74,10 @@ options:
         - numeric
       default: NULL
       description:
-          R: a vector of strings naming the anchor item columns from `data`
+          ui: >
+            The anchor items for use in purification. This will be ignored if an external matching variable is supplied.
+          R: >
+            a vector of strings naming the anchor item columns from `data` for use in purification. This will be ignored if an external matching variable is supplied
 
 #    - name: groupA
 #      title: Group 1
@@ -85,7 +100,11 @@ options:
         title: Discrete Groups
       - name: cont
         title: Continuous Groups
-      description: either "discrete" (default) to specify that group membership is made of two (or more than two) groups, or "continuous" to indicate that group membership is based on a continuous criterion. 
+      description: 
+        ui: >
+          Either "discrete" (default) to specify that group membership is made of two (or more than two) groups, or "continuous" to indicate that group membership is based on a continuous criterion. 
+        R: >
+          Either "discrete" (default) to specify that group membership is made of two (or more than two) groups, or "continuous" to indicate that group membership is based on a continuous criterion. 
     
     - name: difFlagScale
       title: Evaluation Scale
@@ -95,26 +114,63 @@ options:
           title: Zumbo-Thomas
         - name: jg
           title: Jodoin-Gierl
+      description:
+        ui: >
+          The effect size criterion scale to be used in assigning 'level' to flagged items.
+        R: >
+          The effect size criterion scale to be used in assigning 'level' to flagged items
+
 
     - name: designAnalysis
       type: Bool
       title: Design Analysis
       default: false
+      description:
+        ui: >
+          True/False, perform a design analysis. NB: Computationally intensive.
+        R: >
+          True/False, perform a design analysis. NB: Computationally intensive
 
     - name: designAnalysisSigOnly
       type: Bool
       title: Flagged items only
       default: true
+      description:
+        ui: >
+          True/False, should only items which have been flagged for exhibitting DIF be considered in the Design Analysis?
+        R: >
+          True/False, should only items which have been flagged for exhibitting DIF be considered in the Design Analysis?
+
+
+    - name: bootSims
+      title: Bootstrap N
+      type: Number
+      default: 1000
+      description:
+        ui: >
+          Number of bootstrap simulations to perform.
+        R: >
+          Number of bootstrap simulations to perform 
 
     - name: power
       type: Bool
       title: Observed Power
       default: false
+      description:
+        ui:
+          True/False, display the empirical observed power.
+        R: >
+          True/False, display the empirical observed power
 
     - name: D
       title: Hypothesized True Effect Size
       type: String
       default: ''
+      description:
+        ui: >
+          A character string indicating the hypothesized True Effect to be used in Design Analysis. Left blank will default to the category thresholds of the DIF scale selected.
+        R: >
+          A character string indicating the hypothesized True Effect to be used in Design Analysis. Left blank will default to the category thresholds of the DIF scale selected
 
     - name: type
       title: Type
@@ -127,7 +183,11 @@ options:
       - name: both
         title: Uniform and Non-Uniform DIF
       default: both
-      description: a character string specifying which DIF effects must be tested. Possible values are "both" (default), "udif" and "nudif"
+      description: 
+        ui: >
+          A character string specifying which DIF effects must be tested. Possible values are "both" (default), "udif" and "nudif".
+        R: >
+          A character string specifying which DIF effects must be tested. Possible values are "both" (default), "udif" and "nudif"
 
     - name: criterion
       title: Flagging Criterion
@@ -137,25 +197,41 @@ options:
         title: Wald Statistic
       - name: "LRT"
         title: "Likelihood Ratio Test"
-      description: a character string specifying which DIF statistic is computed. Possible values are "LRT" (default) or "Wald"
+      description: 
+        ui: >
+          A character string specifying which DIF statistic is computed. Possible values are "LRT" (default) or "Wald".
+        R: >
+          A character string specifying which DIF statistic is computed. Possible values are "LRT" (default) or "Wald"
 
     - name: alpha
       title: Alpha
       type: Number
       default: 0.05
-      description: significance level
+      description: 
+        ui: >
+          Significance level.
+        R: >
+          Significance level
 
     - name: purify
       title: Item Purification
       type: Bool
       default: FALSE
-      description: should the method be used iteratively to purify the set of anchor items? (default is FALSE). Ignored if match is not "score"
+      description: 
+        ui: >
+          Should the method be used iteratively to purify the set of anchor items? (default is FALSE). Ignored if an external matching variable is supplied.
+        R: >
+          Should the method be used iteratively to purify the set of anchor items? (default is FALSE). Ignored if an external matching variable is supplied
 
     - name: nIter
       title: Number of Iterations
       type: Number
       default: 10
-      description: the maximal number of iterations in the item purification process. (default is 10)   
+      description: 
+        ui: >
+          The maximal number of iterations in the item purification process. (default is 10).
+        R: >
+          The maximal number of iterations in the item purification process. (default is 10)  
 
     - name: pAdjustMethod
       title: P-value Adjustment method
@@ -176,9 +252,18 @@ options:
         - name: none
           title: None
       default: BH
-      description: either NULL (default) or the acronym of the method for p-value adjustment for multiple comparisons
+      description: 
+        ui: >
+          Either BH (default) or the acronym of the method for p-value adjustment for multiple comparisons
+        R: >
+          Either BH (default) or the acronym of the method for p-value adjustment for multiple comparisons.
 
     - name: plotVarsICC
       type: Variables
+      description:
+          ui: >
+            Items for plotting Item Characteristic Curves.
+          R: >
+            A vector of strings naming the item columns for plotting Item Characteristic Curves
    
 ...

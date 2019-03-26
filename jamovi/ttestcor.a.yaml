@@ -53,15 +53,46 @@ options:
       title: Alpha
       default: 0.05
 
-   # - name: nSims
-   #   type: Number
-   #   title: Number of Simulations
-   #   default: 10000
+    - name: sensHyp
+      title: Sensitivity - Hypothesized True Effect
+      type: Bool
+      default: TRUE
 
-#    - name: df
-#      type: Number
-#      title: Degrees of Freedom
-#      default: 9999
+    - name: sensN
+      title: Sensitivity - Sample Size
+      type: Bool
+      default: TRUE
+
+    - name: sensObs
+      title: Sensitivity - Observed Correlation
+      type: Bool
+      default: TRUE
+
+
+    - name: HTEViz
+      title: Sensitivity - Scatter Viz HTE
+      type: Bool
+      default: FALSE
+
+    - name: bootSims
+      type: Number
+      title: Number of Simulations
+      default: 10000
+
+    - name: lengthOut
+      type: Number
+      title: lengthOut
+      default: 1000
+
+    - name: corType
+      title: Correlation Type
+      type: List
+      options:
+        - name: pearson
+          title: Pearson
+        - name: spearman
+          title: Spearman
+
 
 
 ...

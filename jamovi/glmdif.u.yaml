@@ -98,6 +98,9 @@ children:
               - type: TextBox
                 name: D
                 format: string
+              - type: TextBox
+                name: bootSims
+                format: number
   - type: CollapseBox
     label: Item Characteristic Curves
     margin: large
