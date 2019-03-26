@@ -329,7 +329,7 @@ ttestCorClass <- if (requireNamespace('jmvcore'))
                       y = power * (max(typeM)),
                       colour = "power"
                     )) +
-                    # scale_y_continuous(name = "Type-M", sec.axis = sec_axis(name = "Type-S/Power", trans = ~./max(plotData$typeM))) +
+                    scale_y_continuous(name = "Type-M", sec.axis = sec_axis(name = "Type-S/Power", trans = ~./max(plotData$typeM))) +
                     scale_x_continuous(name = "Propsed HTE +/- 2 Observed SE") +
                     theme_classic() +
                     facet_wrap(~ hypTrueGroup, scales = "free")
@@ -362,7 +362,7 @@ ttestCorClass <- if (requireNamespace('jmvcore'))
                       y = power * (max(typeM)),
                       colour = "power"
                     )) +
-                    # scale_y_continuous(name = "Type-M", sec.axis = sec_axis(name = "Type-S/Power", trans = ~./max(plotData$typeM))) +
+                    scale_y_continuous(name = "Type-M", sec.axis = sec_axis(name = "Type-S/Power", trans = ~./max(plotData$typeM))) +
                     scale_x_continuous(name = "Half to Double Observed N") +
                     theme_classic() +
                     facet_wrap(~ hypTrueGroup, scales = "free")
@@ -395,7 +395,7 @@ ttestCorClass <- if (requireNamespace('jmvcore'))
                       y = power * (max(typeM)),
                       colour = "power"
                     )) +
-                    # scale_y_continuous(name = "Type-M", sec.axis = sec_axis(name = "Type-S/Power", trans = ~./max(plotData$typeM))) +
+                    scale_y_continuous(name = "Type-M", sec.axis = sec_axis(name = "Type-S/Power", trans = ~./max(plotData$typeM))) +
                     scale_x_continuous(name = "Possible Obs. Corr. where power != 1") +
                     theme_classic() +
                     facet_wrap(~ hypTrueGroup, scales = "free")

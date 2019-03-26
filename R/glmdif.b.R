@@ -66,9 +66,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           colnames(anchor) <- self$options$anchor
         }
         
-        # Vector containing grouping data
-        group <- data[, self$options$group]
-        
         # Vector containing matching data
         match <-
           data.frame(jmvcore::toNumeric(data[, self$options$matchVar]))
@@ -79,9 +76,17 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           match <- unlist(match)
         }
         
-        focalName <- levels(group)[1]
         
+        # Vector containing grouping data
+        group <- as.character(data[, self$options$group])
         groupType <- self$options$groupType
+        
+        if (groupType == "group"){
+          groupValueList <- unique(group)
+          groupOne <- unique(group)[1]
+          group <- as.factor(ifelse(group == groupOne, "Group A", "Group B"))
+          groupOne <- unique(group)[1]
+        }
         
         type <- self$options$type
         
@@ -101,7 +106,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         difLogistic <-
           function (DATA,
                     group,
-                    focalName,
+                    groupOne,
                     anchor = NULL,
                     memberType = "group",
                     match = "score",
@@ -121,7 +126,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             internalLog <- function() {
               if (memberType == "group") {
                 Group <- rep(0, NROW(DATA))
-                Group[group == focalName] <- 1
+                Group[group == groupOne] <- 1
               }
               else
                 Group <- group
@@ -175,7 +180,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     names = colnames(DATA),
                     anchor.names = anchorNames,
                     criterion = criterion,
-                    focalName = focalName,
+                    groupOne = groupOne,
                     matchScores = PROV$matchScores,
                     ZT = as.character(symnum(
                       deltaR2,
@@ -302,7 +307,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     names = colnames(DATA),
                     anchor.names = NULL,
                     criterion = criterion,
-                    focalName = focalName,
+                    groupOne = groupOne,
                     matchScores = logistikRes1$matchScores,
                     ZT = as.character(symnum(
                       deltaR2,
@@ -658,6 +663,11 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                           format = jmvcore::Cell.NEGATIVE)
         }
         
+        blankRow <- function(){
+          self$results$DESCtable$addRow(rowKey = self$results$DESCtable$rowCount + 1,
+                         values = list(bob = ""))
+        }
+        
         designAnalysis <- function(designList, Data, group, match) {
             if (self$options$D == "") {
               if (self$options$difFlagScale == "zt") {
@@ -682,7 +692,11 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           for (item in 1:length(designList)) {
             curItem <- designList[item]
             if (is.na(curItem)) {
-              stop("No items have been flagged for DIF")
+              self$results$gcTable$addRow(
+                rowKey = item,
+                values = list(
+                  itemName = "No items flagged as exhibitting DIF."
+                ))
               return()
             }
             empDATA <- cbind(Item = jmvcore::toNumeric(Data[, curItem]), jmvcore::toNumeric(group), match)
@@ -746,8 +760,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           
         buildGC <- function(GC) {
           table <- self$results$gcTable
-          for (item in 1:nrow(GC)){
-            if (GC[item, 1] != 0) {
+            for (item in 1:nrow(GC)){
               table$addRow(
                 rowKey = item,
                 values = list(
@@ -755,21 +768,11 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                   obsEff = GC[item, 3],
                   bootSE = GC[item, 6],
                   hypTrueEff = GC[item, 2],
-                    # ifelse(
-                    # self$options$D == "",
-                    # switch(rownames(GC)[item],
-                    #       0.00000001 = paste0(round(as.numeric(rownames(GC)[item]),3), " (NULL)"),
-                    #       0.13 = paste0(round(as.numeric(rownames(GC)[item]),3), " (B)"),
-                    #       0.26 = paste0(round(as.numeric(rownames(GC)[item]),3), " (C)"),
-                    #       0.035 = paste0(round(as.numeric(rownames(GC)[item]),3), " (B)"),
-                    #       0.07 = paste0(round(as.numeric(rownames(GC)[item]),3), " (C)"))
-                    # 
                   typeM = GC[item, 4],
                   # typeS = GC[item, 6],
                   power = GC[item, 5]
                 )
               )
-            }
           }
         }
         
@@ -779,7 +782,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           difLogistic(
             DATA = Data,
             group = group,
-            focalName = focalName,
+            groupOne = groupOne,
             anchor = anchor,
             # groupType = groupType,
             match = match,
@@ -799,8 +802,10 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             designList <- model$names
           }
           GCTable = designAnalysis(designList = designList, Data = Data, group = group, match = model$matchScores)
-          buildGC(GCTable)
+          if (length(GCTable) != 0){
+            buildGC(GCTable)
           }
+        }
         
         # Description Results Table ----
         calculateDESCtable <- function() {
@@ -822,7 +827,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               df <- ifelse(type == "both", 2, 1)
             } else {
               df <-
-                ifelse(type == "both", 2 * length(focalName), length(focalName))
+                ifelse(type == "both", 2 * length(groupOne), length(groupOne))
             }
             
             table$addRow(rowKey = 1, values = list(
@@ -839,15 +844,15 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                   ),
                   pur,
                   "item purification and with ",
-                  # length(model$focalName),
+                  # length(model$groupOne),
                   #  " reference group(s) and ",
                   df,
                   " degree(s) of freedom."
                 )
             ))
             
-            table$addRow(rowKey = self$results$DESCtable$rowCount + 1,
-                         values = list(bob = ""))
+            blankRow()
+            
             table$addRow(
               rowKey = self$results$DESCtable$rowCount + 1,
               values = list(bob = paste0(
@@ -864,8 +869,8 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               ))
             )
             
-            table$addRow(rowKey = self$results$DESCtable$rowCount + 1,
-                         values = list(bob = ""))
+            blankRow()
+            
             if (model$pAdjustMethod == "none")
               table$addRow(
                 rowKey = self$results$DESCtable$rowCount + 1,
@@ -892,8 +897,8 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 )
               )
             }
-            table$addRow(rowKey = self$results$DESCtable$rowCount + 1,
-                         values = list(bob = ""))
+            
+            blankRow()
             
             if (model$purification) {
               if (model$nrPur <= 1) {
@@ -960,19 +965,47 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     
                   )
                 )
-                table$addRow(
-                  rowKey = self$results$DESCtable$rowCount + 1,
-                  values = list(bob = "")
-                )
+                
+            blankRow()
+            
               }
             }
             
             table$addRow(
               rowKey = self$results$DESCtable$rowCount + 1,
               values = list(bob = paste0(
-                "Grouping variable(s): ", list(self$options$group)
+                "Grouping variable: ", list(self$options$group)
               ))
             )
+            
+            if (length(groupValueList) > 2 & groupType == "group"){
+              blankRow()
+              table$addRow(
+              rowKey = self$results$DESCtable$rowCount + 1,
+              values = list(bob = paste0(
+                "(The data file provided non-binary groupings. Please see below for the recoding legend.)"
+              ))
+            )
+                          blankRow()
+            }
+            
+            if (groupType == "group"){
+              table$addRow(
+                rowKey = self$results$DESCtable$rowCount + 1,
+                values = list(bob = paste0(
+                  "Group coding: "
+                ))
+              )
+              for (i in 1:length(groupValueList)){
+                table$addRow(
+                rowKey = self$results$DESCtable$rowCount + 1,
+                values = list(bob = paste0(
+                  groupValueList[i], " : ", ifelse(i == 1, "Group A", "Group B"))
+                ))
+              }
+            }
+            
+            blankRow()
             
             if (model$match[1] == "score") {
               table$addRow(
@@ -987,8 +1020,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 ))
               )
             }
-            table$addRow(rowKey = self$results$DESCtable$rowCount + 1,
-                         values = list(bob = ""))
+            blankRow()
             if (is.null(model$anchor.names) |
                 model$match != "score") {
               table$addRow(
@@ -1009,24 +1041,39 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 )
               }
             }
-            table$addRow(rowKey = self$results$DESCtable$rowCount + 1,
-                         values = list(bob = ""))
+            blankRow()
+            
+            
+                      # Set notes
+          # if (self$options$difFlagScale == "zt") {
+          #   table$setNote(key = "ZT", note = "Zumbo & Thomas (ZT): 'A' = 'R\u00B2' 0 <> 0.13, 'B' = 'R\u00B2' 0.13 <> 0.26, 'C' = 'R\u00B2' 0.26 <> 1")
+          # } else {
+          #   table$setNote(key = "JG", note = "Jodoin & Gierl (JG): 'A' = 'R\u00B2' 0 <> 0.035, 'B' = 'R\u00B2' 0.035 <> 0.07, 'C' = 'R\u00B2' 0.07 <> 1")
+          # }
             
             table$addRow(
               rowKey = self$results$DESCtable$rowCount + 1,
-              values = list(bob =  "Effect size (Nagelkerke's 'R\u00B2'):")
+              values = list(bob =  paste0("Effect size (Nagelkerke's 'R\u00B2') scale: ", switch(self$options$difFlagScale,
+                                                                                                 zt = "Zumbo-Thomas",
+                                                                                                 jg = "Jodoin-Gierl")))
             )
             table$addRow(
               rowKey = self$results$DESCtable$rowCount + 1,
-              values = list(bob =  "'A': negligible effect")
+              values = list(bob =  switch(self$options$difFlagScale,
+                                          zt = "'A': Negligible effect ('R\u00B2' 0 <> 0.13)",
+                                          jg = "'A': Negligible effect ('R\u00B2' 0 <> 0.035)"))
             )
             table$addRow(
               rowKey = self$results$DESCtable$rowCount + 1,
-              values = list(bob =  "'B': moderate effect")
+              values = list(bob =  switch(self$options$difFlagScale,
+                                          zt = "'B': Moderate effect ('R\u00B2' 0.13 <> 0.26)",
+                                          jg = "'B': Moderate effect ('R\u00B2' 0.035 <> 0.07)"))
             )
             table$addRow(
               rowKey = self$results$DESCtable$rowCount + 1,
-              values = list(bob =  "'C': large effect")
+              values = list(bob =  switch(self$options$difFlagScale,
+                                          zt = "'C': Large effect ('R\u00B2' 0.26 <> 1)",
+                                          jg = "'C': Large effect ('R\u00B2' 0.07 <> 1)"))
             )
           }
         }
@@ -1083,7 +1130,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           }
           
           df <-
-            ifelse(type == "both", 2 * length(focalName), length(focalName))
+            ifelse(type == "both", 2 * length(groupOne), length(groupOne))
           table$setNote(
             key = "df",
             note = paste0(
@@ -1092,12 +1139,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               " degrees of freedom"
             )
           )
-          # Set notes
-          if (self$options$difFlagScale == "zt") {
-            table$setNote(key = "ZT", note = "Zumbo & Thomas (ZT): 'A' = 'R\u00B2' 0 <> 0.13, 'B' = 'R\u00B2' 0.13 <> 0.26, 'C' = 'R\u00B2' 0.26 <> 1")
-          } else {
-            table$setNote(key = "JG", note = "Jodoin & Gierl (JG): 'A' = 'R\u00B2' 0 <> 0.035, 'B' = 'R\u00B2' 0.035 <> 0.07, 'C' = 'R\u00B2' 0.07 <> 1")
-          }
         }
         
         DIFstate <- self$results$DIFtable$state
@@ -1180,10 +1221,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             subtitle = paste(
               "Effect Size: ",
               round(model$deltaR2[model$names == colnames(plotData)[1]], 3),
-              " | DIF Classification: ZT = ",
-              model$ZT[model$names == colnames(plotData)[1]],
-              ", JG = ",
-              model$JG[model$names == colnames(plotData)[1]]
+              " | p = ", round(model$adjusted.p[model$names == colnames(plotData)[1]], 3)
             )
           ) +
           xlab(ifelse(
