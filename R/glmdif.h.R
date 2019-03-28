@@ -13,7 +13,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             groupType = NULL,
             difFlagScale = NULL,
             designAnalysis = FALSE,
-            designAnalysisCoefficients = FALSE,
+            designAnalysisEffectType = "nagR2",
             designAnalysisSigOnly = TRUE,
             bootSims = 1000,
             power = FALSE,
@@ -25,7 +25,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             alpha = 0.05,
             purify = FALSE,
             nIter = 10,
-            pAdjustMethod = "BH",
+            pAdjustMethod = "none",
             plotVarsICC = NULL, ...) {
 
             super$initialize(
@@ -63,8 +63,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 suggested=list(
                     "continuous"),
                 permitted=list(
-                    "numeric"),
-                default=NULL)
+                    "numeric"))
             private$..groupType <- jmvcore::OptionList$new(
                 "groupType",
                 groupType,
@@ -81,10 +80,13 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "designAnalysis",
                 designAnalysis,
                 default=FALSE)
-            private$..designAnalysisCoefficients <- jmvcore::OptionBool$new(
-                "designAnalysisCoefficients",
-                designAnalysisCoefficients,
-                default=FALSE)
+            private$..designAnalysisEffectType <- jmvcore::OptionList$new(
+                "designAnalysisEffectType",
+                designAnalysisEffectType,
+                options=list(
+                    "nagR2",
+                    "coefficients"),
+                default="nagR2")
             private$..designAnalysisSigOnly <- jmvcore::OptionBool$new(
                 "designAnalysisSigOnly",
                 designAnalysisSigOnly,
@@ -146,7 +148,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "BH",
                     "BY",
                     "none"),
-                default="BH")
+                default="none")
             private$..plotVarsICC <- jmvcore::OptionVariables$new(
                 "plotVarsICC",
                 plotVarsICC)
@@ -158,7 +160,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..groupType)
             self$.addOption(private$..difFlagScale)
             self$.addOption(private$..designAnalysis)
-            self$.addOption(private$..designAnalysisCoefficients)
+            self$.addOption(private$..designAnalysisEffectType)
             self$.addOption(private$..designAnalysisSigOnly)
             self$.addOption(private$..bootSims)
             self$.addOption(private$..power)
@@ -181,7 +183,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         groupType = function() private$..groupType$value,
         difFlagScale = function() private$..difFlagScale$value,
         designAnalysis = function() private$..designAnalysis$value,
-        designAnalysisCoefficients = function() private$..designAnalysisCoefficients$value,
+        designAnalysisEffectType = function() private$..designAnalysisEffectType$value,
         designAnalysisSigOnly = function() private$..designAnalysisSigOnly$value,
         bootSims = function() private$..bootSims$value,
         power = function() private$..power$value,
@@ -203,7 +205,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..groupType = NA,
         ..difFlagScale = NA,
         ..designAnalysis = NA,
-        ..designAnalysisCoefficients = NA,
+        ..designAnalysisEffectType = NA,
         ..designAnalysisSigOnly = NA,
         ..bootSims = NA,
         ..power = NA,
@@ -243,9 +245,9 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$add(jmvcore::Table$new(
                 options=options,
                 name="instructions",
-                title="Procedure Notes",
+                title="Instructions",
                 rows=4,
-                visible=FALSE,
+                visible=TRUE,
                 columns=list(
                     list(
                         `name`="ted", 
@@ -256,6 +258,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 name="DESCtable",
                 title="Procedure Notes",
                 rows=0,
+                refs="binaryDIF",
                 clearWith=list(
                     "item",
                     "group",
@@ -361,8 +364,16 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "D"),
                 columns=list(
                     list(
+                        `name`="label", 
+                        `title`="Effect", 
+                        `type`="text"),
+                    list(
                         `name`="itemName", 
                         `title`="Item", 
+                        `type`="text"),
+                    list(
+                        `name`="hypTrueEff", 
+                        `title`="Hyp. True Effect", 
                         `type`="text"),
                     list(
                         `name`="obsEff", 
@@ -372,10 +383,6 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `name`="bootSE", 
                         `title`="Bootstrap SE", 
                         `type`="number"),
-                    list(
-                        `name`="hypTrueEff", 
-                        `title`="Hyp. True Effect", 
-                        `type`="text"),
                     list(
                         `name`="typeM", 
                         `title`="Type-M", 
@@ -464,7 +471,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$add(jmvcore::Array$new(
                 options=options,
                 name="ICCplots",
-                title="Item Characteristic Curves",
+                title="Item Response Curves - Based on Logistic Regression",
                 items="(plotVarsICC)",
                 template=jmvcore::Image$new(
                     options=options,
@@ -532,8 +539,7 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'   'level' to flagged items
 #' @param designAnalysis True/False, perform a design analysis. NB:
 #'   Computationally intensive
-#' @param designAnalysisCoefficients True/False, perform a design analysis.
-#'   NB: Computationally intensive
+#' @param designAnalysisEffectType In progress
 #' @param designAnalysisSigOnly True/False, should only items which have been
 #'   flagged for exhibitting DIF be considered in the Design Analysis?
 #' @param bootSims Number of bootstrap simulations to perform
@@ -553,10 +559,10 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'   is supplied
 #' @param nIter The maximal number of iterations in the item purification
 #'   process. (default is 10)
-#' @param pAdjustMethod Either BH (default) or the acronym of the method for
+#' @param pAdjustMethod Either none (default) or the acronym of the method for
 #'   p-value adjustment for multiple comparisons.
 #' @param plotVarsICC A vector of strings naming the item columns for plotting
-#'   Item Characteristic Curves
+#'   Item Response Curves
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
@@ -580,11 +586,11 @@ glmDIF <- function(
     item,
     group,
     matchVar,
-    anchor = NULL,
+    anchor,
     groupType,
     difFlagScale,
     designAnalysis = FALSE,
-    designAnalysisCoefficients = FALSE,
+    designAnalysisEffectType = "nagR2",
     designAnalysisSigOnly = TRUE,
     bootSims = 1000,
     power = FALSE,
@@ -596,7 +602,7 @@ glmDIF <- function(
     alpha = 0.05,
     purify = FALSE,
     nIter = 10,
-    pAdjustMethod = "BH",
+    pAdjustMethod = "none",
     plotVarsICC) {
 
     if ( ! requireNamespace('jmvcore'))
@@ -625,7 +631,7 @@ glmDIF <- function(
         groupType = groupType,
         difFlagScale = difFlagScale,
         designAnalysis = designAnalysis,
-        designAnalysisCoefficients = designAnalysisCoefficients,
+        designAnalysisEffectType = designAnalysisEffectType,
         designAnalysisSigOnly = designAnalysisSigOnly,
         bootSims = bootSims,
         power = power,

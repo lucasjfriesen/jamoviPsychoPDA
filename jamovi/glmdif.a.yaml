@@ -66,31 +66,17 @@ options:
             A string naming the matching variable from `data`
 
     - name: anchor
-      title: Anchor Items
+      title: Anchor Item(s)
       type: Variables
       suggested:
         - continuous
       permitted:
         - numeric
-      default: NULL
       description:
           ui: >
             The anchor items for use in purification. This will be ignored if an external matching variable is supplied.
           R: >
             a vector of strings naming the anchor item columns from `data` for use in purification. This will be ignored if an external matching variable is supplied
-
-#    - name: groupA
-#      title: Group 1
-#      type: String
-
-#    - name: groupB
-#      title: Group 2
-#      type: String
-
-   # - name: focal
-   #   title: Reference Group
-   #   type: String
-   #   description: a string indicating which group(s) are to be considered focal groups
 
     - name: groupType
       title: Group Type
@@ -123,7 +109,7 @@ options:
 
     - name: designAnalysis
       type: Bool
-      title: "Design Analysis - Naeglekirke R\u00B2"
+      title: Design Analysis
       default: false
       description:
         ui: >
@@ -131,15 +117,20 @@ options:
         R: >
           True/False, perform a design analysis. NB: Computationally intensive
 
-    - name: designAnalysisCoefficients
-      type: Bool
-      title: Design Analysis - Coefficients
-      default: false
+    - name: designAnalysisEffectType
+      type: List
+      title: Effect Type
+      options: 
+        - name: nagR2
+          title: "\u0394 Naeglekirke R\u00B2"
+        - name: coefficients
+          title: Regression Coefficients 
+      default: nagR2
       description:
         ui: >
-          True/False, perform a design analysis. NB: Computationally intensive.
+          In progress
         R: >
-          True/False, perform a design analysis. NB: Computationally intensive
+          In progress
 
     - name: designAnalysisSigOnly
       type: Bool
@@ -271,19 +262,19 @@ options:
           title: Benjamini-Yekutieli
         - name: none
           title: None
-      default: BH
+      default: none
       description: 
         ui: >
-          Either BH (default) or the acronym of the method for p-value adjustment for multiple comparisons
+          Either none (default) or the acronym of the method for p-value adjustment for multiple comparisons
         R: >
-          Either BH (default) or the acronym of the method for p-value adjustment for multiple comparisons.
+          Either none (default) or the acronym of the method for p-value adjustment for multiple comparisons.
 
     - name: plotVarsICC
       type: Variables
       description:
           ui: >
-            Items for plotting Item Characteristic Curves.
+            Items for plotting Item Response Curves.
           R: >
-            A vector of strings naming the item columns for plotting Item Characteristic Curves
+            A vector of strings naming the item columns for plotting Item Response Curves
    
 ...

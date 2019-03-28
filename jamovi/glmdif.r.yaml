@@ -9,10 +9,10 @@ items:
       type: Preformatted
 
     - name: instructions
-      title: Procedure Notes
+      title: Instructions
       type: Table
       rows: 4
-      visible: False
+      visible: True
       columns:
         - name: ted
           title: ""
@@ -22,6 +22,7 @@ items:
       title: Procedure Notes
       type:  Table
       rows: 0
+      refs: binaryDIF
       clearWith: 
           - item
           - group
@@ -39,7 +40,6 @@ items:
           - designAnalysisSigOnly
           - bootSims
           - D
-           
       columns: 
         - name: bob
           title: ""
@@ -131,18 +131,21 @@ items:
           - bootSims
           - D
       columns:
+        - name: label
+          title: Effect
+          type: text        
         - name: itemName
           title: Item
           type: text
+        - name: hypTrueEff
+          title: Hyp. True Effect
+          type: text 
         - name: obsEff
           title: Obs. Effect
           type: text
         - name: bootSE
           title: Bootstrap SE
           type: number
-        - name: hypTrueEff
-          title: Hyp. True Effect
-          type: text 
         - name: typeM
           title: Type-M
           type: number
@@ -216,7 +219,7 @@ items:
           visible: (power)
 
     - name: ICCplots
-      title: Item Characteristic Curves
+      title: Item Response Curves - Based on Logistic Regression
       type: Array
       items: (plotVarsICC)
       template:

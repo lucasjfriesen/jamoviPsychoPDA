@@ -49,18 +49,6 @@ items:
       height: 600
       renderFun: .plotHTE
 
-    - name: plotHTEViz
-      title: Sensitivity - Viz
-      type: Array
-      items: (hypTrueEff)
-      template:
-        type: Image
-        width:  800
-        height: 600
-        renderFun: .plotHTEViz
-        visible: (HTEViz)
-        requiresData: TRUE
-
     - name: plotN
       title: Sensitivity - Sample Size
       type: Image
@@ -76,5 +64,17 @@ items:
       width:  800
       height: 600
       renderFun: .plotSE
+
+    - name: plotHTEViz
+      title: Sensitivity - Viz
+      type: Array
+      items: (hypTrueEff)
+      template:
+        type: Image
+        width:  800
+        height: 600
+        renderFun: .plotHTEViz
+        visible: (HTEViz)
+        requiresData: TRUE
 
 ...
