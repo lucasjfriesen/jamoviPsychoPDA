@@ -137,9 +137,6 @@ items:
         - name: itemName
           title: Item
           type: text
-        - name: hypTrueEff
-          title: Hyp. True Effect
-          type: text 
         - name: obsEff
           title: Obs. Effect
           type: text
@@ -159,7 +156,7 @@ items:
       title: "Design Analysis - Regression Coefficients"
       type: Table
       rows: 0
-      visible: (designAnalysisCoefficients)
+      visible: (designAnalysisEffectType)
       clearWith: 
           - item
           - group
@@ -178,21 +175,24 @@ items:
           - bootSims
           - D
       columns:
+        - name: label
+          title: Effect
+          type: text
         - name: itemName
           title: Item
           type: text
+        - name: hypTrueEff
+          title: Hyp. True Effect
+          type: text 
         - name: obsMain
           title: Obs. Main
           type: text
-        - name: obsInt
-          title: Obs. Interaction
-          type: text
         - name: obsMainSE
           title: Obs. Main SE
-        - name: typeM
+        - name: typeMMain
           title: Type-M Main
           type: number
-        - name: typeS
+        - name: typeSMain
           title: Type-S Main
           type: number
         - name: powerMain
@@ -200,16 +200,16 @@ items:
           type: number
           format: (zto)
           visible: (power)
+        - name: obsInt
+          title: Obs. Interaction
+          type: text
         - name: obsIntSE
           title: Obs. Interaction SE
           type: number
-        - name: hypTrueEff
-          title: Hyp. True Effect
-          type: text 
-        - name: typeM
+        - name: typeMInt
           title: Type-M Int
           type: number
-        - name: typeS
+        - name: typeSInt
           title: Type-S Int
           type: number
         - name: powerInt

@@ -4,7 +4,7 @@
 .jmvrefs <- list(
     `binaryDIF`=list(
         `type`="software", 
-        `author`="Friesen, L.", 
+        `author`="Friesen, L., Kroc, E., Zumbo, B. D.", 
         `year`=2019, 
         `title`="PsychoPDA: Binary Differential Item Functioning", 
         `publisher`="[jamovi module]. Retrieved from https://github.com/lucasjfriesen/jamoviPsychoPDA", 

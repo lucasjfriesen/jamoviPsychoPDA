@@ -84,8 +84,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "designAnalysisEffectType",
                 designAnalysisEffectType,
                 options=list(
-                    "nagR2",
-                    "coefficients"),
+                    "nagR2"),
                 default="nagR2")
             private$..designAnalysisSigOnly <- jmvcore::OptionBool$new(
                 "designAnalysisSigOnly",
@@ -372,10 +371,6 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `title`="Item", 
                         `type`="text"),
                     list(
-                        `name`="hypTrueEff", 
-                        `title`="Hyp. True Effect", 
-                        `type`="text"),
-                    list(
                         `name`="obsEff", 
                         `title`="Obs. Effect", 
                         `type`="text"),
@@ -398,7 +393,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 name="gcTableCoefficients",
                 title="Design Analysis - Regression Coefficients",
                 rows=0,
-                visible="(designAnalysisCoefficients)",
+                visible="(designAnalysisEffectType)",
                 clearWith=list(
                     "item",
                     "group",
@@ -418,26 +413,30 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "D"),
                 columns=list(
                     list(
+                        `name`="label", 
+                        `title`="Effect", 
+                        `type`="text"),
+                    list(
                         `name`="itemName", 
                         `title`="Item", 
+                        `type`="text"),
+                    list(
+                        `name`="hypTrueEff", 
+                        `title`="Hyp. True Effect", 
                         `type`="text"),
                     list(
                         `name`="obsMain", 
                         `title`="Obs. Main", 
                         `type`="text"),
                     list(
-                        `name`="obsInt", 
-                        `title`="Obs. Interaction", 
-                        `type`="text"),
-                    list(
                         `name`="obsMainSE", 
                         `title`="Obs. Main SE"),
                     list(
-                        `name`="typeM", 
+                        `name`="typeMMain", 
                         `title`="Type-M Main", 
                         `type`="number"),
                     list(
-                        `name`="typeS", 
+                        `name`="typeSMain", 
                         `title`="Type-S Main", 
                         `type`="number"),
                     list(
@@ -447,19 +446,19 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `format`="(zto)", 
                         `visible`="(power)"),
                     list(
+                        `name`="obsInt", 
+                        `title`="Obs. Interaction", 
+                        `type`="text"),
+                    list(
                         `name`="obsIntSE", 
                         `title`="Obs. Interaction SE", 
                         `type`="number"),
                     list(
-                        `name`="hypTrueEff", 
-                        `title`="Hyp. True Effect", 
-                        `type`="text"),
-                    list(
-                        `name`="typeM", 
+                        `name`="typeMInt", 
                         `title`="Type-M Int", 
                         `type`="number"),
                     list(
-                        `name`="typeS", 
+                        `name`="typeSInt", 
                         `title`="Type-S Int", 
                         `type`="number"),
                     list(

@@ -530,7 +530,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         }
         
         retroStat <-
-          function(DATA, ind, returnCoefficients = FALSE, type) {
+          function(DATA, ind, coefficients = FALSE, type) {
             ITEM <- (DATA[, 1])
             SCORE <- (DATA[, 3])
             GROUP <- (DATA[, 2])
@@ -565,7 +565,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               return(deltaNagR2)
             }
             
-            if (returnCoefficients) {
+            if (coefficients) {
               res <- coefficients(m0)
             } else {
               res <- deltaNagR2(m0, m1, n)
@@ -589,9 +589,9 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           dens_x
         }
         
-        empDist <- function(DATA, R = R, type = type) {
+        empDist <- function(DATA, R, type, coefficients) {
           # Get bootstrapped distribution
-          myBoot <- boot(DATA, retroStat, R = R, type = type)
+          myBoot <- boot(DATA, retroStat, R = R, type = type, coefficients = coefficients)
           if (!all(!is.na(myBoot$t))) {
             self$results$gcTable$setNote(
               key = colnames(DATA)[1],
@@ -644,18 +644,19 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           return(rdRes)
         }
         
-        retroDesignCoefficients <- function(hypTrueEff) {
+        retroDesignCoefficients <- function(hypTrueEff, myBoot) {
           alpha <- self$options$alpha
           rdRes <- matrix(0, nrow = 1, ncol = 4)
-          rdRes[1, 1] <- myBoot$t0
+          rdRes[1, 1:2] <- myBoot$t0[3:4]
           
           # se of emp. dist.
-          observedSE <- print.bootSE(myBoot)[[3]]
-          rdRes[1, 4] <- observedSE
+          observedSE <- print.bootSE(myBoot)[3:4,3]
+          rdRes[1, 5:6] <- observedSE
           
           # D <- abs(myBoot$t0 - hypTrueEff/observedSE)
           D <- abs(myBoot$t0 - hypTrueEff)
           lambda <- D / observedSE
+          self$results$debug$setContent(list(D,print.bootSE(myBoot)))
           # Quantile matching the upper 1 - alpha in the emp. dist.
           empFn <- ecdf(myBoot$t)
           z <- quantile(empFn,  1 - (alpha))
@@ -705,19 +706,19 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                    bootSims,
                    type,
                    coefficients = FALSE) {
-            if (self$options$D == "") {
-              if (self$options$difFlagScale == "zt") {
-                hypTrueEff <- c(0, 0.13, 0.26)
-              } else {
-                hypTrueEff <- c(0, 0.035, 0.07)
-              }
-              labels <- c("Null", "Moderate", "Large")
-            } else {
-              hypTrueEff <- as.numeric(self$options$D)
-              labels <- c("Custom Hyp.")
-            }
-            
             if (coefficients == FALSE) {
+              if (self$options$D == "") {
+                if (self$options$difFlagScale == "zt") {
+                  hypTrueEff <- c(0, 0.13, 0.26)
+                } else {
+                  hypTrueEff <- c(0, 0.035, 0.07)
+                }
+                labels <- c("Null", "Moderate", "Large")
+              } else {
+                hypTrueEff <- as.numeric(self$options$D)
+                labels <- c("Custom Hyp.")
+              }
+              
               GC <-
                 data.frame(
                   "label" = rep(as.character(), times = length(designList) * length(hypTrueEff)),
@@ -735,22 +736,36 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                   stringsAsFactors = FALSE
                 )
             } else {
+              if (self$options$D == "") {
+                hypTrueEff <- 0
+                labels <- "Null"
+              } else {
+                  hypTrueEff <- as.numeric(self$options$D)
+                  labels <- c("Custom Hyp.")
+              }
+            
               GC <-
                 data.frame(
                   "label" = rep(as.character(), times = length(designList) * length(hypTrueEff)),
                   "item" = rep(as.character(), times = length(designList) * length(hypTrueEff)),
-                  "obsEff" = rep(as.numeric(), times = length(designList) *
+                  "obsMain" = rep(as.numeric(), times = length(designList) *
+                                   length(hypTrueEff)),
+                  "obsInt" = rep(as.numeric(), times = length(designList) *
                                    length(hypTrueEff)),
                   "hypTrueEff" = rep(as.numeric(), times = length(designList) *
                                        length(hypTrueEff)),
-                  "typeM" = rep(as.numeric(), times = length(designList) *
+                  "bootSE" = rep(as.numeric(), times = length(designList) *
+                                   length(hypTrueEff)),
+                  "typeMMain" = rep(as.numeric(), times = length(designList) *
+                                  length(hypTrueEff)),
+                  "typeSMain" = rep(as.numeric(), times = length(designList) *
+                                  length(hypTrueEff)),
+                  "typeMInt" = rep(as.numeric(), times = length(designList) *
+                                  length(hypTrueEff)),
+                  "typeSInt" = rep(as.numeric(), times = length(designList) *
                                   length(hypTrueEff)),
                   "power" = rep(as.numeric(), times = length(designList) *
                                   length(hypTrueEff)),
-                  "typeS" = rep(as.numeric(), times = length(designList) *
-                                  length(hypTrueEff)),
-                  "bootSE" = rep(as.numeric(), times = length(designList) *
-                                   length(hypTrueEff)),
                   stringsAsFactors = FALSE
                 )
             }
@@ -771,13 +786,17 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               colnames(empDATA) <-
                 c(colnames(Data)[item], "GROUP", "SCORES")
               tick <- length(hypTrueEff) - 1
-              myBoot <- empDist(empDATA, R = bootSims, type = type)
+              if (coefficients == FALSE) {
+                myBoot <- empDist(empDATA, R = bootSims, type = type, coefficients = FALSE)
+              } else {
+                myBoot <- empDist(empDATA, R = bootSims, type = type, coefficients = TRUE)
+              }
               for (hypInd in 1:length(hypTrueEff)) {
                 private$.checkpoint()
                 if (coefficients == FALSE) {
                   retroDesignRes <- retroDesign(hypTrueEff = hypTrueEff[hypInd], myBoot)
                 } else {
-                  retroDesignRes <- retroDesignCoefficients(hypTrueEff = hypTrueEff[hypInd])
+                  retroDesignRes <- retroDesignCoefficients(hypTrueEff = hypTrueEff[hypInd], myBoot)
                 }
                 GC[item * length(hypTrueEff) - tick, 1] <- labels[hypInd]
                 GC[item * length(hypTrueEff) - tick, 2] <-
@@ -865,7 +884,9 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               Data = Data,
               group = group,
               match = model$matchScores,
-              coefficients = TRUE
+              coefficients = TRUE,
+              bootSims = bootSims,
+              type = type
             )
             if (length(gcTableCoefficients) != 0) {
               table <- self$results$gcTableCoefficients
@@ -1153,7 +1174,10 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 rowKey = self$results$DESCtable$rowCount + 1,
                 values = list(bob = paste0("Post-Data Design Analysis performed on ",
                                            ifelse(self$options$designAnalysisSigOnly, "only flagged ", "all "),
-                                           "items using "
+                                           "items using ",
+                                           self$options$bootSims,
+                                           "bootstraps to create an empirical distribution for ",
+                                           "\u0394 Naeglekirke R\u00B2."
                                            ))
               )
             }

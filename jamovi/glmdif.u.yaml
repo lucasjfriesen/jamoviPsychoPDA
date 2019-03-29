@@ -97,19 +97,25 @@ children:
               - type: CheckBox
                 name: designAnalysisSigOnly
                 enable: (designAnalysis)
-              - type: ComboBox
-                name: designAnalysisEffectType
               - type: CheckBox
                 name: power
                 enable: (designAnalysis)
-              - type: TextBox
-                name: D
-                format: string
-                enable: (designAnalysis)
-              - type: TextBox
-                name: bootSims
-                format: number
-                enable: (designAnalysis)
+      - type: LayoutBox
+        margin: large
+        children:
+          - type: ComboBox
+            name: designAnalysisEffectType
+      - type: LayoutBox
+        margin: large
+        children:
+          - type: TextBox
+            name: D
+            format: string
+            enable: (designAnalysis)
+          - type: TextBox
+            name: bootSims
+            format: number
+            enable: (designAnalysis)
   - type: CollapseBox
     label: Item Response Curves
     margin: large
