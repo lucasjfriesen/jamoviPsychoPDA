@@ -1,23 +1,22 @@
 # retroDesign ----
-        retroDesign <- function(hypTrueEff, myBoot) {
-          alpha <- self$options$alpha
+        retroDesign.nagR2 <- function(hypTrueEff, myBoot, alpha, sigOnly) {
           rdRes <- matrix(0, nrow = 1, ncol = 4)
           rdRes[1, 1] <- myBoot$t0
           
           # se of empirical distribution
-          rdRes[1, 4] <- observedSE <- print.bootSE(myBoot)[[3]]
+          rdRes[1, 4] <- observedSE <- boot.printSE(myBoot)[[3]]
           
           # Observed R^2
           D <- myBoot$t0
           
           # Empirical cumulative density function on the bootstrapped data
           qUpper <- ecdf(myBoot$t)
-          if (self$options$designAnalysisSigOnly) {
+          if (sigOnly) {
             # Quantile matching the upper 1 - alpha in the emp. dist.
             qUpper <- quantile(qUpper,  1 - (alpha))
           } else {
             # Quantile matching the observed value
-            qUpper <- qEmp(qUpper, pEmp(qUpper, D))
+            qUpper <- boot.qEmp(qUpper, boot.pEmp(qUpper, D))
           }
           
           ## shifts distribution by the difference between the observed effect size and the empirical effect size
@@ -32,19 +31,28 @@
           return(rdRes)
         }
         
-        retroDesignCoefficients <- function(hypTrueEff, myBoot) {
-          alpha <- self$options$alpha
+        retroDesign.coefficients <- function(hypTrueEff, myBoot, alpha, sigOnly) {
           rdRes <- matrix(0, nrow = 1, ncol = 4)
           rdRes[1, 1:2] <- myBoot$t0[3:4]
           
           # se of emp. dist.
-          observedSE <- print.bootSE(myBoot)[3:4,3]
+          observedSE <- boot.printSE(myBoot)[3:4,3]
           rdRes[1, 5:6] <- observedSE
+          
+          
+          # Empirical cumulative density function on the bootstrapped data
+          qUpper <- ecdf(myBoot$t)
+          if (sigOnly) {
+            # Quantile matching the upper 1 - alpha in the emp. dist.
+            qUpper <- quantile(qUpper,  1 - (alpha))
+          } else {
+            # Quantile matching the observed value
+            qUpper <- boot.qEmp(qUpper, boot.pEmp(qUpper, D))
+          }
           
           # D <- abs(myBoot$t0 - hypTrueEff/observedSE)
           D <- abs(myBoot$t0 - hypTrueEff)
           lambda <- D / observedSE
-          self$results$debug$setContent(list(D,print.bootSE(myBoot)))
           # Quantile matching the upper 1 - alpha in the emp. dist.
           empFn <- ecdf(myBoot$t)
           z <- quantile(empFn,  1 - (alpha))
