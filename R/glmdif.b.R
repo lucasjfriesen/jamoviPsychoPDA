@@ -836,11 +836,12 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         # Model ----
         
         model <-
-          difLogistic(
+          binaryDIF.logistic(
             DATA = Data,
             group = group,
             groupOne = groupOne,
             anchor = anchor,
+            anchorNames <- self$options$anchor,
             groupType = groupType,
             match = match,
             type = type,
