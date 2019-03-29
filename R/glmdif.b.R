@@ -9,6 +9,7 @@
 
 
 
+
 # Data Wrangling ----
 
 glmDIFClass <- if (requireNamespace('jmvcore'))
@@ -16,28 +17,34 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
     "glmDIFClass",
     inherit = glmDIFBase,
     private = list(
+          .init=function() {
+            if (is.null(self$options$group) |
+              is.null(self$data) | is.null(self$options$item)) {
+              self$results$DESCtable$setVisible(visible = FALSE)
+              self$results$DIFtable$setVisible(visible = FALSE)
+              self$results$instructions$setRow(
+                rowNo = 1,
+                value = list(ted = "1) Place items to be assessed for DIF in the 'Item(s) for analysis' slot.")
+              )
+              self$results$instructions$setRow(
+                rowNo = 2,
+                value = list(ted = "2) [Optional] Place the remaining measure items in the 'Anchor Items' slot. This is not needed if a Matching Variable is supplied.")
+              )
+              self$results$instructions$setRow(
+                rowNo = 3,
+                value = list(ted = "3) [Optional] Place an external matching variable in the 'Matching Variable' slot. Measure total score will be calculated if this option is omitted.")
+              )
+              self$results$instructions$setRow(
+                rowNo = 4,
+                value = list(ted = "4) Place the grouping variable in the 'Grouping Variable' slot.")
+              )
+            } else {
+              self$results$instructions$setVisible(visible = FALSE)
+            }
+        },
       .run = function() {
         if (is.null(self$options$group) |
-            is.null(self$data) | is.null(self$options$item)) {
-          self$results$instructions$setVisible(visible = TRUE)
-          self$results$instructions$setRow(
-            rowNo = 1,
-            value = list(ted = "1) Place items to be assessed for DIF in the 'Item(s) for analysis' slot.")
-          )
-          self$results$instructions$setRow(
-            rowNo = 2,
-            value = list(ted = "2) [Optional] Place the remaining measure items in the 'Anchor Items' slot. This is not needed if a Matching Variable is supplied.")
-          )
-          self$results$instructions$setRow(
-            rowNo = 3,
-            value = list(ted = "3) [Optional] Place an external matching variable in the 'Matching Variable' slot. Measure total score will be calculated if this option is omitted.")
-          )
-          self$results$instructions$setRow(
-            rowNo = 4,
-            value = list(ted = "4) Place the grouping variable in the 'Grouping Variable' slot.")
-          )
-          return()
-        }
+              is.null(self$data) | is.null(self$options$item)){return()}
         # The full DF
         data <- self$data
         
@@ -81,10 +88,11 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         group <- as.character(data[, self$options$group])
         groupType <- self$options$groupType
         
-        if (groupType == "group"){
+        if (groupType == "group") {
           groupValueList <- unique(group)
           groupOne <- unique(group)[1]
-          group <- as.factor(ifelse(group == groupOne, "Group A", "Group B"))
+          group <-
+            as.factor(ifelse(group == groupOne, "Group A", "Group B"))
           groupOne <- unique(group)[1]
         }
         
@@ -100,6 +108,8 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         
         pAdjustMethod <- self$options$pAdjustMethod
         
+        bootSims = self$options$bootSims
+        
         # DIF ----
         # difLogReg is a starter function to determine whether GLM or LM should be used, as well as QA on the arguments input
         
@@ -107,29 +117,29 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           function (DATA,
                     group,
                     groupOne,
-                    anchor = NULL,
-                    memberType = "group",
-                    match = "score",
-                    type = "both",
-                    criterion = "LRT",
-                    alpha = 0.05,
-                    purify = FALSE,
-                    nrIter = 10,
-                    pAdjustMethod = NULL)
-          {            
-            
+                    anchor,
+                    groupType,
+                    match,
+                    type,
+                    criterion,
+                    alpha,
+                    purify,
+                    nIter,
+                    pAdjustMethod)
+          {
             if (purify & match[1] != "score") {
               stop(
-                "purification not allowed when using a custom matching variable. Please remove the custom matching variable or deselect 'Purification'.")
+                "purification not allowed when using a custom matching variable. Please remove the custom matching variable or deselect 'Purification'."
+              )
               return()
             }
+            
             internalLog <- function() {
-              if (memberType == "group") {
+              if (groupType == "group") {
                 Group <- rep(0, NROW(DATA))
                 Group[group == groupOne] <- 1
-              }
-              else
-                Group <- group
+              } else {Group <- group}
+
               sigThreshold <-
                 switch(
                   type,
@@ -147,7 +157,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 PROV <- Logistik(
                   DATA,
                   Group,
-                  memberType = memberType,
+                  groupType = groupType,
                   match = match,
                   type = type,
                   criterion = criterion,
@@ -161,17 +171,18 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 }
                 else {
                   DIFitems <- (1:NCOL(DATA))[chiSquared > sigThreshold]
-                  }
+                }
                 
                 RES <-
                   list(
                     Logistik = chiSquared,
                     p.value = PVAL,
                     deltaR2 = deltaR2,
+                    coefficients = PROV$coefficients,
                     alpha = alpha,
                     thr = sigThreshold,
                     DIFitems = DIFitems,
-                    memberType = memberType,
+                    groupType = groupType,
                     match = PROV$match,
                     type = type,
                     pAdjustMethod = pAdjustMethod,
@@ -206,7 +217,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                   Logistik(
                     DATA,
                     Group,
-                    memberType = memberType,
+                    groupType = groupType,
                     match = match,
                     anchor = anchor,
                     type = type,
@@ -224,7 +235,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                   difPur <- rep(0, length(chiSquared1))
                   difPur[dif] <- 1
                   repeat {
-                    if (nrPur >= nrIter) {
+                    if (nrPur >= nIter) {
                       break
                     } else {
                       nrPur <- nrPur + 1
@@ -242,7 +253,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                         DATA,
                         Group,
                         anchor = nodif,
-                        memberType = memberType,
+                        groupType = groupType,
                         match = match,
                         type = type,
                         criterion = criterion
@@ -255,27 +266,28 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                         dif2 <- (1:NCOL(DATA))[chiSquared2 > sigThreshold]
                         difPur <- rbind(difPur, rep(0, NCOL(DATA)))
                         difPur[nrPur + 1, dif2] <- 1
-                      } 
+                      }
                       
                       if (length(dif) != length(dif2)) {
                         dif <- dif2
-                        } else {
+                      } else {
                         dif <- sort(dif)
                         dif2 <- sort(dif2)
                         if (sum(dif == dif2) == length(dif)) {
                           noLoop <- TRUE
                           break
-                      } else {
-                        dif <- dif2
+                        } else {
+                          dif <- dif2
+                        }
                       }
                     }
                   }
-                }
                   logistikRes1 <- logistikRes2
                   chiSquared1 <- chiSquared2
                   PVAL <- 1 - pchisq(chiSquared1, DF)
                   deltaR2 <- deltaR2
-                  DIFitems <- (1:NCOL(DATA))[chiSquared1 > sigThreshold]
+                  DIFitems <-
+                    (1:NCOL(DATA))[chiSquared1 > sigThreshold]
                 }
                 if (is.null(difPur) == FALSE) {
                   ro <- co <- NULL
@@ -292,10 +304,11 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                   list(
                     Logistik = chiSquared1,
                     deltaR2 = deltaR2,
+                    coefficients = logistikRes1$coefficients,
                     alpha = alpha,
                     thr = sigThreshold,
                     DIFitems = DIFitems,
-                    memberType = memberType,
+                    groupType = groupType,
                     match = logistikRes1$match,
                     type = type,
                     pAdjustMethod = pAdjustMethod,
@@ -325,7 +338,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               }
               # p-Adjust ----
               df <- switch(
-                self$options$type,
+                type,
                 both = 2,
                 udif = 1,
                 nudif = 1
@@ -350,11 +363,11 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         Logistik <-
           function (data,
                     member,
-                    memberType = "group",
-                    match = "score",
-                    anchor = NULL,
-                    type = "both",
-                    criterion = "LRT")
+                    groupType,
+                    match,
+                    anchor,
+                    type,
+                    criterion)
           {
             R2 <-
               function(m, n)
@@ -367,8 +380,8 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             mFull <-
               mSimple <- seFull <- seSimple <- matrix(0, NCOL(data),
                                                       4)
-              cov.matM0 <- cov.matM1 <- NULL
-            if (memberType == "group")
+            cov.matM0 <- cov.matM1 <- NULL
+            if (groupType == "group")
               GROUP <- as.factor(member)
             else
               GROUP <- member
@@ -442,13 +455,14 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               seSimple[item, 1:length(m1$coefficients)] <-
                 sqrt(diag(vcov(m1)))
             }
-
+            
             res <-
               list(
                 stat = dev,
                 deltaR2 = deltaR,
+                coefficients = mFull,
                 criterion = criterion,
-                memberType = memberType,
+                groupType = groupType,
                 match = ifelse(match[1] ==
                                  "score", "score", "matching variable"),
                 matchScores = SCORES
@@ -471,7 +485,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             all(is.na(t)))
           ind1 <- index[allNA]
           index <- index[!allNA]
-          t <- matrix(t[, !allNA], nrow = nrow(t))
+          t <- matrix(t[,!allNA], nrow = nrow(t))
           rn <- paste("t", index, "*", sep = "")
           if (length(index) == 0L)
             op <- NULL
@@ -515,49 +529,59 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           
         }
         
-        NagR2 <- function(DATA, ind) {
-          ITEM <- (DATA[, 1])
-          SCORE <- (DATA[, 3])
-          GROUP <- (DATA[, 2])
-          n <- nrow(DATA)
-          
-          m0 <- switch(
-            self$options$type,
-            both = glm(ITEM[ind] ~ SCORE * GROUP,
-                       family = "binomial"),
-            udif = glm(ITEM[ind] ~ SCORE +
-                         GROUP, family = "binomial"),
-            nudif = glm(ITEM[ind] ~ SCORE *
-                          GROUP, family = "binomial")
-          )
-          
-          m1 <-
-            switch(
-              self$options$type,
-              both = glm(ITEM[ind] ~ SCORE, family = "binomial"),
-              udif = glm(ITEM[ind] ~ SCORE, family = "binomial"),
-              nudif = glm(ITEM[ind] ~
-                            SCORE + GROUP, family = "binomial")
+        retroStat <-
+          function(DATA, ind, coefficients = FALSE, type) {
+            ITEM <- (DATA[, 1])
+            SCORE <- (DATA[, 3])
+            GROUP <- (DATA[, 2])
+            n <- nrow(DATA)
+            
+            m0 <- switch(
+              type,
+              both = glm(ITEM[ind] ~ SCORE * GROUP,
+                         family = "binomial"),
+              udif = glm(ITEM[ind] ~ SCORE +
+                           GROUP, family = "binomial"),
+              nudif = glm(ITEM[ind] ~ SCORE *
+                            GROUP, family = "binomial")
             )
-          
-          R2cox0 <-  1 - exp((m0$deviance - m0$null.deviance) / n)
-          R2nag0 <-  R2cox0 / (1 - exp((-m0$null.deviance) / n))
-          
-          R2cox1 <-  1 - exp((m1$deviance - m1$null.deviance) / n)
-          R2nag1 <-  R2cox1 / (1 - exp((-m1$null.deviance) / n))
-          
-          deltaNagR2 <- R2nag0 - R2nag1
-          return(deltaNagR2)
-        }
+            
+            m1 <-
+              switch(
+                type,
+                both = glm(ITEM[ind] ~ SCORE, family = "binomial"),
+                udif = glm(ITEM[ind] ~ SCORE, family = "binomial"),
+                nudif = glm(ITEM[ind] ~
+                              SCORE + GROUP, family = "binomial")
+              )
+            
+            deltaNagR2 <- function(m0, m1, n) {
+              R2cox0 <-  1 - exp((m0$deviance - m0$null.deviance) / n)
+              R2nag0 <-  R2cox0 / (1 - exp((-m0$null.deviance) / n))
+              
+              R2cox1 <-  1 - exp((m1$deviance - m1$null.deviance) / n)
+              R2nag1 <-  R2cox1 / (1 - exp((-m1$null.deviance) / n))
+              deltaNagR2 <- R2nag0 - R2nag1
+              return(deltaNagR2)
+            }
+            
+            if (coefficients) {
+              res <- coefficients(m0)
+            } else {
+              res <- deltaNagR2(m0, m1, n)
+            }
+            
+            return(res)
+          }
         
         qEmp <- function(empFn, x) {
           quantile(empFn, x)
         }
-
+        
         pEmp <- function(empFn, x) {
           empFn(x)
         }
-
+        
         dEmp <- function(empFn, qEmp, dPoint, values) {
           dens <- density(values)
           i <- dens$x[which.min(abs(dens$x - dPoint))]
@@ -565,9 +589,9 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           dens_x
         }
         
-        empDist <- function(DATA, R = 1000) {
+        empDist <- function(DATA, R, type, coefficients) {
           # Get bootstrapped distribution
-          myBoot <- boot(DATA, NagR2, R = self$options$bootSims)
+          myBoot <- boot(DATA, retroStat, R = R, type = type, coefficients = coefficients)
           if (!all(!is.na(myBoot$t))) {
             self$results$gcTable$setNote(
               key = colnames(DATA)[1],
@@ -585,13 +609,16 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           }
           return(myBoot)
         }
-        # retroDesignOG ----
-        retroDesign <- function(hypTrueEff, myBoot){
+        
+        # retroDesign ----
+        retroDesign <- function(hypTrueEff, myBoot) {
           alpha <- self$options$alpha
           rdRes <- matrix(0, nrow = 1, ncol = 4)
-          rdRes[1,1] <- myBoot$t0
+          rdRes[1, 1] <- myBoot$t0
+          
           # se of empirical distribution
-          rdRes[1,4] <- observedSE <- print.bootSE(myBoot)[[3]]
+          rdRes[1, 4] <- observedSE <- print.bootSE(myBoot)[[3]]
+          
           # Observed R^2
           D <- myBoot$t0
           
@@ -604,175 +631,205 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             # Quantile matching the observed value
             qUpper <- qEmp(qUpper, pEmp(qUpper, D))
           }
-
+          
           ## shifts distribution by the difference between the observed effect size and the empirical effect size
           myBoot.Shifted <- ecdf(myBoot$t + hypTrueEff)
           rdRes[1, 3] <- power <- 1 - myBoot.Shifted(qUpper)
-          # typeM error rate VIA Estimation
+          # typeM error rate via Estimation
           estimate <-
             D + sample(myBoot$t, replace = T, size = 10000)
           significant <- estimate > qUpper
-          rdRes[1, 2] <- typeMError <- mean(estimate[significant]) / D
+          rdRes[1, 2] <-
+            typeMError <- mean(estimate[significant]) / D
           return(rdRes)
         }
-        #  
-        # # retroDesignSE ----
-        # retroDesign <- function(hypTrueEff, myBoot){
-        #   alpha <- self$options$alpha
-        #   rdRes <- matrix(0, nrow = 1, ncol = 4)
-        #   rdRes[1,1] <- myBoot$t0
-        #   # se of emp. dist.
-        #   
-        #   observedSE <- print.bootSE(myBoot)[[3]]
-        #   rdRes[1,4] <- observedSE
-        #   
-        #   # D <- abs(myBoot$t0 - hypTrueEff/observedSE)
-        #   D <- abs(myBoot$t0 - hypTrueEff)
-        #   lambda <- D/observedSE
-        #   # Quantile matching the upper 1 - alpha in the emp. dist.
-        #   empFn <- ecdf(myBoot$t)
-        #   z <- quantile(empFn,  1 - (alpha))
-        # 
-        #   exp1P <- pEmp(empFn, -z - lambda)
-        #   exp2P <- pEmp(empFn, z - lambda)
-        # 
-        #   power <- exp1P + 1 - exp2P
-        #   typeS <- exp1P/(exp1P + 1 - exp2P)
-        #   # rdRes[1, 4] <- typeS
-        #   rdRes[1, 3] <- power
-        # 
-        #   # typeM error rate
-        #   exp1M <- dEmp(empFn, qEmp, lambda + z, myBoot$t)
-        #   exp2M <- dEmp(empFn, qEmp,lambda - z, myBoot$t)
-        #   exp3M <- pEmp(empFn, lambda + z)
-        #   exp4M <- pEmp(empFn, lambda - z)
-        # 
-        #   typeM <- (exp1M + exp2M +
-        #                 lambda*(exp3M + exp4M - 1))/
-        #                     (lambda*(1 - exp3M + exp4M))
-        # 
-        #   rdRes[1, 2] <- typeM
-        #   return(rdRes)
-        # }
+        
+        retroDesignCoefficients <- function(hypTrueEff, myBoot) {
+          alpha <- self$options$alpha
+          rdRes <- matrix(0, nrow = 1, ncol = 4)
+          rdRes[1, 1:2] <- myBoot$t0[3:4]
+          
+          # se of emp. dist.
+          observedSE <- print.bootSE(myBoot)[3:4,3]
+          rdRes[1, 5:6] <- observedSE
+          
+          # D <- abs(myBoot$t0 - hypTrueEff/observedSE)
+          D <- abs(myBoot$t0 - hypTrueEff)
+          lambda <- D / observedSE
+          self$results$debug$setContent(list(D,print.bootSE(myBoot)))
+          # Quantile matching the upper 1 - alpha in the emp. dist.
+          empFn <- ecdf(myBoot$t)
+          z <- quantile(empFn,  1 - (alpha))
+          
+          exp1P <- pEmp(empFn,-z - lambda)
+          exp2P <- pEmp(empFn, z - lambda)
+          
+          power <- exp1P + 1 - exp2P
+          typeS <- exp1P / (exp1P + 1 - exp2P)
+          # rdRes[1, 4] <- typeS
+          rdRes[1, 3] <- power
+          
+          # typeM error rate
+          exp1M <- dEmp(empFn, qEmp, lambda + z, myBoot$t)
+          exp2M <- dEmp(empFn, qEmp, lambda - z, myBoot$t)
+          exp3M <- pEmp(empFn, lambda + z)
+          exp4M <- pEmp(empFn, lambda - z)
+          
+          typeM <- (exp1M + exp2M +
+                      lambda * (exp3M + exp4M - 1)) /
+            (lambda * (1 - exp3M + exp4M))
+          
+          rdRes[1, 2] <- typeM
+          return(rdRes)
+        }
         
         # Results functions ----
         
-        highlight <- function(table, column, i) {
-          table$addFormat(rowNo = i,
-                          col = column,
-                          format = jmvcore::Cell.NEGATIVE)
-        }
-        
-        blankRow <- function(){
-          self$results$DESCtable$addRow(rowKey = self$results$DESCtable$rowCount + 1,
-                         values = list(bob = ""))
-        }
-        
-        designAnalysis <- function(designList, Data, group, match) {
-            if (self$options$D == "") {
-              if (self$options$difFlagScale == "zt") {
-                hypTrueEff <- c(0, 0.13, 0.26)
-              } else {
-                hypTrueEff <- c(0, 0.035, 0.07)
-              }
-            } else {
-              hypTrueEff <- as.numeric(self$options$D)
-            }
-            
-            GC <-
-              data.frame("item" = rep(as.character(), times = length(designList)*length(hypTrueEff)),
-                         "obsEff" = rep(as.numeric(), times = length(designList)*length(hypTrueEff)),
-                         "hypTrueEff"= rep(as.numeric(), times = length(designList)*length(hypTrueEff)),
-                         "typeM" = rep(as.numeric(), times = length(designList)*length(hypTrueEff)),
-                         "power" = rep(as.numeric(), times = length(designList)*length(hypTrueEff)),
-                         # "typeS" = rep(as.numeric(), times = length(designList)*length(hypTrueEff)),
-                         "bootSE" = rep(as.numeric(), times = length(designList)*length(hypTrueEff)),
-                         stringsAsFactors = FALSE)
-            
-          for (item in 1:length(designList)) {
-            curItem <- designList[item]
-            if (is.na(curItem)) {
-              self$results$gcTable$addRow(
-                rowKey = item,
-                values = list(
-                  itemName = "No items flagged as exhibitting DIF."
-                ))
-              return()
-            }
-            empDATA <- cbind(Item = jmvcore::toNumeric(Data[, curItem]), jmvcore::toNumeric(group), match)
-            colnames(empDATA) <-
-              c(colnames(Data)[item], "GROUP", "SCORES")
-            myBoot <- empDist(empDATA)
-            tick <- length(hypTrueEff) - 1
-            for (hypInd in 1:length(hypTrueEff)) {
-              private$.checkpoint()
-              GC[item*length(hypTrueEff) - tick, 1] <- designList[item]
-              GC[item*length(hypTrueEff) - tick, 2] <- as.character((hypTrueEff[hypInd]))
-              GC[item*length(hypTrueEff) - tick, 3:6] <- as.numeric(retroDesign(hypTrueEff = hypTrueEff[hypInd],myBoot))
-              tick <- tick - 1
-              }
+        highlight <- function(table, row, column) {
+          for (i in column){
+             table$addFormat(rowNo = row,
+                  col = i,
+                  format = jmvcore::Cell.NEGATIVE) 
           }
+        }
+        
+        blankRow <- function() {
+          self$results$DESCtable$addRow(rowKey = self$results$DESCtable$rowCount + 1,
+                                        values = list(bob = ""))
+        }
+        
+        designAnalysis <-
+          function(designList,
+                   Data,
+                   group,
+                   match,
+                   bootSims,
+                   type,
+                   coefficients = FALSE) {
+            if (coefficients == FALSE) {
+              if (self$options$D == "") {
+                if (self$options$difFlagScale == "zt") {
+                  hypTrueEff <- c(0, 0.13, 0.26)
+                } else {
+                  hypTrueEff <- c(0, 0.035, 0.07)
+                }
+                labels <- c("Null", "Moderate", "Large")
+              } else {
+                hypTrueEff <- as.numeric(self$options$D)
+                labels <- c("Custom Hyp.")
+              }
+              
+              GC <-
+                data.frame(
+                  "label" = rep(as.character(), times = length(designList) * length(hypTrueEff)),
+                  "item" = rep(as.character(), times = length(designList) * length(hypTrueEff)),
+                  "obsEff" = rep(as.numeric(), times = length(designList) *
+                                   length(hypTrueEff)),
+                  "hypTrueEff" = rep(as.numeric(), times = length(designList) *
+                                       length(hypTrueEff)),
+                  "typeM" = rep(as.numeric(), times = length(designList) *
+                                  length(hypTrueEff)),
+                  "power" = rep(as.numeric(), times = length(designList) *
+                                  length(hypTrueEff)),
+                  "bootSE" = rep(as.numeric(), times = length(designList) *
+                                   length(hypTrueEff)),
+                  stringsAsFactors = FALSE
+                )
+            } else {
+              if (self$options$D == "") {
+                hypTrueEff <- 0
+                labels <- "Null"
+              } else {
+                  hypTrueEff <- as.numeric(self$options$D)
+                  labels <- c("Custom Hyp.")
+              }
+            
+              GC <-
+                data.frame(
+                  "label" = rep(as.character(), times = length(designList) * length(hypTrueEff)),
+                  "item" = rep(as.character(), times = length(designList) * length(hypTrueEff)),
+                  "obsMain" = rep(as.numeric(), times = length(designList) *
+                                   length(hypTrueEff)),
+                  "obsInt" = rep(as.numeric(), times = length(designList) *
+                                   length(hypTrueEff)),
+                  "hypTrueEff" = rep(as.numeric(), times = length(designList) *
+                                       length(hypTrueEff)),
+                  "bootSE" = rep(as.numeric(), times = length(designList) *
+                                   length(hypTrueEff)),
+                  "typeMMain" = rep(as.numeric(), times = length(designList) *
+                                  length(hypTrueEff)),
+                  "typeSMain" = rep(as.numeric(), times = length(designList) *
+                                  length(hypTrueEff)),
+                  "typeMInt" = rep(as.numeric(), times = length(designList) *
+                                  length(hypTrueEff)),
+                  "typeSInt" = rep(as.numeric(), times = length(designList) *
+                                  length(hypTrueEff)),
+                  "power" = rep(as.numeric(), times = length(designList) *
+                                  length(hypTrueEff)),
+                  stringsAsFactors = FALSE
+                )
+            }
+            
+            for (item in 1:length(designList)) {
+              curItem <- designList[item]
+              if (is.na(curItem)) {
+                self$results$gcTable$addRow(
+                  rowKey = item,
+                  values = list(itemName = "No items flagged as exhibitting DIF.")
+                )
+                return()
+              }
+              empDATA <-
+                cbind(Item = jmvcore::toNumeric(Data[, curItem]),
+                      jmvcore::toNumeric(group),
+                      match)
+              colnames(empDATA) <-
+                c(colnames(Data)[item], "GROUP", "SCORES")
+              tick <- length(hypTrueEff) - 1
+              if (coefficients == FALSE) {
+                myBoot <- empDist(empDATA, R = bootSims, type = type, coefficients = FALSE)
+              } else {
+                myBoot <- empDist(empDATA, R = bootSims, type = type, coefficients = TRUE)
+              }
+              for (hypInd in 1:length(hypTrueEff)) {
+                private$.checkpoint()
+                if (coefficients == FALSE) {
+                  retroDesignRes <- retroDesign(hypTrueEff = hypTrueEff[hypInd], myBoot)
+                } else {
+                  retroDesignRes <- retroDesignCoefficients(hypTrueEff = hypTrueEff[hypInd], myBoot)
+                }
+                GC[item * length(hypTrueEff) - tick, 1] <- labels[hypInd]
+                GC[item * length(hypTrueEff) - tick, 2] <-
+                  designList[item]
+                GC[item * length(hypTrueEff) - tick, 3] <-
+                  as.character((hypTrueEff[hypInd]))
+                GC[item * length(hypTrueEff) - tick, 4:7] <-
+                  as.numeric(retroDesignRes)
+                tick <- tick - 1
+              }
+            }
             
             return(GC)
           }
         
-        designAnalysisSensitivity <- function(designList, Data, group, match, nMin, nMax, points) {
-          nList <- seq(nMin, nMax, length.out = points)
-          if (self$options$D == "") {
-            if (self$options$difFlagScale == "zt") {
-              hypTrueEff <- c(0, 0.13, 0.26)
-            } else {
-              hypTrueEff <- c(0, 0.035, 0.07)
-            }
-          } else {
-            hypTrueEff <- as.numeric(self$options$D)
-          }
-          
-          sensMatrix <- matrix(nrow = points*length(designList)*length(hypTrueEff), ncol = 7)
-          for (i in nList){
-            nListTick <- length(nList) - 1
-            # Sample i rows from Data with replacement
-            Data <- Data[sample(nrow(Data), round(i), replace = TRUE),]
-            for (item in 1:length(designList)) {
-              curItem <- designList[item]
-              if (is.na(curItem)) {
-                stop("No items have been flagged for DIF")
-                return()
-              }
-              empDATA <- cbind(Item = jmvcore::toNumeric(Data[, curItem]), jmvcore::toNumeric(group), match)
-              colnames(empDATA) <-
-                c(colnames(Data)[item], "GROUP", "SCORES")
-              myBoot <- empDist(empDATA)
-              tick <- length(hypTrueEff) - 1
-              for (hypInd in 1:length(hypTrueEff)) {
-                private$.checkpoint()
-                sensMatrix[length(nList) - nListTick * item * length(hypTrueEff) - tick, 1] <- i
-                sensMatrix[length(nList) - nListTick * item * length(hypTrueEff) - tick, 2] <- designList[item]
-                sensMatrix[length(nList) - nListTick * item * length(hypTrueEff) - tick, 3] <- as.character((hypTrueEff[hypInd]))
-                sensMatrix[length(nList) - nListTick * item * length(hypTrueEff) - tick, 4:7] <- as.numeric(retroDesign(hypTrueEff = hypTrueEff[hypInd],myBoot))
-                tick <- tick - 1
-                }
-            }
-              nListTick <- nListTick - 1
-          }
-          return(sensMatrix)
-        }
-          
-        buildGC <- function(GC) {
-          table <- self$results$gcTable
-            for (item in 1:nrow(GC)){
-              table$addRow(
-                rowKey = item,
-                values = list(
-                  itemName = GC[item, 1],
-                  obsEff = GC[item, 3],
-                  bootSE = GC[item, 6],
-                  hypTrueEff = GC[item, 2],
-                  typeM = GC[item, 4],
-                  # typeS = GC[item, 6],
-                  power = GC[item, 5]
-                )
+        buildGC <- function(GC, table) {
+          for (item in 1:nrow(GC)) {
+            table$addRow(
+              rowKey = item,
+              values = list(
+                label = GC[item, 1],
+                itemName = GC[item, 2],
+                obsEff = GC[item, 4],
+                bootSE = GC[item, 7],
+                hypTrueEff = GC[item, 3],
+                typeM = GC[item, 5],
+                power = GC[item, 6]
               )
+            )
+            if (GC[item, 4] < GC[item, 3]){
+              highlight(table, item, 1)
+              table$setNote("interpretGC", "Several items (flagged red) have observed effect sizes below the hypothesized true effect. For a guide to interpretation see: https://bit.ly/2I274JY")
+            }
           }
         }
         
@@ -784,29 +841,59 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             group = group,
             groupOne = groupOne,
             anchor = anchor,
-            # groupType = groupType,
+            groupType = groupType,
             match = match,
             type = type,
             criterion = criterion,
             alpha = alpha,
             purify = purify,
+            nIter = nIter,
             pAdjustMethod = pAdjustMethod
           )
         
-        
-        
-        if (self$options$designAnalysis) {
-          if (self$options$designAnalysisSigOnly) {
-            designList <- model$names[model$DIFitems]
-          } else{
-            designList <- model$names
+        # Build GC tables ----
+        runDesignAnalysis <- function(){
+          if (self$options$designAnalysis) {
+            if (self$options$designAnalysisSigOnly) {
+              designList <- model$names[model$DIFitems]
+            } else{
+              designList <- model$names
+            }
+            GCTable = designAnalysis(
+              designList = designList,
+              Data = Data,
+              group = group,
+              match = model$matchScores,
+              bootSims = bootSims,
+              type = type
+            )
+            if (length(GCTable) != 0) {
+              table <- self$results$gcTable
+              buildGC(GCTable, table)
+            }
           }
-          GCTable = designAnalysis(designList = designList, Data = Data, group = group, match = model$matchScores)
-          if (length(GCTable) != 0){
-            buildGC(GCTable)
+          
+          if (self$options$designAnalysisEffectType == "coefficients") {
+            if (self$options$designAnalysisSigOnly) {
+              designList <- model$names[model$DIFitems]
+            } else {
+              designList <- model$names
+            }
+            gcTableCoefficients = designAnalysis(
+              designList = designList,
+              Data = Data,
+              group = group,
+              match = model$matchScores,
+              coefficients = TRUE,
+              bootSims = bootSims,
+              type = type
+            )
+            if (length(gcTableCoefficients) != 0) {
+              table <- self$results$gcTableCoefficients
+              buildGC(gcTableCoefficients, table)
+            }
           }
         }
-        
         # Description Results Table ----
         calculateDESCtable <- function() {
           if (self$results$DESCtable$isNotFilled() |
@@ -920,7 +1007,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 )
                 loop <- NULL
                 for (i in 1:model$nrPur) {
-                  loop[i] <- sum(model$difPur[1,] == model$difPur[i + 1,])
+                  loop[i] <- sum(model$difPur[1, ] == model$difPur[i + 1, ])
                 }
                 if (max(loop) != length(model$genLogistik)) {
                   table$addRow(
@@ -966,8 +1053,8 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                   )
                 )
                 
-            blankRow()
-            
+                blankRow()
+                
               }
             }
             
@@ -978,30 +1065,33 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               ))
             )
             
-            if (length(groupValueList) > 2 & groupType == "group"){
+            if (length(groupValueList) > 2 & groupType == "group") {
               blankRow()
               table$addRow(
-              rowKey = self$results$DESCtable$rowCount + 1,
-              values = list(bob = paste0(
-                "(The data file provided non-binary groupings. Please see below for the recoding legend.)"
-              ))
-            )
-                          blankRow()
+                rowKey = self$results$DESCtable$rowCount + 1,
+                values = list(
+                  bob = paste0(
+                    "(The data file provided non-binary groupings. Please see below for the recoding legend.)"
+                  )
+                )
+              )
+              blankRow()
             }
             
-            if (groupType == "group"){
+            if (groupType == "group") {
               table$addRow(
                 rowKey = self$results$DESCtable$rowCount + 1,
-                values = list(bob = paste0(
-                  "Group coding: "
-                ))
+                values = list(bob = paste0("Group coding: "))
               )
-              for (i in 1:length(groupValueList)){
+              for (i in 1:length(groupValueList)) {
                 table$addRow(
-                rowKey = self$results$DESCtable$rowCount + 1,
-                values = list(bob = paste0(
-                  groupValueList[i], " : ", ifelse(i == 1, "Group A", "Group B"))
-                ))
+                  rowKey = self$results$DESCtable$rowCount + 1,
+                  values = list(bob = paste0(
+                    groupValueList[i],
+                    " : ",
+                    ifelse(i == 1, "Group A", "Group B")
+                  ))
+                )
               }
             }
             
@@ -1043,54 +1133,62 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             }
             blankRow()
             
+            table$addRow(
+              rowKey = self$results$DESCtable$rowCount + 1,
+              values = list(
+                bob =  paste0("Effect size (Nagelkerke's 'R\u00B2') scale: ", switch(
+                  self$options$difFlagScale,
+                  zt = "Zumbo-Thomas",
+                  jg = "Jodoin-Gierl"
+                ))
+              )
+            )
+            table$addRow(
+              rowKey = self$results$DESCtable$rowCount + 1,
+              values = list(bob =  switch(
+                self$options$difFlagScale,
+                zt = "'A': Negligible effect ('R\u00B2' 0 <> 0.13)",
+                jg = "'A': Negligible effect ('R\u00B2' 0 <> 0.035)"
+              ))
+            )
+            table$addRow(
+              rowKey = self$results$DESCtable$rowCount + 1,
+              values = list(bob =  switch(
+                self$options$difFlagScale,
+                zt = "'B': Moderate effect ('R\u00B2' 0.13 <> 0.26)",
+                jg = "'B': Moderate effect ('R\u00B2' 0.035 <> 0.07)"
+              ))
+            )
+            table$addRow(
+              rowKey = self$results$DESCtable$rowCount + 1,
+              values = list(bob =  switch(
+                self$options$difFlagScale,
+                zt = "'C': Large effect ('R\u00B2' 0.26 <> 1)",
+                jg = "'C': Large effect ('R\u00B2' 0.07 <> 1)"
+              ))
+            )
+            blankRow()
             
-                      # Set notes
-          # if (self$options$difFlagScale == "zt") {
-          #   table$setNote(key = "ZT", note = "Zumbo & Thomas (ZT): 'A' = 'R\u00B2' 0 <> 0.13, 'B' = 'R\u00B2' 0.13 <> 0.26, 'C' = 'R\u00B2' 0.26 <> 1")
-          # } else {
-          #   table$setNote(key = "JG", note = "Jodoin & Gierl (JG): 'A' = 'R\u00B2' 0 <> 0.035, 'B' = 'R\u00B2' 0.035 <> 0.07, 'C' = 'R\u00B2' 0.07 <> 1")
-          # }
+            if (self$options$designAnalysis) {
+              table$addRow(
+                rowKey = self$results$DESCtable$rowCount + 1,
+                values = list(bob = paste0("Post-Data Design Analysis performed on ",
+                                           ifelse(self$options$designAnalysisSigOnly, "only flagged ", "all "),
+                                           "items using ",
+                                           self$options$bootSims,
+                                           "bootstraps to create an empirical distribution for ",
+                                           "\u0394 Naeglekirke R\u00B2."
+                                           ))
+              )
+            }
             
-            table$addRow(
-              rowKey = self$results$DESCtable$rowCount + 1,
-              values = list(bob =  paste0("Effect size (Nagelkerke's 'R\u00B2') scale: ", switch(self$options$difFlagScale,
-                                                                                                 zt = "Zumbo-Thomas",
-                                                                                                 jg = "Jodoin-Gierl")))
-            )
-            table$addRow(
-              rowKey = self$results$DESCtable$rowCount + 1,
-              values = list(bob =  switch(self$options$difFlagScale,
-                                          zt = "'A': Negligible effect ('R\u00B2' 0 <> 0.13)",
-                                          jg = "'A': Negligible effect ('R\u00B2' 0 <> 0.035)"))
-            )
-            table$addRow(
-              rowKey = self$results$DESCtable$rowCount + 1,
-              values = list(bob =  switch(self$options$difFlagScale,
-                                          zt = "'B': Moderate effect ('R\u00B2' 0.13 <> 0.26)",
-                                          jg = "'B': Moderate effect ('R\u00B2' 0.035 <> 0.07)"))
-            )
-            table$addRow(
-              rowKey = self$results$DESCtable$rowCount + 1,
-              values = list(bob =  switch(self$options$difFlagScale,
-                                          zt = "'C': Large effect ('R\u00B2' 0.26 <> 1)",
-                                          jg = "'C': Large effect ('R\u00B2' 0.07 <> 1)"))
-            )
           }
-        }
-        
-        DESCstate <- self$results$DESCtable$state
-        
-        if (!is.null(DESCstate)) {
-          # ... populate the table from the state
-        } else {
-          DESCstate <- calculateDESCtable()
-          # ... populate the table from the state
-          self$results$DESCtable$setState(DESCstate)
         }
         
         # DIF Results Table ----
         
         calculateDIFTable <- function() {
+          # self$results$debug$setContent(list(model))
           for (i in 1:length(Data)) {
             if (self$results$DIFtable$isNotFilled()) {
               table <- self$results$DIFtable
@@ -1101,13 +1199,14 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     item = model$names[i],
                     chiSquare = model$Logistik[i],
                     p = model$adjusted.p[i],
-                    difType = ifelse(
-                      model$adjusted.p[i] <= alpha,
-                      ifelse(model$logitPar[i, 4] == 0, "Uni", "Non-Uni"),
-                      "No DIF"
-                    ),
-                    #p = paste0(round(model$p.value[i], 3), symnum(model$p.value[i], c(0, 0.001, 0.01, 0.05, 0.1, 1), symbols = c("***", "**", "*", ".", ""))),
                     effSize = model$deltaR2[i],
+                    coeffMain = model$coefficients[i, 3],
+                    coeffInteraction = switch(
+                      self$options$type,
+                      both = model$coefficients[i, 4],
+                      udif = "",
+                      nudif = model$coefficients[i, 4]
+                    ),
                     ZT = ifelse(model$adjusted.p[i] <= alpha, model$ZT[i], ""),
                     JG = ifelse(model$adjusted.p[i] <= alpha, model$JG[i], "")
                   )
@@ -1118,13 +1217,13 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             # Highlight DIF results table
             if (self$options$difFlagScale == "zt") {
               if (model$adjusted.p[i] <= alpha) {
-                highlight(table, "ZT", i)
-                highlight(table, "item", i)
+                highlight(table, i, "ZT")
+                highlight(table, i, "item")
               }
             } else {
               if (model$adjusted.p[i] <= alpha) {
-                highlight(table, "JG", i)
-                highlight(table, "item", i)
+                highlight(table, i, "JG")
+                highlight(table, i, "item")
               }
             }
           }
@@ -1140,6 +1239,17 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             )
           )
         }
+        # State Savers ----
+        
+        DESCstate <- self$results$DESCtable$state
+        
+        if (!is.null(DESCstate)) {
+          # ... populate the table from the state
+        } else {
+          DESCstate <- calculateDESCtable()
+          # ... populate the table from the state
+          self$results$DESCtable$setState(DESCstate)
+        }
         
         DIFstate <- self$results$DIFtable$state
         
@@ -1149,6 +1259,16 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           DIFstate <- calculateDIFTable()
           # ... populate the table from the state
           self$results$DIFtable$setState(DIFstate)
+        }
+        
+        gcState <- self$results$gcTable$state
+        
+        if (!is.null(gcState)) {
+          # ... populate the table from the state
+        } else {
+          # ... populate the table from the state
+          gcState <- runDesignAnalysis()
+          self$results$gcTable$setState(gcState)
         }
         
         table <- self$results$gcTable
@@ -1216,20 +1336,19 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             method.args = (family = "binomial")
           ) +
           labs(colour = "Group membership") +
-          ggtitle(
-            paste("Item: ", colnames(plotData)),
-            subtitle = paste(
-              "Effect Size: ",
-              round(model$deltaR2[model$names == colnames(plotData)[1]], 3),
-              " | p = ", round(model$adjusted.p[model$names == colnames(plotData)[1]], 3)
-            )
-          ) +
+          ggtitle(paste("Item: ", colnames(plotData)),
+                  subtitle = paste(
+                    "Effect Size: ",
+                    round(model$deltaR2[model$names == colnames(plotData)[1]], 3),
+                    " | p = ",
+                    round(model$adjusted.p[model$names == colnames(plotData)[1]], 3)
+                  )) +
           xlab(ifelse(
             is.null(self$options$matchVar),
             "Total sore",
             "Supplied matching variable range"
           )) +
-          ylab("Probability of endorsement") +
+          ylab("Prediicted probability of endorsement") +
           theme_classic()
         
         print(p)

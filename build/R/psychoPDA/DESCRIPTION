@@ -4,8 +4,8 @@ Title: Psychometric Post-Data Analysis
 Version: 1.2.3
 Author: Lucas Friesen
 Maintainer: Lucas Friesen <lucas.j.friesen@gmail.com>
-Description: PPDA provides several Analysis functions designed to enable researchers to perform post-data analyses in psychometric validation research. Currently, these functions include: Differential Item functioning and Retroactive Design Analysis for T-Tests of mean differences and correlations.
+Description: PPDA provides a suite of modules designed to enable researchers to perform post-data analyses in psychometric validation research. Currently, these functions include: Differential Item functioning and Retroactive Design Analysis for T-Tests of mean differences and correlations.
 Encoding: UTF-8
 LazyData: true
 Imports: jmvcore (>= 0.8.5), R6, stats, ggplot2, boot
-Built: R 3.3.0; ; 2019-03-25 19:43:08 UTC; unix
+Built: R 3.3.0; ; 2019-03-29 00:13:29 UTC; unix

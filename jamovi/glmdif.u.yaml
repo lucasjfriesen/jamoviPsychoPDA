@@ -20,11 +20,10 @@ children:
             events:
               change: './glmDIF.events::onChange_item'
       - type: TargetLayoutBox
-        label: Grouping Variable
+        label: Anchor Items
         children:
           - type: VariablesListBox
-            name: group
-            maxItemCount: 1
+            name: anchor
             isTarget: true
       - type: TargetLayoutBox
         label: Matching Variable
@@ -34,11 +33,13 @@ children:
             maxItemCount: 1
             isTarget: true
       - type: TargetLayoutBox
-        label: Anchor Items
+        label: Grouping Variable
         children:
           - type: VariablesListBox
-            name: anchor
+            name: group
+            maxItemCount: 1
             isTarget: true
+
   - type: CollapseBox
     label: DIF Analysis
     margin: large
@@ -50,31 +51,35 @@ children:
           - type: LayoutBox
             children:
               - type: ComboBox
-                name: difFlagScale
-              - type: ComboBox
                 name: type
               - type: ComboBox
                 name: criterion
+              - type: ComboBox
+                name: groupType
+              - type: ComboBox
+                name: difFlagScale
               - type: TextBox
                 name: alpha
                 format: number
               - type: ComboBox
                 name: pAdjustMethod
-              - type: Label
-                label: ________________
-                children:
-                  - type: ComboBox
-                    name: groupType
-              - type: Label
-                label: ________________
-                children:
-                  - type: CheckBox
-                    name: purify
-                    enable: (anchor)
-                  - type: TextBox
-                    name: nIter
-                    format: number
-                    enable: (purify)
+          - type: LayoutBox
+            margin: large
+            children:
+              - type: CheckBox
+                name: nagEff
+              - type: CheckBox
+                name: coeffEff
+          - type: LayoutBox
+            margin: large
+            children:
+              - type: CheckBox
+                name: purify
+                enable: (anchor)
+              - type: TextBox
+                name: nIter
+                format: number
+                enable: (purify)
   - type: CollapseBox
     label: Design Analysis
     margin: large
@@ -95,14 +100,24 @@ children:
               - type: CheckBox
                 name: power
                 enable: (designAnalysis)
-              - type: TextBox
-                name: D
-                format: string
-              - type: TextBox
-                name: bootSims
-                format: number
+      - type: LayoutBox
+        margin: large
+        children:
+          - type: ComboBox
+            name: designAnalysisEffectType
+      - type: LayoutBox
+        margin: large
+        children:
+          - type: TextBox
+            name: D
+            format: string
+            enable: (designAnalysis)
+          - type: TextBox
+            name: bootSims
+            format: number
+            enable: (designAnalysis)
   - type: CollapseBox
-    label: Item Characteristic Curves
+    label: Item Response Curves
     margin: large
     collapsed: true
     children:

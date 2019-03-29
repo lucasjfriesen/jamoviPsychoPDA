@@ -125,9 +125,9 @@ rdTTestResults <- if (requireNamespace('jmvcore')) R6::R6Class(
         instructions = function() private$.items[["instructions"]],
         rdTTest = function() private$.items[["rdTTest"]],
         plotHTE = function() private$.items[["plotHTE"]],
-        plotHTEViz = function() private$.items[["plotHTEViz"]],
         plotN = function() private$.items[["plotN"]],
-        plotSE = function() private$.items[["plotSE"]]),
+        plotSE = function() private$.items[["plotSE"]],
+        plotHTEViz = function() private$.items[["plotHTEViz"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -184,18 +184,6 @@ rdTTestResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 width=800,
                 height=600,
                 renderFun=".plotHTE"))
-            self$add(jmvcore::Array$new(
-                options=options,
-                name="plotHTEViz",
-                title="Sensitivity - Viz",
-                items="(hypTrueEff)",
-                template=jmvcore::Image$new(
-                    options=options,
-                    width=800,
-                    height=600,
-                    renderFun=".plotHTEViz",
-                    visible="(HTEViz)",
-                    requiresData=TRUE)))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="plotN",
@@ -211,7 +199,19 @@ rdTTestResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 visible="(sensSE)",
                 width=800,
                 height=600,
-                renderFun=".plotSE"))}))
+                renderFun=".plotSE"))
+            self$add(jmvcore::Array$new(
+                options=options,
+                name="plotHTEViz",
+                title="Sensitivity - Viz",
+                items="(hypTrueEff)",
+                template=jmvcore::Image$new(
+                    options=options,
+                    width=800,
+                    height=600,
+                    renderFun=".plotHTEViz",
+                    visible="(HTEViz)",
+                    requiresData=TRUE)))}))
 
 rdTTestBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     "rdTTestBase",
@@ -253,9 +253,9 @@ rdTTestBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$rdTTest} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$plotHTE} \tab \tab \tab \tab \tab an image \cr
-#'   \code{results$plotHTEViz} \tab \tab \tab \tab \tab an array of images \cr
 #'   \code{results$plotN} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$plotSE} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$plotHTEViz} \tab \tab \tab \tab \tab an array of images \cr
 #' }
 #'
 #' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:

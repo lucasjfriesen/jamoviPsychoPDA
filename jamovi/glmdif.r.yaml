@@ -9,10 +9,10 @@ items:
       type: Preformatted
 
     - name: instructions
-      title: Procedure Notes
+      title: Instructions
       type: Table
       rows: 4
-      visible: False
+      visible: True
       columns:
         - name: ted
           title: ""
@@ -22,6 +22,7 @@ items:
       title: Procedure Notes
       type:  Table
       rows: 0
+      refs: binaryDIF
       clearWith: 
           - item
           - group
@@ -39,7 +40,6 @@ items:
           - designAnalysisSigOnly
           - bootSims
           - D
-           
       columns: 
         - name: bob
           title: ""
@@ -68,6 +68,20 @@ items:
           title: Item
           type: text
 
+        - name: ZT
+          title: Zumbo-Thomas
+          type: text
+          visible: (difFlagScale:zt)
+
+        - name: JG
+          title: Jodoin-Gierl
+          type: text
+          visible: (difFlagScale:jg)
+
+        #- name: difType
+        #  title: Result
+        #  type: text
+
         - name: p
           title: P-value
           type: number
@@ -81,23 +95,21 @@ items:
           title: "Naeglekirke R\u00B2"
           type: number
           format: zto,pvalue
+          visible: (nagEff)
 
-        - name: difType
-          title: Type
-          type: text
+        - name: coeffMain
+          title: Main Effect
+          type: number
+          visible: (coeffEff)
 
-        - name: ZT
-          title: Zumbo-Thomas
-          type: text
-          visible: (difFlagScale:zt)
+        - name: coeffInteraction
+          title: Interaction Effect
+          type: number
+          visible: (coeffEff)
 
-        - name: JG
-          title: Jodoin-Gierl
-          type: text
-          visible: (difFlagScale:jg)
 
     - name: gcTable
-      title: Design Analysis
+      title: "Design Analysis - Naeglekirke R\u00B2"
       type: Table
       rows: 0
       visible: (designAnalysis)
@@ -119,6 +131,9 @@ items:
           - bootSims
           - D
       columns:
+        - name: label
+          title: Effect
+          type: text        
         - name: itemName
           title: Item
           type: text
@@ -128,9 +143,6 @@ items:
         - name: bootSE
           title: Bootstrap SE
           type: number
-        - name: hypTrueEff
-          title: Hyp. True Effect
-          type: text 
         - name: typeM
           title: Type-M
           type: number
@@ -140,8 +152,74 @@ items:
           format: (zto)
           visible: (power)
 
+    - name: gcTableCoefficients
+      title: "Design Analysis - Regression Coefficients"
+      type: Table
+      rows: 0
+      visible: (designAnalysisEffectType)
+      clearWith: 
+          - item
+          - group
+          - matchVar
+          - anchor
+          - groupType
+          - difFlagScale
+          - type
+          - criterion
+          - alpha
+          - nIter
+          - purify
+          - pAdjustMethod
+          - designAnalysis
+          - designAnalysisSigOnly
+          - bootSims
+          - D
+      columns:
+        - name: label
+          title: Effect
+          type: text
+        - name: itemName
+          title: Item
+          type: text
+        - name: hypTrueEff
+          title: Hyp. True Effect
+          type: text 
+        - name: obsMain
+          title: Obs. Main
+          type: text
+        - name: obsMainSE
+          title: Obs. Main SE
+        - name: typeMMain
+          title: Type-M Main
+          type: number
+        - name: typeSMain
+          title: Type-S Main
+          type: number
+        - name: powerMain
+          title: Observed Power Main
+          type: number
+          format: (zto)
+          visible: (power)
+        - name: obsInt
+          title: Obs. Interaction
+          type: text
+        - name: obsIntSE
+          title: Obs. Interaction SE
+          type: number
+        - name: typeMInt
+          title: Type-M Int
+          type: number
+        - name: typeSInt
+          title: Type-S Int
+          type: number
+        - name: powerInt
+          title: Observed Power Int
+          type: number
+          format: (zto)
+          visible: (power)
+
     - name: ICCplots
-      title: Item Characteristic Curves
+      title: Item Response Curves - Based on Logistic Regression
       type: Array
       items: (plotVarsICC)
       template:
