@@ -256,7 +256,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="DESCtable",
                 title="Procedure Notes",
-                rows=1,
+                rows=0,
                 refs="binaryDIF",
                 clearWith=list(
                     "item",

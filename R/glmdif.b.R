@@ -478,7 +478,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         # These don't work for DESCtable or gcTable
         
         DESCstate <- self$results$DESCtable$state
-        if (DESCstate)) {
+        if (!is.null(DESCstate)) {
           # ... populate the table from the state
         } else {
           # ... calculate the state

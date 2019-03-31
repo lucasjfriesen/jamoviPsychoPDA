@@ -8,4 +8,4 @@ Description: PPDA provides a suite of modules designed to enable researchers to 
 Encoding: UTF-8
 LazyData: true
 Imports: jmvcore (>= 0.8.5), R6, stats, ggplot2, boot
-Built: R 3.3.0; ; 2019-03-31 22:58:31 UTC; unix
+Built: R 3.3.0; ; 2019-03-31 23:13:01 UTC; unix
