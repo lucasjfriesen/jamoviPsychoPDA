@@ -256,7 +256,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="DESCtable",
                 title="Procedure Notes",
-                rows=0,
+                rows=1,
                 refs="binaryDIF",
                 clearWith=list(
                     "item",
@@ -393,7 +393,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 name="gcTableCoefficients",
                 title="Design Analysis - Regression Coefficients",
                 rows=0,
-                visible="(designAnalysisEffectType)",
+                visible=FALSE,
                 clearWith=list(
                     "item",
                     "group",

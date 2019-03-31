@@ -156,7 +156,7 @@ items:
       title: "Design Analysis - Regression Coefficients"
       type: Table
       rows: 0
-      visible: (designAnalysisEffectType)
+      visible: False
       clearWith: 
           - item
           - group

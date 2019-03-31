@@ -119,7 +119,7 @@
         
         boot.empDist <- function(DATA, R, type, coefficients) {
           # Get bootstrapped distribution
-          myBoot <- boot(DATA, retroStat, R = R, type = type, coefficients = coefficients)
+          myBoot <- boot(DATA, boot.retroStat, R = R, type = type, coefficients = coefficients)
           if (!all(!is.na(myBoot$t))) {
             self$results$gcTable$setNote(
               key = colnames(DATA)[1],
