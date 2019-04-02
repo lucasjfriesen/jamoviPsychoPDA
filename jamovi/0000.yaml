@@ -31,14 +31,14 @@ analyses:
     name: rdTTest
     ns: psychoPDA
     menuGroup: PPDA
-    menuTitle: Mean Differences
     menuSubgroup: T-Tests
+    menuTitle: Mean Differences
   - title: Correlations
     name: ttestCor
     ns: psychoPDA
     menuGroup: PPDA
-    menuTitle: Correlations
     menuSubgroup: T-Tests
+    menuTitle: Correlations
 datasets:
   - name: DIF
     path: dataverbal.csv
