@@ -27,18 +27,6 @@ analyses:
 
       diferentially on that item.
     menuSubgroup: Differential Item Functioning
-  - title: Mean Differences
-    name: rdTTest
-    ns: psychoPDA
-    menuGroup: PPDA
-    menuSubgroup: T-Tests
-    menuTitle: Mean Differences
-  - title: Correlations
-    name: ttestCor
-    ns: psychoPDA
-    menuGroup: PPDA
-    menuSubgroup: T-Tests
-    menuTitle: Correlations
 datasets:
   - name: DIF
     path: dataverbal.csv

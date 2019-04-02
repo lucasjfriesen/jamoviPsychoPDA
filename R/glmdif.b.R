@@ -9,10 +9,6 @@
 
 
 
-
-
-# Data Wrangling ----
-
 glmDIFClass <- if (requireNamespace('jmvcore'))
   R6::R6Class(
     "glmDIFClass",
