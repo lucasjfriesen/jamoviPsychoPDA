@@ -393,7 +393,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 name="gcTableCoefficients",
                 title="Design Analysis - Regression Coefficients",
                 rows=0,
-                visible="(designAnalysisEffectType)",
+                visible=FALSE,
                 clearWith=list(
                     "item",
                     "group",
