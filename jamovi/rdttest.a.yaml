@@ -1,0 +1,86 @@
+---
+name:  rdTTest
+title: Mean Differences
+menuGroup: PPDA
+menuSubgroup: T-Tests
+version: '1.0.0'
+jas: '1.2'
+
+options:
+    - name: data
+      type: Data
+
+    - name: labelVar
+      title: Label
+      type: Variable
+
+    - name: hypTrueEff
+      title: Hypothesised True Effect Size
+      type: Variable
+      suggested:
+        - continuous
+      permitted:
+        - numeric
+
+    - name: observedSE
+      title: Observed Standard Error
+      type: Variable
+      suggested:
+        - continuous
+      permitted:
+        - numeric
+
+    - name: observedP
+      title: Observed P-Value
+      type: Variable
+      suggested:
+        - continuous
+      permitted:
+        - numeric
+
+    - name: n
+      title: N
+      type: Variable
+      suggested:
+        - continuous
+      permitted:
+        - numeric
+
+    - name: alpha
+      type: Number
+      title: Alpha
+      default: 0.05
+
+    - name: nSims
+      type: Number
+      title: Number of Simulations
+      default: 10000
+
+    - name: sensHyp
+      title: Sensitivity - Hypothesized True Effect
+      type: Bool
+      default: TRUE
+
+    - name: sensN
+      title: Sensitivity - Sample Size
+      type: Bool
+      default: TRUE
+
+    - name: sensSE
+      title: Sensitivity - Standard Error
+      type: Bool
+      default: TRUE
+
+    - name: HTEViz
+      title: Sensitivity - Scatter Viz HTE
+      type: Bool
+      default: FALSE
+
+
+#    - name: df
+#      type: Number
+#      title: Degrees of Freedom
+#      default: 9999
+
+
+...
