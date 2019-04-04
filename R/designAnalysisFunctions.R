@@ -6,6 +6,7 @@ designAnalysis.nagR2 <-
            bootSims,
            type,
            hypTrueEff,
+           alpha,
            difFlagScale,
            sigOnly) {
     if (hypTrueEff == "") {

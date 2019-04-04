@@ -55,7 +55,6 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 suggested=list(
                     "continuous"),
                 permitted=list(
-                    "factor",
                     "numeric"))
             private$..anchor <- jmvcore::OptionVariables$new(
                 "anchor",

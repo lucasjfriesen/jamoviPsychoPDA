@@ -51,7 +51,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         }
         # The full DF
         data <- self$data
-        
         # Data frame containing all items selected for analysis
         Data <-
           data.frame(jmvcore::toNumeric(data[, self$options$item]))
@@ -89,7 +88,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         
         
         # Vector containing grouping data
-        group <- as.character(data[, self$options$group])
+        group <- data[, self$options$group]
         groupType <- self$options$groupType
         
         if (groupType == "group") {
@@ -98,6 +97,9 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           group <-
             as.factor(ifelse(group == groupOne, "Group A", "Group B"))
           groupOne <- unique(group)[1]
+        } else {
+          groupOne <- median(group)
+          groupValueList <- c(min(group), max(group))
         }
         
         type <- self$options$type
@@ -163,7 +165,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             group = group,
             groupOne = groupOne,
             anchor = anchor,
-            anchorNames <- self$options$anchor,
+            anchorNames = self$options$anchor,
             groupType = groupType,
             match = match,
             type = type,
@@ -199,6 +201,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               bootSims = bootSims,
               type = type,
               hypTrueEff = self$options$D,
+              alpha = alpha,
               difFlagScale = self$options$difFlagScale,
               sigOnly = self$options$designAnalysisSigOnly
             )
@@ -449,17 +452,17 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             }
             
             # Highlight DIF results table
-            if (self$options$difFlagScale == "zt") {
-              if (model$adjusted.p[i] <= alpha) {
-                highlight(table, i, "ZT")
-                highlight(table, i, "item")
-              }
-            } else {
-              if (model$adjusted.p[i] <= alpha) {
-                highlight(table, i, "JG")
-                highlight(table, i, "item")
-              }
-            }
+            # if (self$options$difFlagScale == "zt") {
+            #   if (model$adjusted.p[i] <= alpha) {
+            #     highlight(table, i, "ZT")
+            #     highlight(table, i, "item")
+            #   }
+            # } else {
+            #   if (model$adjusted.p[i] <= alpha) {
+            #     highlight(table, i, "JG")
+            #     highlight(table, i, "item")
+            #   }
+            # }
           }
           
           df <-
@@ -560,7 +563,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     aes(
                       x = as.numeric(plotData$match),
                       y = as.integer(plotData[, 1]),
-                      colour = as.character(plotData$group)
+                      colour = plotData$group
                     )) +
           geom_smooth(
             method = "glm",

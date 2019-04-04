@@ -57,7 +57,6 @@ options:
       suggested:
         - continuous
       permitted:
-        - factor
         - numeric
       description:
           ui: >
@@ -134,7 +133,7 @@ options:
 
     - name: designAnalysisSigOnly
       type: Bool
-      title: Flagged items only
+      title: Constant Alpha
       default: true
       description:
         ui: >
