@@ -38,7 +38,7 @@ options:
             A vector of strings naming the item columns from `data` which are to be assessed for DIF
 
     - name: group
-      title: Grouping Variable
+      title: Grouping variable
       type: Variable
       suggested:
         - nominal
@@ -52,7 +52,7 @@ options:
             A string naming the grouping variable from `data`
 
     - name: matchVar
-      title: Matching Variable
+      title: Matching variable
       type: Variable
       suggested:
         - continuous
@@ -65,7 +65,7 @@ options:
             A string naming the matching variable from `data`
 
     - name: anchor
-      title: Anchor Item(s)
+      title: Anchor item(s)
       type: Variables
       suggested:
         - continuous
@@ -78,7 +78,7 @@ options:
             a vector of strings naming the anchor item columns from `data` for use in purification. This will be ignored if an external matching variable is supplied
 
     - name: groupType
-      title: Group Type
+      title: Group type
       type: List
       options:
       - name: group
@@ -92,7 +92,7 @@ options:
           Either "discrete" (default) to specify that group membership is made of two (or more than two) groups, or "continuous" to indicate that group membership is based on a continuous criterion. 
     
     - name: difFlagScale
-      title: Evaluation Scale
+      title: Evaluation scale
       type: List
       options:
         - name: zt
@@ -108,7 +108,7 @@ options:
 
     - name: designAnalysis
       type: Bool
-      title: Design Analysis
+      title: Design analysis
       default: false
       description:
         ui: >
@@ -118,7 +118,7 @@ options:
 
     - name: designAnalysisEffectType
       type: List
-      title: Effect Type
+      title: Effect type
       options: 
         - name: nagR2
           title: "\u0394 Naeglekirke R\u00B2"
@@ -133,7 +133,7 @@ options:
 
     - name: designAnalysisSigOnly
       type: Bool
-      title: Constant Alpha
+      title: Constant alpha
       default: true
       description:
         ui: >
@@ -154,7 +154,7 @@ options:
 
     - name: power
       type: Bool
-      title: Observed Power
+      title: Observed power
       default: false
       description:
         ui:
@@ -163,7 +163,7 @@ options:
           True/False, display the empirical observed power
 
     - name: D
-      title: Hypothesized True Effect Size
+      title: Hypothesized true effect size
       type: String
       default: ''
       description:
@@ -190,7 +190,7 @@ options:
           A character string specifying which DIF effects must be tested. Possible values are "both" (default), "udif" and "nudif"
 
     - name: criterion
-      title: Flagging Criterion
+      title: Flagging criterion
       type: List
       options:
       - name: "Wald"
@@ -209,7 +209,7 @@ options:
       default: true
 
     - name: coeffEff
-      title: Regression Coefficients
+      title: Regression coefficients
       type: Bool
       default: FALSE
 
@@ -224,7 +224,7 @@ options:
           Significance level
 
     - name: purify
-      title: Item Purification
+      title: Item purification
       type: Bool
       default: FALSE
       description: 
@@ -234,7 +234,7 @@ options:
           Should the method be used iteratively to purify the set of anchor items? (default is FALSE). Ignored if an external matching variable is supplied
 
     - name: nIter
-      title: Number of Iterations
+      title: Number of iterations
       type: Number
       default: 10
       description: 
@@ -244,7 +244,7 @@ options:
           The maximal number of iterations in the item purification process. (default is 10)  
 
     - name: pAdjustMethod
-      title: P-value Adjustment method
+      title: P-value adjustment method
       type: List
       options: 
         - name: bonferroni

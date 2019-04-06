@@ -19,6 +19,9 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
     inherit = glmDIFBase,
     private = list(
       .init = function() {
+      },
+      .run = function() {
+        
         if (is.null(self$options$group) |
             is.null(self$data) | is.null(self$options$item)) {
           self$results$DESCtable$setVisible(visible = FALSE)
@@ -53,15 +56,20 @@ div.instructions {
         } else {
           self$results$instructions$setVisible(visible = FALSE)
         }
-      },
-      .run = function() {
+        
         if (is.null(self$options$group) |
             is.null(self$data) |
             is.null(self$options$item)) {
           return()
         }
+
         # The full DF
         data <- self$data
+        # error <- jmvcore::extractErrorMessage(try(rowSums(sapply(x, as.numeric)), silent = TRUE))
+        # if (error == "'x' must be an array of at least two dimensions"){
+        #   stop("Your data is missing.",
+        #       call. = FALSE)
+        # }
         # Data frame containing all items selected for analysis
         Data <-
           data.frame(jmvcore::toNumeric(data[, self$options$item]))
@@ -396,7 +404,7 @@ div.instructions {
           }
           resDescTable <- blankRow(resDescTable)
           
-          resDescTable[nrow(resDescTable) + 1, "bob"] =  paste0("Effect size (Nagelkerke's 'R\u00B2') scale: ", switch(self$options$difFlagScale,
+          resDescTable[nrow(resDescTable) + 1, "bob"] =  paste0("Effect size (\u0394 Nagelkerke's R\u00B2) scale: ", switch(self$options$difFlagScale,
                                                                                                                        zt = "Zumbo-Thomas",
                                                                                                                        jg = "Jodoin-Gierl"))
           resDescTable[nrow(resDescTable) + 1, "bob"] =  switch(self$options$difFlagScale,
