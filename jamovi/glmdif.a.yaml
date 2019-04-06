@@ -41,7 +41,7 @@ options:
       title: Grouping Variable
       type: Variable
       suggested:
-        - continuous
+        - nominal
       permitted:
         - factor
         - numeric

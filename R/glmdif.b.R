@@ -23,22 +23,33 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             is.null(self$data) | is.null(self$options$item)) {
           self$results$DESCtable$setVisible(visible = FALSE)
           self$results$DIFtable$setVisible(visible = FALSE)
-          self$results$instructions$setRow(
-            rowNo = 1,
-            value = list(ted = "1) Place items to be assessed for DIF in the 'Item(s) for analysis' slot.")
-          )
-          self$results$instructions$setRow(
-            rowNo = 2,
-            value = list(ted = "2) [Optional] Place the remaining measure items in the 'Anchor Items' slot. This is not needed if a Matching Variable is supplied.")
-          )
-          self$results$instructions$setRow(
-            rowNo = 3,
-            value = list(ted = "3) [Optional] Place an external matching variable in the 'Matching Variable' slot. Measure total score will be calculated if this option is omitted.")
-          )
-          self$results$instructions$setRow(
-            rowNo = 4,
-            value = list(ted = "4) Place the grouping variable in the 'Grouping Variable' slot.")
-          )
+          self$results$instructions$setContent(
+"<html>
+<head>
+<style>
+
+div.instructions {
+  width: 500px;
+  height: 225px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+}
+</style>
+</head>
+<body>
+<div class='instructions'>
+<p>Welcome to PsychoPDA's Binary Differential Functioning Analysis. To get started:</p>
+<ol>
+<li>Place items to be assessed for DIF in the 'Item(s) for analysis' slot.<br /><br /></li>
+<li>[<em>Optional</em>] Place the remaining measure items in the 'Anchor Items' slot. This is not needed if a Matching Variable is supplied.<br /><br /></li>
+<li>[<em>Optional</em>] Place an external matching variable in the 'Matching Variable' slot. The measure total score will be calculated and used for matching if this option is omitted.<br /><br /></li>
+<li>Place the grouping variable in the 'Grouping Variable' slot.</li>
+</ol>
+<p>If you encounter any errors, or have questions, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/differentialItemFunctioning.html' target = '_blank'>documentation</a></p>
+</div>
+</body>
+</html>")
         } else {
           self$results$instructions$setVisible(visible = FALSE)
         }
@@ -158,23 +169,22 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         }
         
         # Model ----
-        
-        model <-
-          binaryDIF.logistic(
-            DATA = Data,
-            group = group,
-            groupOne = groupOne,
-            anchor = anchor,
-            anchorNames = self$options$anchor,
-            groupType = groupType,
-            match = match,
-            type = type,
-            criterion = criterion,
-            alpha = alpha,
-            purify = purify,
-            nIter = nIter,
-            pAdjustMethod = pAdjustMethod
-          )
+            model <-
+              binaryDIF.logistic(
+                DATA = Data,
+                group = group,
+                groupOne = groupOne,
+                anchor = anchor,
+                anchorNames = self$options$anchor,
+                groupType = groupType,
+                match = match,
+                type = type,
+                criterion = criterion,
+                alpha = alpha,
+                purify = purify,
+                nIter = nIter,
+                pAdjustMethod = pAdjustMethod
+              )
         
         # Build GC tables ----
         runDesignAnalysis <- function() {
@@ -187,7 +197,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             
             if (is.na(designList[1])) {
               self$results$gcTable$addRow(
-                rowKey = "twat",
+                rowKey = "doesntMatter",
                 values = list(itemName = "No items flagged as exhibitting DIF.")
               )
               return()
@@ -205,34 +215,31 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               difFlagScale = self$options$difFlagScale,
               sigOnly = self$options$designAnalysisSigOnly
             )
-            if (length(GCTable) != 0) {
-              table <- self$results$gcTable
-              buildGC(GCTable, table)
-            }
+           return(GCTable)
           }
           
-          if (self$options$designAnalysisEffectType == "coefficients") {
-            if (self$options$designAnalysisSigOnly) {
-              designList <- model$names[model$DIFitems]
-            } else {
-              designList <- model$names
-            }
-            gcTableCoefficients = designAnalysis.coefficients(
-              designList = designList,
-              Data = Data,
-              group = group,
-              match = model$matchScores,
-              coefficients = TRUE,
-              bootSims = bootSims,
-              type = type,
-              hypTrueEff = self$options$D,
-              difFlagScale = self$options$difFlagScale
-            )
-            if (length(gcTableCoefficients) != 0) {
-              table <- self$results$gcTableCoefficients
-              buildGC(gcTableCoefficients, table)
-            }
-          }
+          # if (self$options$designAnalysisEffectType == "coefficients") {
+          #   if (self$options$designAnalysisSigOnly) {
+          #     designList <- model$names[model$DIFitems]
+          #   } else {
+          #     designList <- model$names
+          #   }
+          #   gcTableCoefficients = designAnalysis.coefficients(
+          #     designList = designList,
+          #     Data = Data,
+          #     group = group,
+          #     match = model$matchScores,
+          #     coefficients = TRUE,
+          #     bootSims = bootSims,
+          #     type = type,
+          #     hypTrueEff = self$options$D,
+          #     difFlagScale = self$options$difFlagScale
+          #   )
+          #   if (length(gcTableCoefficients) != 0) {
+          #     table <- self$results$gcTableCoefficients
+          #     buildGC(gcTableCoefficients, table)
+          #   }
+          # }
         }
         # Description Results Table ----
         calculateDESCtable <- function() {
@@ -363,7 +370,11 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                                                                    " : ",
                                                                    ifelse(i == 1, "Group A", "Group B"))
             }
-          }
+          } else {
+            resDescTable[nrow(resDescTable) + 1, "bob"] = paste0("Group Range: ")
+            resDescTable[nrow(resDescTable) + 1, "bob"] = paste0("Min Value : ", groupValueList[1])
+            resDescTable[nrow(resDescTable) + 1, "bob"] = paste0("Max Value : ", groupValueList[2])
+            }
           
           resDescTable <- blankRow(resDescTable)
           
@@ -413,19 +424,13 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               "\u0394 Naeglekirke R\u00B2."
             )
           }
-          table <- self$results$DESCtable
-
-          for (i in 1:nrow(resDescTable)) {
-            table$addRow(rowKey = i,
-                         values = list(bob = resDescTable$bob[i]))
-          }
+          return(resDescTable)
         }
         
         
         # DIF Results Table ----
         
         calculateDIFTable <- function() {
-          # self$results$debug$setContent(list(model))
           for (i in 1:length(Data)) {
             if (self$results$DIFtable$isNotFilled()) {
               table <- self$results$DIFtable
@@ -475,35 +480,53 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               " degrees of freedom"
             )
           )
-          
         }
         # State Savers ----
         # These don't work for DESCtable or gcTable
-        
-        DESCstate <- self$results$DESCtable$state
-        if (!is.null(DESCstate)) {
-          # ... populate the table from the state
-        } else {
-          # ... calculate the state
-          DESCstate <- calculateDESCtable()
-          self$results$DESCtable$setState(DESCstate)
-        }
-        
+        # DIF state ----
         DIFstate <- self$results$DIFtable$state
         if (!is.null(DIFstate)) {
           # ... populate the table from the state
         } else {
+          # ... create the table and the state
           DIFstate <- calculateDIFTable()
-          # ... populate the table from the state
           self$results$DIFtable$setState(DIFstate)
         }
         
+        # DESC state ----
+        DESCstate <- self$results$DESCtable$state
+        if (!is.null(DESCstate)) {
+          # ... populate the table from the state
+          table <- self$results$DESCtable
+          for (i in 1:nrow(DESCstate)) {
+            table$addRow(rowKey = i,
+                         values = list(bob = DESCstate$bob[i]))
+          }
+        } else {
+          # ... calculate the state
+          table <- self$results$DESCtable
+          DESCstate <- calculateDESCtable()
+          for (i in 1:nrow(DESCstate)) {
+            table$addRow(rowKey = i,
+                         values = list(bob = DESCstate$bob[i]))
+          }
+          self$results$DESCtable$setState(DESCstate)
+        }
+        # GC state ----
         gcState <- self$results$gcTable$state
         if (!is.null(gcState)) {
           # ... populate the table from the state
+          if (length(gcState) != 0) {
+              table <- self$results$gcTable
+              buildGC(gcState, table)
+            }
         } else {
           # ... populate the table from the state
           gcState <- runDesignAnalysis()
+           if (length(gcState) != 0) {
+              table <- self$results$gcTable
+              buildGC(gcState, table)
+            }
           self$results$gcTable$setState(gcState)
         }
         
@@ -545,7 +568,12 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         }
       },
       
-      .plotICC = function(imageICC, ...) {
+      .plotICC = function(imageICC, ggtheme, theme,...) {
+        if (is.null(self$options$group) |
+            is.null(self$data) | is.null(self$options$item)) {
+          return()
+        }
+        
         plotData <- data.frame(imageICC$state[[1]])
         model <- imageICC$state[[2]]
         
@@ -585,7 +613,8 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             "Supplied matching variable range"
           )) +
           ylab("Prediicted probability of endorsement") +
-          theme_classic()
+          ggtheme + theme(plot.title = ggplot2::element_text(margin=ggplot2::margin(b = 5.5 * 1.2)),
+                              plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5))
         
         print(p)
         TRUE
