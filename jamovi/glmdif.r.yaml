@@ -4,19 +4,14 @@ title: Differential Item Functioning
 jrs:   '1.1'
 
 items:
-    - name: debug
-      title: debug
-      type: Preformatted
+   # - name: debug
+   #   title: debug
+   #   type: Preformatted
 
     - name: instructions
       title: Instructions
-      type: Table
-      rows: 4
+      type: Html
       visible: True
-      columns:
-        - name: ted
-          title: ""
-          type: text
 
     - name:  DESCtable
       title: Procedure Notes
@@ -88,13 +83,13 @@ items:
           format: zto,pvalue
 
         - name: chiSquare
-          title: "Chi\u00B2 Stat."
+          title: "\u03A7\u00B2 Stat."
           type: number
 
         - name: effSize
           title: "Naeglekirke R\u00B2"
           type: number
-          format: zto,pvalue
+          format: zto
           visible: (nagEff)
 
         - name: coeffMain

@@ -1,4 +1,4 @@
-title: Differential Item Functioning
+title: Binary Differential Item Functioning (2 groups)
 name: glmDIF
 jus: '2.0'
 stage: 0
@@ -42,7 +42,7 @@ children:
 
   - type: CollapseBox
     label: DIF Analysis
-    margin: large
+    margin: small
     collapsed: true
     children:
       - type: LayoutBox
@@ -82,7 +82,7 @@ children:
                 enable: (purify)
   - type: CollapseBox
     label: Design Analysis
-    margin: large
+    margin: small
     collapsed: true
     children:
       - type: LayoutBox
@@ -118,7 +118,7 @@ children:
             enable: (designAnalysis)
   - type: CollapseBox
     label: Item Response Curves
-    margin: large
+    margin: small
     collapsed: true
     children:
       - type: VariableSupplier
