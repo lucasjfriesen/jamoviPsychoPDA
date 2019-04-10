@@ -11,6 +11,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             matchVar = NULL,
             anchor = NULL,
             groupType = NULL,
+            twoGroups = FALSE,
             difFlagScale = NULL,
             designAnalysis = FALSE,
             designAnalysisEffectType = "nagR2",
@@ -69,6 +70,10 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=list(
                     "group",
                     "cont"))
+            private$..twoGroups <- jmvcore::OptionBool$new(
+                "twoGroups",
+                twoGroups,
+                default=FALSE)
             private$..difFlagScale <- jmvcore::OptionList$new(
                 "difFlagScale",
                 difFlagScale,
@@ -156,6 +161,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..matchVar)
             self$.addOption(private$..anchor)
             self$.addOption(private$..groupType)
+            self$.addOption(private$..twoGroups)
             self$.addOption(private$..difFlagScale)
             self$.addOption(private$..designAnalysis)
             self$.addOption(private$..designAnalysisEffectType)
@@ -179,6 +185,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         matchVar = function() private$..matchVar$value,
         anchor = function() private$..anchor$value,
         groupType = function() private$..groupType$value,
+        twoGroups = function() private$..twoGroups$value,
         difFlagScale = function() private$..difFlagScale$value,
         designAnalysis = function() private$..designAnalysis$value,
         designAnalysisEffectType = function() private$..designAnalysisEffectType$value,
@@ -201,6 +208,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..matchVar = NA,
         ..anchor = NA,
         ..groupType = NA,
+        ..twoGroups = NA,
         ..difFlagScale = NA,
         ..designAnalysis = NA,
         ..designAnalysisEffectType = NA,
@@ -222,6 +230,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
 glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
+        debug = function() private$.items[["debug"]],
         instructions = function() private$.items[["instructions"]],
         DESCtable = function() private$.items[["DESCtable"]],
         DIFtable = function() private$.items[["DIFtable"]],
@@ -235,6 +244,10 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="Differential Item Functioning")
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="debug",
+                title="debug"))
             self$add(jmvcore::Html$new(
                 options=options,
                 name="instructions",
@@ -262,7 +275,8 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "designAnalysis",
                     "designAnalysisSigOnly",
                     "bootSims",
-                    "D"),
+                    "D",
+                    "twoGroups"),
                 columns=list(
                     list(
                         `name`="bob", 
@@ -285,7 +299,8 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "alpha",
                     "nIter",
                     "purify",
-                    "pAdjustMethod"),
+                    "pAdjustMethod",
+                    "twoGroups"),
                 columns=list(
                     list(
                         `name`="item", 
@@ -398,7 +413,8 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "designAnalysis",
                     "designAnalysisSigOnly",
                     "bootSims",
-                    "D"),
+                    "D",
+                    "twoGroups"),
                 columns=list(
                     list(
                         `name`="label", 
@@ -479,7 +495,8 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         "alpha",
                         "nIter",
                         "purify",
-                        "pAdjustMethod"))))}))
+                        "pAdjustMethod",
+                        "twoGroups"))))}))
 
 glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     "glmDIFBase",
@@ -522,6 +539,7 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param groupType Either "discrete" (default) to specify that group
 #'   membership is made of two (or more than two) groups, or "continuous" to
 #'   indicate that group membership is based on a continuous criterion.
+#' @param twoGroups .
 #' @param difFlagScale The effect size criterion scale to be used in assigning
 #'   'level' to flagged items
 #' @param designAnalysis True/False, perform a design analysis. NB:
@@ -552,6 +570,7 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'   Item Response Curves
 #' @return A results object containing:
 #' \tabular{llllll}{
+#'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$DESCtable} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$DIFtable} \tab \tab \tab \tab \tab a table \cr
@@ -574,6 +593,7 @@ glmDIF <- function(
     matchVar,
     anchor,
     groupType,
+    twoGroups = FALSE,
     difFlagScale,
     designAnalysis = FALSE,
     designAnalysisEffectType = "nagR2",
@@ -615,6 +635,7 @@ glmDIF <- function(
         matchVar = matchVar,
         anchor = anchor,
         groupType = groupType,
+        twoGroups = twoGroups,
         difFlagScale = difFlagScale,
         designAnalysis = designAnalysis,
         designAnalysisEffectType = designAnalysisEffectType,

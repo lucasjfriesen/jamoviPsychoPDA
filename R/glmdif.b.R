@@ -21,7 +21,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
       .init = function() {
       },
       .run = function() {
-        
+
         if (is.null(self$options$group) |
             is.null(self$data) | is.null(self$options$item)) {
           self$results$DESCtable$setVisible(visible = FALSE)
@@ -56,7 +56,7 @@ div.instructions {
         } else {
           self$results$instructions$setVisible(visible = FALSE)
         }
-        
+
         if (is.null(self$options$group) |
             is.null(self$data) |
             is.null(self$options$item)) {
@@ -86,7 +86,7 @@ div.instructions {
             )
           }
         }
-        
+
         if (is.null(self$options$anchor)) {
           anchor <- NULL
         } else {
@@ -94,7 +94,7 @@ div.instructions {
             data.frame(jmvcore::toNumeric(data[, self$options$anchor]))
           colnames(anchor) <- self$options$anchor
         }
-        
+
         # Vector containing matching data
         match <-
           data.frame(jmvcore::toNumeric(data[, self$options$matchVar]))
@@ -104,39 +104,50 @@ div.instructions {
           colnames(match) <- self$options$matchVar
           match <- unlist(match)
         }
-        
-        
+
+
         # Vector containing grouping data
         group <- data[, self$options$group]
         groupType <- self$options$groupType
-        
+        twoGroups <- self$options$twoGroups
         if (groupType == "group") {
-          groupValueList <- unique(group)
-          groupOne <- unique(group)[1]
-          group <-
-            as.factor(ifelse(group == groupOne, "Group A", "Group B"))
-          groupOne <- unique(group)[1]
+          group <- as.factor(group)
+          groupValueList <- sort(unique(group))
+          groupOne <- unique(group)
+          if (twoGroups == TRUE){
+            group <- ifelse(group == groupOne, "Group A", "Group B")
+            groupOne <- unique(group)[1]
+          } else {
+            groupOne <- unique(group)
+          }
         } else {
           groupOne <- median(group)
           groupValueList <- c(min(group), max(group))
         }
-        
+
+        # Check no singular group values
+
+        groupCheck <- table(group)
+        if (length(names(groupCheck)[groupCheck== 1]) != 0){
+            stop(paste0("Only one row contains the group value(s) (", names(groupCheck)[groupCheck == 1],") . This row cannot be used in fitting a linear model. Either remove the row, or use the '2 Group' option."))
+        }
+
         type <- self$options$type
-        
+
         criterion <- self$options$criterion
-        
+
         alpha <- self$options$alpha
-        
+
         purify <- self$options$purify
-        
+
         nIter <- self$options$nIter
-        
+
         pAdjustMethod <- self$options$pAdjustMethod
-        
+
         bootSims = self$options$bootSims
-        
+
         # Results functions ----
-        
+
         highlight <- function(table, row, column) {
           for (i in column) {
             table$addFormat(
@@ -146,12 +157,12 @@ div.instructions {
             )
           }
         }
-        
+
         blankRow <- function(table) {
           table[nrow(table) + 1, "bob"] = ""
           return(table)
         }
-        
+
         buildGC <- function(GC, table) {
           for (item in 1:nrow(GC)) {
             table$addRow(
@@ -175,7 +186,7 @@ div.instructions {
             }
           }
         }
-        
+
         # Model ----
             model <-
               binaryDIF.logistic(
@@ -193,7 +204,7 @@ div.instructions {
                 nIter = nIter,
                 pAdjustMethod = pAdjustMethod
               )
-        
+
         # Build GC tables ----
         runDesignAnalysis <- function() {
           if (self$options$designAnalysis) {
@@ -202,7 +213,7 @@ div.instructions {
             } else{
               designList <- model$names
             }
-            
+
             if (is.na(designList[1])) {
               self$results$gcTable$addRow(
                 rowKey = "doesntMatter",
@@ -210,7 +221,7 @@ div.instructions {
               )
               return()
             }
-            
+
             GCTable = designAnalysis.nagR2(
               designList = designList,
               Data = Data,
@@ -225,7 +236,7 @@ div.instructions {
             )
            return(GCTable)
           }
-          
+
           # if (self$options$designAnalysisEffectType == "coefficients") {
           #   if (self$options$designAnalysisSigOnly) {
           #     designList <- model$names[model$DIFitems]
@@ -263,14 +274,14 @@ div.instructions {
           } else {
             pur <- "without "
           }
-          
+
           if (class(model) == "Logistic") {
             df <- ifelse(type == "both", 2, 1)
           } else {
             df <-
               ifelse(type == "both", 2 * length(groupOne), length(groupOne))
           }
-          
+
           resDescTable[1, "bob"] =
             paste0(
               "Detection of",
@@ -289,9 +300,9 @@ div.instructions {
               df,
               " degree(s) of freedom."
             )
-          
+
           resDescTable <- blankRow(resDescTable)
-          
+
           resDescTable[nrow(resDescTable) + 1, "bob"] = paste0(
             "DIF flagging criterion: ",
             ifelse(
@@ -304,9 +315,9 @@ div.instructions {
               "Likelihood ratio test"
             )
           )
-          
+
           resDescTable <- blankRow(resDescTable)
-          
+
           if (model$pAdjustMethod == "none") {
             resDescTable[nrow(resDescTable) + 1, "bob"] = "No p-value adjustment for multiple comparisons"
           } else {
@@ -323,9 +334,9 @@ div.instructions {
                                                                 pAdjMeth,
                                                                 " adjustment of p-values.")
           }
-          
+
           resDescTable <- blankRow(resDescTable)
-          
+
           if (model$purification) {
             if (model$nrPur <= 1) {
               word <- " iteration"
@@ -360,32 +371,34 @@ div.instructions {
               resDescTable <- blankRow(resDescTable)
             }
           }
-          
+
           resDescTable[nrow(resDescTable) + 1, "bob"] = paste0("Grouping variable: ", list(self$options$group))
-          
-          if (length(groupValueList) > 2 & groupType == "group") {
+
+          if (groupType == "group" & twoGroups == TRUE) {
+
+            if (length(groupValueList) > 2) {
             resDescTable <- blankRow(resDescTable)
             resDescTable[nrow(resDescTable) + 1, "bob"] = paste0(
               "(The data file provided non-binary groupings. Please see below for the recoding legend.)"
             )
             resDescTable <- blankRow(resDescTable)
-          }
-          
-          if (groupType == "group") {
+            }
+
             resDescTable[nrow(resDescTable) + 1, "bob"] = paste0("Group coding: ")
             for (i in 1:length(groupValueList)) {
               resDescTable[nrow(resDescTable) + 1, "bob"] = paste0(groupValueList[i],
                                                                    " : ",
                                                                    ifelse(i == 1, "Group A", "Group B"))
             }
-          } else {
+          }
+          if (groupType != "group" ){
             resDescTable[nrow(resDescTable) + 1, "bob"] = paste0("Group Range: ")
             resDescTable[nrow(resDescTable) + 1, "bob"] = paste0("Min Value : ", groupValueList[1])
             resDescTable[nrow(resDescTable) + 1, "bob"] = paste0("Max Value : ", groupValueList[2])
             }
-          
+
           resDescTable <- blankRow(resDescTable)
-          
+
           if (model$match[1] == "score") {
             resDescTable[nrow(resDescTable) + 1, "bob"] = "Matching variable: Test score"
           } else {
@@ -403,7 +416,7 @@ div.instructions {
             }
           }
           resDescTable <- blankRow(resDescTable)
-          
+
           resDescTable[nrow(resDescTable) + 1, "bob"] =  paste0("Effect size (\u0394 Nagelkerke's R\u00B2) scale: ", switch(self$options$difFlagScale,
                                                                                                                        zt = "Zumbo-Thomas",
                                                                                                                        jg = "Jodoin-Gierl"))
@@ -417,7 +430,7 @@ div.instructions {
                                                                 zt = "'C': Large effect ('R\u00B2' 0.26 <> 1)",
                                                                 jg = "'C': Large effect ('R\u00B2' 0.07 <> 1)")
           resDescTable <- blankRow(resDescTable)
-          
+
           if (self$options$designAnalysis) {
             resDescTable[nrow(resDescTable) + 1, "bob"] = paste0(
               "Post-Data Design Analysis performed on ",
@@ -434,10 +447,10 @@ div.instructions {
           }
           return(resDescTable)
         }
-        
-        
+
+
         # DIF Results Table ----
-        
+
         calculateDIFTable <- function() {
           for (i in 1:length(Data)) {
             if (self$results$DIFtable$isNotFilled()) {
@@ -463,7 +476,7 @@ div.instructions {
                 )
               }
             }
-            
+
             # Highlight DIF results table
             # if (self$options$difFlagScale == "zt") {
             #   if (model$adjusted.p[i] <= alpha) {
@@ -477,7 +490,7 @@ div.instructions {
             #   }
             # }
           }
-          
+
           df <-
             ifelse(type == "both", 2 * length(groupOne), length(groupOne))
           table$setNote(
@@ -485,7 +498,7 @@ div.instructions {
             note = paste0(
               "Tests of significance conducted using: ",
               df,
-              " degrees of freedom"
+              " degrees of freedom (\u03A7\u00B2 significance threshold = ", round(model$sigThreshold, 3),")"
             )
           )
         }
@@ -500,7 +513,7 @@ div.instructions {
           DIFstate <- calculateDIFTable()
           self$results$DIFtable$setState(DIFstate)
         }
-        
+
         # DESC state ----
         DESCstate <- self$results$DESCtable$state
         if (!is.null(DESCstate)) {
@@ -537,7 +550,7 @@ div.instructions {
             }
           self$results$gcTable$setState(gcState)
         }
-        
+
         table <- self$results$gcTable
         if (table$rowCount == 0) {
           table$addRow(
@@ -545,16 +558,16 @@ div.instructions {
             values = list(item = "No items were flagged as exhibiting statistically significant DIF", NULL, NULL, NULL)
           )
         }
-        
+
         # ICC plot data ----
-        
+
         if (!is.null(self$options$plotVarsICC)) {
           if (self$results$ICCplots$isNotFilled()) {
             items <- self$options$plotVarsICC
-            
+
             for (i in unique(items)) {
               private$.checkpoint()
-              
+
               if (!is.null(anchor)) {
                 data2 <- cbind(data, anchor)
                 match <-
@@ -562,29 +575,29 @@ div.instructions {
               } else {
                 match <- rowSums(sapply(data, as.numeric))
               }
-              
+
               plotData <-
                 data.frame(jmvcore::toNumeric(Data[, colnames(Data) == i]), match, group)
-              
+
               colnames(plotData) <-
                 c(i, "match", "group")
-              
+
               imageICC <- self$results$ICCplots$get(key = i)
               imageICC$setState(list(plotData, model))
             }
           }
         }
       },
-      
+
       .plotICC = function(imageICC, ggtheme, theme,...) {
         if (is.null(self$options$group) |
             is.null(self$data) | is.null(self$options$item)) {
           return()
         }
-        
+
         plotData <- data.frame(imageICC$state[[1]])
         model <- imageICC$state[[2]]
-        
+
         if (!all(self$options$plotVarsICC %in% self$options$item)) {
           stop(
             paste0(
@@ -594,7 +607,7 @@ div.instructions {
             call. = FALSE
           )
         }
-        
+
         p <- ggplot(data = as.data.frame(plotData),
                     aes(
                       x = as.numeric(plotData$match),
@@ -623,7 +636,7 @@ div.instructions {
           ylab("Prediicted probability of endorsement") +
           ggtheme + theme(plot.title = ggplot2::element_text(margin=ggplot2::margin(b = 5.5 * 1.2)),
                               plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5))
-        
+
         print(p)
         TRUE
       }

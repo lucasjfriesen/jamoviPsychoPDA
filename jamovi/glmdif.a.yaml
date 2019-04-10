@@ -90,7 +90,13 @@ options:
           Either "discrete" (default) to specify that group membership is made of two (or more than two) groups, or "continuous" to indicate that group membership is based on a continuous criterion. 
         R: >
           Either "discrete" (default) to specify that group membership is made of two (or more than two) groups, or "continuous" to indicate that group membership is based on a continuous criterion. 
-    
+
+
+    - name: twoGroups
+      title: Binary Grouping
+      type: Bool
+      default: false
+
     - name: difFlagScale
       title: Evaluation scale
       type: List

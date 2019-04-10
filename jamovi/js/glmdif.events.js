@@ -14,4 +14,6 @@ let populatePlotVarsICCSupplier = function(ui, context) {
     ui.plotVarsICCSupplier.setValue(b1);
 };
 
+
 module.exports = events;
+

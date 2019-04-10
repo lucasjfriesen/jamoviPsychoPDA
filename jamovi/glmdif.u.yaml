@@ -1,4 +1,4 @@
-title: Binary Differential Item Functioning (2 groups)
+title: Binary Differential Item Functioning
 name: glmDIF
 jus: '2.0'
 stage: 0
@@ -39,7 +39,6 @@ children:
             name: group
             maxItemCount: 1
             isTarget: true
-
   - type: CollapseBox
     label: DIF Analysis
     margin: small
@@ -56,6 +55,8 @@ children:
                 name: criterion
               - type: ComboBox
                 name: groupType
+              - type: CheckBox
+                name: twoGroups
               - type: ComboBox
                 name: difFlagScale
               - type: TextBox
