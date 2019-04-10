@@ -12,9 +12,9 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             observedCor = NULL,
             n = NULL,
             alpha = 0.05,
-            sensHyp = TRUE,
-            sensN = TRUE,
-            sensObs = TRUE,
+            sensHyp = FALSE,
+            sensN = FALSE,
+            sensObs = FALSE,
             HTEViz = FALSE,
             bootSims = 10000,
             lengthOut = 1000,
@@ -66,15 +66,15 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             private$..sensHyp <- jmvcore::OptionBool$new(
                 "sensHyp",
                 sensHyp,
-                default=TRUE)
+                default=FALSE)
             private$..sensN <- jmvcore::OptionBool$new(
                 "sensN",
                 sensN,
-                default=TRUE)
+                default=FALSE)
             private$..sensObs <- jmvcore::OptionBool$new(
                 "sensObs",
                 sensObs,
-                default=TRUE)
+                default=FALSE)
             private$..HTEViz <- jmvcore::OptionBool$new(
                 "HTEViz",
                 HTEViz,
@@ -313,9 +313,9 @@ ttestCor <- function(
     observedCor,
     n,
     alpha = 0.05,
-    sensHyp = TRUE,
-    sensN = TRUE,
-    sensObs = TRUE,
+    sensHyp = FALSE,
+    sensN = FALSE,
+    sensObs = FALSE,
     HTEViz = FALSE,
     bootSims = 10000,
     lengthOut = 1000,

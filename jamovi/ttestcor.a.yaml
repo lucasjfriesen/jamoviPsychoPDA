@@ -56,17 +56,17 @@ options:
     - name: sensHyp
       title: Sensitivity - Hypothesized True Effect
       type: Bool
-      default: TRUE
+      default: FALSE
 
     - name: sensN
       title: Sensitivity - Sample Size
       type: Bool
-      default: TRUE
+      default: FALSE
 
     - name: sensObs
       title: Sensitivity - Observed Correlation
       type: Bool
-      default: TRUE
+      default: FALSE
 
 
     - name: HTEViz

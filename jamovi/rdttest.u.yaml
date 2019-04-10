@@ -2,7 +2,7 @@ title: Mean Differences
 name: rdTTest
 jus: '2.0'
 stage: 0
-compilerMode: aggressive
+compilerMode: tame
 children:
   - type: VariableSupplier
     persistentItems: false
@@ -16,10 +16,10 @@ children:
             maxItemCount: 1
             isTarget: true
       - type: TargetLayoutBox
-        label: Hypothesised True Effect Size
+        label: Observed Effect Size
         children:
           - type: VariablesListBox
-            name: hypTrueEff
+            name: observedEff
             maxItemCount: 1
             isTarget: true
       - type: TargetLayoutBox
@@ -37,10 +37,17 @@ children:
             maxItemCount: 1
             isTarget: true
       - type: TargetLayoutBox
-        label: 'N'
+        label: Sample Size
         children:
           - type: VariablesListBox
             name: 'n'
+            maxItemCount: 1
+            isTarget: true
+      - type: TargetLayoutBox
+        label: Hypothesised True Effect Size
+        children:
+          - type: VariablesListBox
+            name: hypTrueEff
             maxItemCount: 1
             isTarget: true
   - type: LayoutBox
@@ -55,14 +62,19 @@ children:
       - type: TextBox
         name: nSims
         format: number
-  - type: LayoutBox
-    margin: large
+  - type: CollapseBox
+    label: Sensitivity Analysis
+    margin: small
+    collapsed: true
     children:
-      - type: CheckBox
-        name: sensHyp
-      - type: CheckBox
-        name: sensN
-      - type: CheckBox
-        name: sensSE
-      - type: CheckBox
-        name: HTEViz
+      - type: LayoutBox
+        margin: large
+        children:
+          - type: CheckBox
+            name: sensHyp
+          - type: CheckBox
+            name: sensN
+          - type: CheckBox
+            name: sensSE
+          - type: CheckBox
+            name: HTEViz

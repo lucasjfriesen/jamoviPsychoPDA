@@ -30,6 +30,14 @@ options:
       permitted:
         - numeric
 
+    - name: observedEff
+      title: Observed Effect Size
+      type: Variable
+      suggested:
+        - continuous
+      permitted:
+        - numeric
+
     - name: observedP
       title: Observed P-Value
       type: Variable
@@ -39,7 +47,7 @@ options:
         - numeric
 
     - name: n
-      title: N
+      title: Sample Size
       type: Variable
       suggested:
         - continuous
@@ -59,17 +67,17 @@ options:
     - name: sensHyp
       title: Sensitivity - Hypothesized True Effect
       type: Bool
-      default: TRUE
+      default: FALSE
 
     - name: sensN
       title: Sensitivity - Sample Size
       type: Bool
-      default: TRUE
+      default: FALSE
 
     - name: sensSE
       title: Sensitivity - Standard Error
       type: Bool
-      default: TRUE
+      default: FALSE
 
     - name: HTEViz
       title: Sensitivity - Scatter Viz HTE

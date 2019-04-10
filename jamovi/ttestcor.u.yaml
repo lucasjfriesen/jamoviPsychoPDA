@@ -2,7 +2,7 @@ title: Correlations
 name: ttestCor
 jus: '2.0'
 stage: 0
-compilerMode: aggressive
+compilerMode: tame
 children:
   - type: VariableSupplier
     persistentItems: false
@@ -16,10 +16,10 @@ children:
             maxItemCount: 1
             isTarget: true
       - type: TargetLayoutBox
-        label: Hypothesised True Correlation
+        label: Observed Correlation
         children:
           - type: VariablesListBox
-            name: hypTrueCor
+            name: observedCor
             maxItemCount: 1
             isTarget: true
       - type: TargetLayoutBox
@@ -30,17 +30,17 @@ children:
             maxItemCount: 1
             isTarget: true
       - type: TargetLayoutBox
-        label: Observed Correlation
-        children:
-          - type: VariablesListBox
-            name: observedCor
-            maxItemCount: 1
-            isTarget: true
-      - type: TargetLayoutBox
         label: 'N'
         children:
           - type: VariablesListBox
             name: 'n'
+            maxItemCount: 1
+            isTarget: true
+      - type: TargetLayoutBox
+        label: Hypothesised True Correlation
+        children:
+          - type: VariablesListBox
+            name: hypTrueCor
             maxItemCount: 1
             isTarget: true
   - type: LayoutBox
@@ -49,31 +49,27 @@ children:
       - type: TextBox
         name: alpha
         format: number
-  - type: LayoutBox
-    margin: large
-    children:
-      - type: CheckBox
-        name: sensHyp
-      - type: CheckBox
-        name: sensN
-      - type: CheckBox
-        name: sensObs
-      - type: CheckBox
-        name: HTEViz
-  - type: LayoutBox
-    margin: large
-    children:
       - type: TextBox
         name: bootSims
         format: number
-  - type: LayoutBox
-    margin: large
-    children:
       - type: TextBox
         name: lengthOut
         format: number
-  - type: LayoutBox
-    margin: large
-    children:
       - type: ComboBox
         name: corType
+  - type: CollapseBox
+    label: Sensitivity Analysis
+    margin: small
+    collapsed: true
+    children:
+      - type: LayoutBox
+        margin: large
+        children:
+          - type: CheckBox
+            name: sensHyp
+          - type: CheckBox
+            name: sensN
+          - type: CheckBox
+            name: sensObs
+          - type: CheckBox
+            name: HTEViz
