@@ -51,6 +51,10 @@ options:
           R: >
             A string naming the grouping variable from `data`
 
+    - name: groupContrasts
+      title: Group contrasts
+      type: String
+
     - name: matchVar
       title: Matching variable
       type: Variable
@@ -81,8 +85,10 @@ options:
       title: Group type
       type: List
       options:
-      - name: group
-        title: Discrete Groups
+      - name: groupBin
+        title: Discrete Groups (n = 2)
+      - name: groupNonBin
+        title: Discrete Groups (n > 2)
       - name: cont
         title: Continuous Groups
       description: 
@@ -90,12 +96,6 @@ options:
           Either "discrete" (default) to specify that group membership is made of two (or more than two) groups, or "continuous" to indicate that group membership is based on a continuous criterion. 
         R: >
           Either "discrete" (default) to specify that group membership is made of two (or more than two) groups, or "continuous" to indicate that group membership is based on a continuous criterion. 
-
-
-    - name: twoGroups
-      title: Binary Grouping
-      type: Bool
-      default: false
 
     - name: difFlagScale
       title: Evaluation scale

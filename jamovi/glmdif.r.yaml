@@ -36,6 +36,7 @@ items:
           - bootSims
           - D
           - twoGroups
+          - groupContrasts
       columns: 
         - name: bob
           title: ""
@@ -59,6 +60,7 @@ items:
           - purify
           - pAdjustMethod
           - twoGroups
+          - groupContrasts
 
       columns:
         - name: item
@@ -127,6 +129,7 @@ items:
           - designAnalysisSigOnly
           - bootSims
           - D
+          - groupContrasts
       columns:
         - name: label
           title: Effect
@@ -172,6 +175,7 @@ items:
           - bootSims
           - D
           - twoGroups
+          - groupContrasts
       columns:
         - name: label
           title: Effect
@@ -241,5 +245,6 @@ items:
               - purify
               - pAdjustMethod
               - twoGroups
+              - groupContrasts
 
 ...

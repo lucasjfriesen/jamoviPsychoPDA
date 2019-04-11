@@ -55,8 +55,10 @@ children:
                 name: criterion
               - type: ComboBox
                 name: groupType
-              - type: CheckBox
-                name: twoGroups
+              - type: TextBox
+                name: groupContrasts
+                format: string
+                enable: '(groupType:groupNonBin)'
               - type: ComboBox
                 name: difFlagScale
               - type: TextBox

@@ -8,10 +8,10 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         initialize = function(
             item = NULL,
             group = NULL,
+            groupContrasts = NULL,
             matchVar = NULL,
             anchor = NULL,
             groupType = NULL,
-            twoGroups = FALSE,
             difFlagScale = NULL,
             designAnalysis = FALSE,
             designAnalysisEffectType = "nagR2",
@@ -50,6 +50,9 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 permitted=list(
                     "factor",
                     "numeric"))
+            private$..groupContrasts <- jmvcore::OptionString$new(
+                "groupContrasts",
+                groupContrasts)
             private$..matchVar <- jmvcore::OptionVariable$new(
                 "matchVar",
                 matchVar,
@@ -68,12 +71,9 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "groupType",
                 groupType,
                 options=list(
-                    "group",
+                    "groupBin",
+                    "groupNonBin",
                     "cont"))
-            private$..twoGroups <- jmvcore::OptionBool$new(
-                "twoGroups",
-                twoGroups,
-                default=FALSE)
             private$..difFlagScale <- jmvcore::OptionList$new(
                 "difFlagScale",
                 difFlagScale,
@@ -158,10 +158,10 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
 
             self$.addOption(private$..item)
             self$.addOption(private$..group)
+            self$.addOption(private$..groupContrasts)
             self$.addOption(private$..matchVar)
             self$.addOption(private$..anchor)
             self$.addOption(private$..groupType)
-            self$.addOption(private$..twoGroups)
             self$.addOption(private$..difFlagScale)
             self$.addOption(private$..designAnalysis)
             self$.addOption(private$..designAnalysisEffectType)
@@ -182,10 +182,10 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
     active = list(
         item = function() private$..item$value,
         group = function() private$..group$value,
+        groupContrasts = function() private$..groupContrasts$value,
         matchVar = function() private$..matchVar$value,
         anchor = function() private$..anchor$value,
         groupType = function() private$..groupType$value,
-        twoGroups = function() private$..twoGroups$value,
         difFlagScale = function() private$..difFlagScale$value,
         designAnalysis = function() private$..designAnalysis$value,
         designAnalysisEffectType = function() private$..designAnalysisEffectType$value,
@@ -205,10 +205,10 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
     private = list(
         ..item = NA,
         ..group = NA,
+        ..groupContrasts = NA,
         ..matchVar = NA,
         ..anchor = NA,
         ..groupType = NA,
-        ..twoGroups = NA,
         ..difFlagScale = NA,
         ..designAnalysis = NA,
         ..designAnalysisEffectType = NA,
@@ -276,7 +276,8 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "designAnalysisSigOnly",
                     "bootSims",
                     "D",
-                    "twoGroups"),
+                    "twoGroups",
+                    "groupContrasts"),
                 columns=list(
                     list(
                         `name`="bob", 
@@ -300,7 +301,8 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "nIter",
                     "purify",
                     "pAdjustMethod",
-                    "twoGroups"),
+                    "twoGroups",
+                    "groupContrasts"),
                 columns=list(
                     list(
                         `name`="item", 
@@ -363,7 +365,8 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "designAnalysis",
                     "designAnalysisSigOnly",
                     "bootSims",
-                    "D"),
+                    "D",
+                    "groupContrasts"),
                 columns=list(
                     list(
                         `name`="label", 
@@ -414,7 +417,8 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "designAnalysisSigOnly",
                     "bootSims",
                     "D",
-                    "twoGroups"),
+                    "twoGroups",
+                    "groupContrasts"),
                 columns=list(
                     list(
                         `name`="label", 
@@ -496,7 +500,8 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         "nIter",
                         "purify",
                         "pAdjustMethod",
-                        "twoGroups"))))}))
+                        "twoGroups",
+                        "groupContrasts"))))}))
 
 glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     "glmDIFBase",
@@ -532,6 +537,7 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param item A vector of strings naming the item columns from \code{data}
 #'   which are to be assessed for DIF
 #' @param group A string naming the grouping variable from \code{data}
+#' @param groupContrasts .
 #' @param matchVar A string naming the matching variable from \code{data}
 #' @param anchor a vector of strings naming the anchor item columns from
 #'   \code{data} for use in purification. This will be ignored if an external
@@ -539,7 +545,6 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param groupType Either "discrete" (default) to specify that group
 #'   membership is made of two (or more than two) groups, or "continuous" to
 #'   indicate that group membership is based on a continuous criterion.
-#' @param twoGroups .
 #' @param difFlagScale The effect size criterion scale to be used in assigning
 #'   'level' to flagged items
 #' @param designAnalysis True/False, perform a design analysis. NB:
@@ -590,10 +595,10 @@ glmDIF <- function(
     data,
     item,
     group,
+    groupContrasts,
     matchVar,
     anchor,
     groupType,
-    twoGroups = FALSE,
     difFlagScale,
     designAnalysis = FALSE,
     designAnalysisEffectType = "nagR2",
@@ -632,10 +637,10 @@ glmDIF <- function(
     options <- glmDIFOptions$new(
         item = item,
         group = group,
+        groupContrasts = groupContrasts,
         matchVar = matchVar,
         anchor = anchor,
         groupType = groupType,
-        twoGroups = twoGroups,
         difFlagScale = difFlagScale,
         designAnalysis = designAnalysis,
         designAnalysisEffectType = designAnalysisEffectType,
