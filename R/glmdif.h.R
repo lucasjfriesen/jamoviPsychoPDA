@@ -369,21 +369,24 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "groupContrasts"),
                 columns=list(
                     list(
-                        `name`="label", 
-                        `title`="Effect", 
-                        `type`="text"),
-                    list(
                         `name`="itemName", 
                         `title`="Item", 
-                        `type`="text"),
+                        `type`="text", 
+                        `combineBelow`=TRUE),
                     list(
                         `name`="obsEff", 
                         `title`="Obs. Effect", 
-                        `type`="text"),
+                        `type`="text", 
+                        `combineBelow`=TRUE),
                     list(
                         `name`="bootSE", 
                         `title`="Bootstrap SE", 
-                        `type`="number"),
+                        `type`="number", 
+                        `combineBelow`=TRUE),
+                    list(
+                        `name`="label", 
+                        `title`="Effect", 
+                        `type`="text"),
                     list(
                         `name`="typeM", 
                         `title`="Type-M", 

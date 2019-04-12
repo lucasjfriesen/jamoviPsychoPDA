@@ -24,9 +24,12 @@ binaryDIF.logistic <-
         }
 
         internalLog <- function() {
+          DF <- ifelse(type == "both", 2 * length(groupOne), length(groupOne))
             if (groupType == "group") {
+                # Group <- rep(0, NROW(DATA))
+                # Group[group == groupOne] <- 1
                 Group <- rep(0, NROW(DATA))
-                Group[group == groupOne] <- 1
+                for (i in 1:DF) Group[group == groupOne[i]] <- i
             } else {
                 Group <- group
             }
@@ -39,7 +42,6 @@ binaryDIF.logistic <-
                                       alpha, length(groupOne)),
                     nudif = qchisq(1 - alpha, length(groupOne))
                 )
-            DF <- ifelse(type == "both", 2 * length(groupOne), length(groupOne))
 
             # Purification == FALSE ----
 
@@ -95,7 +97,9 @@ binaryDIF.logistic <-
                             symbols = c("A", "B", "C"),
                             legend = FALSE
                         )),
-                        sigThreshold = sigThreshold
+                        sigThreshold = sigThreshold,
+                                            m0 = PROV$m0,
+                    m1 = PROV$m1
                     )
 
             }
@@ -360,6 +364,8 @@ Logistik <-
             res <-
                 list(
                     stat = dev,
+                    m0 = m0,
+                    m1 = m1,
                     deltaR2 = deltaR,
                     coefficients = mFull,
                     criterion = criterion,

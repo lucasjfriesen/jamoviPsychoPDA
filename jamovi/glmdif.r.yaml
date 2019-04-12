@@ -131,18 +131,21 @@ items:
           - D
           - groupContrasts
       columns:
-        - name: label
-          title: Effect
-          type: text        
         - name: itemName
           title: Item
           type: text
+          combineBelow: True
         - name: obsEff
           title: Obs. Effect
           type: text
+          combineBelow: True
         - name: bootSE
           title: Bootstrap SE
           type: number
+          combineBelow: True        
+        - name: label
+          title: Effect
+          type: text        
         - name: typeM
           title: Type-M
           type: number

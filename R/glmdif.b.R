@@ -20,7 +20,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
     inherit = glmDIFBase,
     private = list(
       .init = function() {
-        
       },
       .run = function() {
         if (is.null(self$options$group) |
@@ -62,6 +61,12 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             is.null(self$data) |
             is.null(self$options$item)) {
           return()
+        }
+        if (self$options$groupType == "groupNonBin" & length(self$options$groupContrasts) > 1){
+          for (i in 1:length(groupContrasts)){
+            self$results$DIFtable$addColumn(name = paste0("coeffMain", i), title = paste0("Main Effect: ", i), type = "number", visible = (coeffEff))
+            self$results$DIFtable$addColumn(name = paste0("coeffInt", i), title = paste0("Interaction Effect: ", i), type = "number", visible = (coeffEff))
+          }
         }
         
         # The full DF
@@ -107,7 +112,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         }
         
         # Vector containing grouping data
-        group <- as.character(data[, self$options$group])
+        group <- data[, self$options$group]
         groupType_ <- self$options$groupType
         if (groupType_ == "groupBin" | groupType_ == "groupNonBin"){
           groupType <- "group"
@@ -250,7 +255,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               )
             )
             if (GC[item, 4] < GC[item, 3]) {
-              highlight(table, item, 1)
+              highlight(table, item, 4)
               table$setNote(
                 "interpretGC",
                 "Several items (flagged red) have observed effect sizes below the hypothesized true effect. For a guide to interpretation see: https://bit.ly/2I274JY"

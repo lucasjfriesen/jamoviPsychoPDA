@@ -42,7 +42,7 @@ designAnalysis.nagR2 <-
     for (item in 1:length(designList)) {
       empDATA <-
         cbind(Item = jmvcore::toNumeric(Data[, designList[item]]),
-              jmvcore::toNumeric(group),
+              as.factor(group),
               match)
       colnames(empDATA) <-
         c(colnames(Data)[item], "GROUP", "SCORES")
