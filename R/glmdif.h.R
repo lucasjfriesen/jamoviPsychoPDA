@@ -235,7 +235,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
         DESCtable = function() private$.items[["DESCtable"]],
         DIFtable = function() private$.items[["DIFtable"]],
         gcTable = function() private$.items[["gcTable"]],
-        gcTableCoefficients = function() private$.items[["gcTableCoefficients"]],
+        coefficientsTable = function() private$.items[["coefficientsTable"]],
         ICCplots = function() private$.items[["ICCplots"]]),
     private = list(),
     public=list(
@@ -399,9 +399,14 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `visible`="(power)"))))
             self$add(jmvcore::Table$new(
                 options=options,
-                name="gcTableCoefficients",
-                title="Design Analysis - Regression Coefficients",
+                name="coefficientsTable",
+                title="Regression Coefficients",
                 rows=0,
+                columns=list(
+                    list(
+                        `name`="itemName", 
+                        `title`="Item", 
+                        `type`="text")),
                 visible=FALSE,
                 clearWith=list(
                     "item",
@@ -421,63 +426,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "bootSims",
                     "D",
                     "twoGroups",
-                    "groupContrasts"),
-                columns=list(
-                    list(
-                        `name`="label", 
-                        `title`="Effect", 
-                        `type`="text"),
-                    list(
-                        `name`="itemName", 
-                        `title`="Item", 
-                        `type`="text"),
-                    list(
-                        `name`="hypTrueEff", 
-                        `title`="Hyp. True Effect", 
-                        `type`="text"),
-                    list(
-                        `name`="obsMain", 
-                        `title`="Obs. Main", 
-                        `type`="text"),
-                    list(
-                        `name`="obsMainSE", 
-                        `title`="Obs. Main SE"),
-                    list(
-                        `name`="typeMMain", 
-                        `title`="Type-M Main", 
-                        `type`="number"),
-                    list(
-                        `name`="typeSMain", 
-                        `title`="Type-S Main", 
-                        `type`="number"),
-                    list(
-                        `name`="powerMain", 
-                        `title`="Observed Power Main", 
-                        `type`="number", 
-                        `format`="(zto)", 
-                        `visible`="(power)"),
-                    list(
-                        `name`="obsInt", 
-                        `title`="Obs. Interaction", 
-                        `type`="text"),
-                    list(
-                        `name`="obsIntSE", 
-                        `title`="Obs. Interaction SE", 
-                        `type`="number"),
-                    list(
-                        `name`="typeMInt", 
-                        `title`="Type-M Int", 
-                        `type`="number"),
-                    list(
-                        `name`="typeSInt", 
-                        `title`="Type-S Int", 
-                        `type`="number"),
-                    list(
-                        `name`="powerInt", 
-                        `title`="Observed Power Int", 
-                        `type`="number", 
-                        `format`="(zto)", 
-                        `visible`="(power)"))))
+                    "groupContrasts")))
             self$add(jmvcore::Array$new(
                 options=options,
                 name="ICCplots",
@@ -583,7 +532,7 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'   \code{results$DESCtable} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$DIFtable} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$gcTable} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$gcTableCoefficients} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$coefficientsTable} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$ICCplots} \tab \tab \tab \tab \tab an array of images \cr
 #' }
 #'

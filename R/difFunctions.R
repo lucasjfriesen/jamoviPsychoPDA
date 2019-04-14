@@ -28,8 +28,8 @@ binaryDIF.logistic <-
             if (groupType == "group") {
                 # Group <- rep(0, NROW(DATA))
                 # Group[group == groupOne] <- 1
-                Group <- rep(0, NROW(DATA))
-                for (i in 1:DF) Group[group == groupOne[i]] <- i
+                # for (i in 1:DF) Group[group == groupOne[i]] <- i
+              Group <- group
             } else {
                 Group <- group
             }
@@ -351,13 +351,13 @@ Logistik <-
                 mSimple[item, 1:length(m1$coefficients)] <-
                     m1$coefficients
         }
-        names <- c("(Intercept)", "SCORE")
+        names <- c("(Intercept)", "Match Variable")
         groupNames <- sort(unique(member))
         for (i in 2:length(groupNames))
-            names <- c(names, paste("GROUP",
+            names <- c(names, paste(
                                     groupNames[i], sep = ""))
         for (i in 2:length(groupNames))
-            names <- c(names, paste("SCORE:GROUP",
+            names <- c(names, paste("Match Variable : ",
                                     groupNames[i], sep = ""))
         colnames(mFull) <- colnames(mSimple) <- names
 

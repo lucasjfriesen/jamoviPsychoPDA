@@ -155,10 +155,14 @@ items:
           format: (zto)
           visible: (power)
 
-    - name: gcTableCoefficients
-      title: "Design Analysis - Regression Coefficients"
+    - name: coefficientsTable
+      title: "Regression Coefficients"
       type: Table
       rows: 0
+      columns:
+        - name: itemName
+          title: Item
+          type: text
       visible: False
       clearWith: 
           - item
@@ -179,49 +183,6 @@ items:
           - D
           - twoGroups
           - groupContrasts
-      columns:
-        - name: label
-          title: Effect
-          type: text
-        - name: itemName
-          title: Item
-          type: text
-        - name: hypTrueEff
-          title: Hyp. True Effect
-          type: text 
-        - name: obsMain
-          title: Obs. Main
-          type: text
-        - name: obsMainSE
-          title: Obs. Main SE
-        - name: typeMMain
-          title: Type-M Main
-          type: number
-        - name: typeSMain
-          title: Type-S Main
-          type: number
-        - name: powerMain
-          title: Observed Power Main
-          type: number
-          format: (zto)
-          visible: (power)
-        - name: obsInt
-          title: Obs. Interaction
-          type: text
-        - name: obsIntSE
-          title: Obs. Interaction SE
-          type: number
-        - name: typeMInt
-          title: Type-M Int
-          type: number
-        - name: typeSInt
-          title: Type-S Int
-          type: number
-        - name: powerInt
-          title: Observed Power Int
-          type: number
-          format: (zto)
-          visible: (power)
 
     - name: ICCplots
       title: Item Response Curves - Based on Logistic Regression

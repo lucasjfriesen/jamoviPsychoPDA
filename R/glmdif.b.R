@@ -112,7 +112,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         }
         
         # Vector containing grouping data
-        group <- data[, self$options$group]
+        group <- as.character(data[, self$options$group])
         groupType_ <- self$options$groupType
         if (groupType_ == "groupBin" | groupType_ == "groupNonBin"){
           groupType <- "group"
@@ -195,7 +195,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             }
             groupOne <- names(groupContrasts)
           }
-          
+          # self$results$debug$setContent(list(group, groupContrasts, groupElementList))
         } else {
           groupOne <- median(group)
           groupElementList <- c(min(group), max(group))
@@ -282,6 +282,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             pAdjustMethod = pAdjustMethod
           )
         
+        # self$results$coefficientsTable$setContent(model$coefficients)
         # self$results$debug$setContent(model)
         
         # Build GC tables ----
@@ -472,8 +473,11 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           } 
           if (groupType_ == "groupNonBin"){
             resDescTable[nrow(resDescTable) + 1, "bob"] = paste0("Group coding: ")
-            for (i in groupElementList) {
-              resDescTable[nrow(resDescTable) + 1, "bob"] = paste0(names(groupElementList[groupElementList == i]), " : ", i)
+            sortedNames <- names(groupElementList)
+            names(sortedNames) <- groupElementList
+            sortedNames <- sort(sortedNames)
+            for (i in 1:length(sortedNames)) {
+              resDescTable[nrow(resDescTable) + 1, "bob"] = paste0(sortedNames[i], " : ", names(sortedNames)[i])
           }}
           if (groupType == "cont" ){
             resDescTable[nrow(resDescTable) + 1, "bob"] = paste0("Group Range: ")
@@ -586,8 +590,27 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             )
           )
         }
+        
+        # Coefficients table ----
+        coefficientsTable <- function(){
+          self$results$coefficientsTable$setVisible(visible = TRUE)
+          table <- self$results$coefficientsTable
+          coefficientsList <- model$coefficients
+          
+          for (i in names(coefficientsList[1,])){
+            table$addColumn(name = i)
+          }
+
+          for (j in 1:NCOL(Data)){
+            table$addRow(rowKey = j, values = coefficientsList[j,])
+            table$setRow(rowKey = j, values = list(itemName = model$names[j]))
+          }
+        }
+        if (self$options$coeffEff){
+          coefficientsTable()
+        }
+        
         # State Savers ----
-        # These don't work for DESCtable or gcTable
         # DIF state ----
         DIFstate <- self$results$DIFtable$state
         if (!is.null(DIFstate)) {
