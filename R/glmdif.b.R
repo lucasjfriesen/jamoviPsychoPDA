@@ -22,7 +22,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
       .init = function() {
       },
       .run = function() {
-        if (is.null(self$options$group) |
+      if (is.null(self$options$group) |
             is.null(self$data) | is.null(self$options$item)) {
           self$results$DESCtable$setVisible(visible = FALSE)
           self$results$DIFtable$setVisible(visible = FALSE)

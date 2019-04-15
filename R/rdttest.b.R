@@ -12,24 +12,40 @@ rdTTestClass <- if (requireNamespace('jmvcore'))
     inherit = rdTTestBase,
     private = list(
       .run = function() {
-        if (is.null(self$options$labelVar) |
+          if (is.null(self$options$labelVar) |
             is.null(self$options$hypTrueEff) |
             (is.null(self$options$observedP) &
              is.null(self$options$observedSE))) {
-          self$results$instructions$setVisible(visible = TRUE)
-          self$results$instructions$setRow(rowNo = 1,
-                                           value = list(frank = "1) Input the 'Label'"))
-          self$results$instructions$setRow(rowNo = 2,
-                                           value = list(frank = "2) Input the 'Observed Effect'"))
-          self$results$instructions$setRow(
-            rowNo = 3,
-            value = list(frank = "3) Input the 'Hypothesized True Effect'")
-          )
-          self$results$instructions$setRow(
-            rowNo = 4,
-            value = list(frank = "4) Input ONE OF 'Observed Standard Error' OR 'Observed P-Value'")
-          )
-          return()
+          self$results$instructions$setContent(
+            "<html>
+            <head>
+            <style>
+            
+            div.instructions {
+            width: 500px;
+            height: 225px;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: center;
+            }
+            </style>
+            </head>
+            <body>
+            <div class='instructions'>
+            <p>Welcome to PsychoPDA's T-Test Design Analysis module. To get started:</p>
+            <ol>
+            <li>Input the 'Label'.<br /><br /></li>
+            <li>Input the 'Observed Effect'.<br /><br /></li>
+            <li>Input the 'Hypothesized True Effect.<br /><br /></li>
+            <li>Input ONE OF 'Observed Standard Error' OR 'Observed P-Value'</li>
+            </ol>
+            <p>If you encounter any errors, or have questions, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/meanDiffDA.html' target = '_blank'>documentation</a></p>
+            </div>
+            </body>
+            </html>")
+            return()
+        } else {
+          self$results$instructions$setVisible(visible = FALSE)
         }
         
         data <- self$data

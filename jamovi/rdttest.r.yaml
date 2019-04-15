@@ -10,13 +10,8 @@ items:
 
     - name: instructions
       title: Instructions
-      type: Table
-      rows: 4
-      visible: False
-      columns: 
-        - name: frank
-          title: ""
-          type: text
+      type: Html
+      visible: True
 
 
     - name: rdTTest

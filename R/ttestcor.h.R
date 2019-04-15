@@ -159,17 +159,11 @@ ttestCorResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="debug",
                 title="debug"))
-            self$add(jmvcore::Table$new(
+            self$add(jmvcore::Html$new(
                 options=options,
                 name="instructions",
                 title="Instructions",
-                rows=4,
-                visible=FALSE,
-                columns=list(
-                    list(
-                        `name`="frank", 
-                        `title`="", 
-                        `type`="text"))))
+                visible=TRUE))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="rdTTestCor",
@@ -290,7 +284,7 @@ ttestCorBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
-#'   \code{results$instructions} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$rdTTestCor} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$plotHTE} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$plotN} \tab \tab \tab \tab \tab an image \cr
@@ -300,9 +294,9 @@ ttestCorBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'
 #' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
 #'
-#' \code{results$instructions$asDF}
+#' \code{results$rdTTestCor$asDF}
 #'
-#' \code{as.data.frame(results$instructions)}
+#' \code{as.data.frame(results$rdTTestCor)}
 #'
 #' @export
 ttestCor <- function(
