@@ -99,7 +99,8 @@ binaryDIF.logistic <-
                         )),
                         sigThreshold = sigThreshold,
                                             m0 = PROV$m0,
-                    m1 = PROV$m1
+                    m1 = PROV$m1,
+                    errors = PROV$coefficientsSE
                     )
 
             }
@@ -153,6 +154,7 @@ binaryDIF.logistic <-
                                 type = type,
                                 criterion = criterion
                             )
+                            
                             chiSquared2 <- logistikRes2$stat
                             deltaR2 <- logistikRes2$deltaR2
                             if (max(chiSquared2) <= sigThreshold) {
@@ -201,7 +203,7 @@ binaryDIF.logistic <-
                         deltaR2 = deltaR2,
                         coefficients = logistikRes1$coefficients,
                         alpha = alpha,
-                        thr = sigThreshold,
+                        sigThreshold = sigThreshold,
                         DIFitems = DIFitems,
                         groupType = groupType,
                         match = logistikRes1$match,
@@ -228,7 +230,11 @@ binaryDIF.logistic <-
                             c(0, 0.035, 0.07, 1),
                             symbols = c("A", "B", "C"),
                             legend = FALSE
-                        ))
+                        )),
+                        m0 = logistikRes1$m0,
+                        m1 = logistikRes1$m1,
+                        errors = logistikRes1$coefficientsSE
+                        
                     )
             }
             # p-Adjust ----
@@ -360,7 +366,8 @@ Logistik <-
             names <- c(names, paste("Match Variable : ",
                                     groupNames[i], sep = ""))
         colnames(mFull) <- colnames(mSimple) <- names
-
+        errors <- summary(m0)$coefficients[, 2]
+        names(errors) <- names
             res <-
                 list(
                     stat = dev,
@@ -368,6 +375,7 @@ Logistik <-
                     m1 = m1,
                     deltaR2 = deltaR,
                     coefficients = mFull,
+                    coefficientsSE = errors,
                     criterion = criterion,
                     groupType = groupType,
                     match = ifelse(match[1] ==

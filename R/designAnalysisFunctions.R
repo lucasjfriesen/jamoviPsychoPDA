@@ -80,15 +80,14 @@ designAnalysis.nagR2 <-
   }
 
 
-# -----
+
 
 designAnalysis.coefficients <- function(designList,
-                                        Data,
-                                        group,
-                                        match,
-                                        bootSims,
-                                        type,
-                                        hypTrueEff,
+                                        hypTrueEff, 
+                                        coefficient, 
+                                        observedSE, 
+                                        alpha, 
+                                        df,
                                         difFlagScale,
                                         sigOnly) {
   if (hypTrueEff == "") {
@@ -105,77 +104,45 @@ designAnalysis.coefficients <- function(designList,
       "item" = rep(as.character(), times = length(designList) * length(hypTrueEff)),
       "obsMain" = rep(as.numeric(), times = length(designList) *
                         length(hypTrueEff)),
+      "coeffMainSE" = rep(as.numeric(), times = length(designList) *
+                            length(hypTrueEff)),
       "obsInt" = rep(as.numeric(), times = length(designList) *
                        length(hypTrueEff)),
+      "coeffIntSE" = rep(as.numeric(), times = length(designList) *
+                           length(hypTrueEff)),
       "hypTrueEff" = rep(as.numeric(), times = length(designList) *
                            length(hypTrueEff)),
-      "bootSE" = rep(as.numeric(), times = length(designList) *
-                       length(hypTrueEff)),
-      "typeMMain" = rep(as.numeric(), times = length(designList) *
-                          length(hypTrueEff)),
-      "typeSMain" = rep(as.numeric(), times = length(designList) *
-                          length(hypTrueEff)),
-      "typeMInt" = rep(as.numeric(), times = length(designList) *
-                         length(hypTrueEff)),
-      "typeSInt" = rep(as.numeric(), times = length(designList) *
-                         length(hypTrueEff)),
-      "power" = rep(as.numeric(), times = length(designList) *
+      "typeM" = rep(as.numeric(), times = length(designList) *
                       length(hypTrueEff)),
-      stringsAsFactors = FALSE
-    )
-  
-  for (item in 1:length(designList)) {
-    curItem <- designList[item]
-    empDATA <-
-      cbind(Item = jmvcore::toNumeric(Data[, curItem]),
-            jmvcore::toNumeric(group),
-            match)
-    colnames(empDATA) <-
-      c(colnames(Data)[item], "GROUP", "SCORES")
-    tick <- length(hypTrueEff) - 1
-    if (coefficients == FALSE) {
-      myBoot <-
-        boot.empDist(empDATA,
-                     R = bootSims,
-                     type = type,
-                     coefficients = FALSE)
-    } else {
-      myBoot <-
-        boot.empDist(empDATA,
-                     R = bootSims,
-                     type = type,
-                     coefficients = TRUE)
-    }
-    for (hypInd in 1:length(hypTrueEff)) {
-      private$.checkpoint()
-      if (coefficients == FALSE) {
-        retroDesignRes <-
-          retroDesign.nagR2(
-            hypTrueEff = hypTrueEff[hypInd],
-            myBoot,
-            alpha = alpha,
-            sigOnly = sigOnly
-          )
-      } else {
+      "typeS" = rep(as.numeric(), times = length(designList) *
+                      length(hypTrueEff)),
+        "power" = rep(as.numeric(), times = length(designList) *
+                        length(hypTrueEff)),
+        stringsAsFactors = FALSE
+      )
+      
+      for (item in 1:length(designList)) {
+        curItem <- designList[item]
         retroDesignRes <-
           retroDesign.coefficients(
             hypTrueEff = hypTrueEff[hypInd],
-            myBoot,
-            alpha = alpha,
+            coefficient = coefficient, 
+            observedSE = observedSE, 
+            alpha = alpha, 
+            df = df,
             sigOnly = sigOnly
           )
+        
+        GC[item * length(hypTrueEff) - tick, 1] <-
+          labels[hypInd]
+        GC[item * length(hypTrueEff) - tick, 2] <-
+          designList[item]
+        GC[item * length(hypTrueEff) - tick, 3] <-
+          as.character((hypTrueEff[hypInd]))
+        GC[item * length(hypTrueEff) - tick, 4:7] <-
+          as.numeric(retroDesignRes)
+        tick <- tick - 1
       }
-      GC[item * length(hypTrueEff) - tick, 1] <-
-        labels[hypInd]
-      GC[item * length(hypTrueEff) - tick, 2] <-
-        designList[item]
-      GC[item * length(hypTrueEff) - tick, 3] <-
-        as.character((hypTrueEff[hypInd]))
-      GC[item * length(hypTrueEff) - tick, 4:7] <-
-        as.numeric(retroDesignRes)
-      tick <- tick - 1
-    }
-  }
-  
-  return(GC)
+      
+      return(GC)
 }

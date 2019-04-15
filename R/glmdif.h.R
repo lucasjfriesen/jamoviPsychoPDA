@@ -332,17 +332,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `title`="Naeglekirke R\u00B2", 
                         `type`="number", 
                         `format`="zto", 
-                        `visible`="(nagEff)"),
-                    list(
-                        `name`="coeffMain", 
-                        `title`="Main Effect", 
-                        `type`="number", 
-                        `visible`="(coeffEff)"),
-                    list(
-                        `name`="coeffInteraction", 
-                        `title`="Interaction Effect", 
-                        `type`="number", 
-                        `visible`="(coeffEff)"))))
+                        `visible`="(nagEff)"))))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="gcTable",

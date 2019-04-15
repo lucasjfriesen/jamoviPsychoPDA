@@ -96,16 +96,6 @@ items:
           format: zto
           visible: (nagEff)
 
-        - name: coeffMain
-          title: Main Effect
-          type: number
-          visible: (coeffEff)
-
-        - name: coeffInteraction
-          title: Interaction Effect
-          type: number
-          visible: (coeffEff)
-
 
     - name: gcTable
       title: "Design Analysis - Naeglekirke R\u00B2"

@@ -551,13 +551,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     chiSquare = model$Logistik[i],
                     p = model$adjusted.p[i],
                     effSize = model$deltaR2[i],
-                    coeffMain = model$coefficients[i, 3],
-                    coeffInteraction = switch(
-                      self$options$type,
-                      both = model$coefficients[i, 4],
-                      udif = "",
-                      nudif = model$coefficients[i, 4]
-                    ),
                     ZT = ifelse(model$adjusted.p[i] <= alpha, model$ZT[i], ""),
                     JG = ifelse(model$adjusted.p[i] <= alpha, model$JG[i], "")
                   )
@@ -592,7 +585,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         }
         
         # Coefficients table ----
-        coefficientsTable <- function(){
+        calculateCoefficientsTable <- function(){
           self$results$coefficientsTable$setVisible(visible = TRUE)
           table <- self$results$coefficientsTable
           coefficientsList <- model$coefficients
@@ -606,9 +599,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             table$setRow(rowKey = j, values = list(itemName = model$names[j]))
           }
         }
-        if (self$options$coeffEff){
-          coefficientsTable()
-        }
         
         # State Savers ----
         # DIF state ----
@@ -619,6 +609,18 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           # ... create the table and the state
           DIFstate <- calculateDIFTable()
           self$results$DIFtable$setState(DIFstate)
+        }
+        
+        # Coefficient state ----
+        coeffState <- self$results$coefficientsTable$state
+        if (!is.null(coeffState)) {
+          # ... populate the table from the state
+        } else {
+          # ... create the table and the state
+          if (self$options$coeffEff){
+            coeffState <- calculateCoefficientsTable()
+            self$results$coefficientsTable$setState(coeffState)
+          }
         }
         
         # DESC state ----
