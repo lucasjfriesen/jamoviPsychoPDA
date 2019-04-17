@@ -31,19 +31,17 @@
           return(rdRes)
         }
         
-        retroDesign.coefficients <- function(hypTrueEff, coefficient, observedSE, alpha, df, sigOnly) {
-          D <- abs(coefficient - hypTrueEff/observedSE)
-          lambda <- D / observedSE
+        retroDesign.coefficients <- function(hypTrueEff, coefficient, coefficientsSE, alpha, df, sigOnly) {
+          D <- abs(coefficient - hypTrueEff/coefficientsSE)
+          lambda <- D / coefficientsSE
           
-          # if (sigOnly) {
-          #   # Quantile matching the upper 1 - alpha in the emp. dist.
-          #   qUpper <- quantile(qUpper,  1 - (alpha))
-          # } else {
-          #   # Quantile matching the observed value
-          #   qUpper <- boot.qEmp(qUpper, boot.pEmp(qUpper, D))
-          # }
-          
-          z <- qt(1 - (alpha), df)
+          if (sigOnly) {
+            # Quantile matching the upper 1 - alpha in the emp. dist.
+            z <- qt(1 - (alpha), df)
+          } else {
+            # Quantile matching the observed value
+            z <- qt(pt(lambda, df = df), df = df)
+          }
           
           exp1S <- pt(-z - lambda, df)
           exp2S <- pt(z - lambda, df)
@@ -60,6 +58,6 @@
           typeM <- (exp1M + exp2M +
                       lambda * (exp3M + exp4M - 1)) /
             (lambda * (1 - exp3M + exp4M))
-          return(list(D = D, "typeS"=typeS, "typeM"=typeM, "power"=power))
+          return(list("obsEff" = lambda, "typeS"=typeS, "typeM"=typeM, "power"=power, "label"=hypTrueEff))
         }
         

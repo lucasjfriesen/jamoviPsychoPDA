@@ -301,45 +301,51 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               )
               return()
             }
+            if (self$options$designAnalysisEffectType == "nagR2") {
+              GCTable = designAnalysis.nagR2(
+                designList = designList,
+                Data = Data,
+                group = group,
+                match = model$matchScores,
+                bootSims = bootSims,
+                type = type,
+                hypTrueEff = self$options$D,
+                alpha = alpha,
+                difFlagScale = self$options$difFlagScale,
+                sigOnly = self$options$designAnalysisSigOnly
+              )
+              return(GCTable)
+            }
             
-            GCTable = designAnalysis.nagR2(
-              designList = designList,
-              Data = Data,
-              group = group,
-              match = model$matchScores,
-              bootSims = bootSims,
-              type = type,
-              hypTrueEff = self$options$D,
-              alpha = alpha,
-              difFlagScale = self$options$difFlagScale,
-              sigOnly = self$options$designAnalysisSigOnly
-            )
-            return(GCTable)
+            if (self$options$designAnalysisEffectType == "coefficients") {
+              # self$results$debug$setContent(model)
+              
+              gcTableCoefficients = designAnalysis.coefficients(
+                designList = designList,
+                coefficient = model$coefficients,
+                coefficientsSE = model$coefficientsSE,
+                alpha = self$options$alpha,
+                hypTrueEff = self$options$D,
+                difFlagScale = self$options$difFlagScale,
+                df = model$m0$df.residual,
+                sigOnly = self$options$designAnalysisSigOnly
+              )
+              
+              
+              for (item in 1:length(designList)) {
+                table <- self$results$gcTable
+                subList <- as.data.frame(gcTableCoefficients[[item]])
+                # self$results$debug$setContent(list(
+                # subList, rownames(subList), model$m0$df.residual
+              # ))
+                for (i in 1:NROW(subList)) {
+                  table$addRow(rowKey = item, values = c("itemName"=designList[item],"coefficientName" = rownames(subList)[i], subList[i, ]))
+                }
+              }
+            }
           }
-          
-          # if (self$options$designAnalysisEffectType == "coefficients") {
-          #   if (self$options$designAnalysisSigOnly) {
-          #     designList <- model$names[model$DIFitems]
-          #   } else {
-          #     designList <- model$names
-          #   }
-          #   gcTableCoefficients = designAnalysis.coefficients(
-          #     designList = designList,
-          #     Data = Data,
-          #     group = group,
-          #     match = model$matchScores,
-          #     coefficients = TRUE,
-          #     bootSims = bootSims,
-          #     type = type,
-          #     hypTrueEff = self$options$D,
-          #     difFlagScale = self$options$difFlagScale
-          #   )
-          #   if (length(gcTableCoefficients) != 0) {
-          #     table <- self$results$gcTableCoefficients
-          #     buildGC(gcTableCoefficients, table)
-          #   }
-          # }
         }
+        
         # Description Results Table ----
         calculateDESCtable <- function() {
           resDescTable <- data.frame(bob = NA)

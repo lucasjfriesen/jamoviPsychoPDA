@@ -125,6 +125,11 @@ items:
           title: Item
           type: text
           combineBelow: True
+        - name: coefficientName
+          title: Term
+          type: text
+          visible: (designAnalysisEffectType:coefficients)
+          combineBelow: True
         - name: obsEff
           title: Obs. Effect
           type: text
@@ -132,13 +137,18 @@ items:
         - name: bootSE
           title: Bootstrap SE
           type: number
+          visible: (designAnalysisEffectType:nagR2)
           combineBelow: True        
         - name: label
-          title: Effect
+          title: Hyp. True Effect
           type: text        
         - name: typeM
           title: Type-M
           type: number
+        - name: typeS
+          title: Type-S
+          type: number
+          visible: (designAnalysisEffectType:coefficients)  
         - name: power
           title: Empirical Observed Power
           type: number

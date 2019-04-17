@@ -88,7 +88,8 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "designAnalysisEffectType",
                 designAnalysisEffectType,
                 options=list(
-                    "nagR2"),
+                    "nagR2",
+                    "coefficients"),
                 default="nagR2")
             private$..designAnalysisSigOnly <- jmvcore::OptionBool$new(
                 "designAnalysisSigOnly",
@@ -364,6 +365,12 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `type`="text", 
                         `combineBelow`=TRUE),
                     list(
+                        `name`="coefficientName", 
+                        `title`="Term", 
+                        `type`="text", 
+                        `visible`="(designAnalysisEffectType:coefficients)", 
+                        `combineBelow`=TRUE),
+                    list(
                         `name`="obsEff", 
                         `title`="Obs. Effect", 
                         `type`="text", 
@@ -372,15 +379,21 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `name`="bootSE", 
                         `title`="Bootstrap SE", 
                         `type`="number", 
+                        `visible`="(designAnalysisEffectType:nagR2)", 
                         `combineBelow`=TRUE),
                     list(
                         `name`="label", 
-                        `title`="Effect", 
+                        `title`="Hyp. True Effect", 
                         `type`="text"),
                     list(
                         `name`="typeM", 
                         `title`="Type-M", 
                         `type`="number"),
+                    list(
+                        `name`="typeS", 
+                        `title`="Type-S", 
+                        `type`="number", 
+                        `visible`="(designAnalysisEffectType:coefficients)"),
                     list(
                         `name`="power", 
                         `title`="Empirical Observed Power", 
