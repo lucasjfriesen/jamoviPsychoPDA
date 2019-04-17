@@ -99,6 +99,7 @@ items:
 
     - name: gcTable
       title: "Design Analysis - "
+      refs: gelmanCarlin2014
       type: Table
       rows: 0
       visible: (designAnalysis)

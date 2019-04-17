@@ -338,6 +338,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="gcTable",
                 title="Design Analysis - ",
+                refs="gelmanCarlin2014",
                 rows=0,
                 visible="(designAnalysis)",
                 clearWith=list(

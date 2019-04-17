@@ -8,4 +8,11 @@
         `year`=2019, 
         `title`="PsychoPDA: Binary Differential Item Functioning", 
         `publisher`="[jamovi module]. Retrieved from https://github.com/lucasjfriesen/jamoviPsychoPDA", 
-        `url`="https://github.com/lucasjfriesen/jamoviPsychoPDA"))
+        `url`="https://github.com/lucasjfriesen/jamoviPsychoPDA"), 
+    `gelmanCarlin2014`=list(
+        `type`="paper", 
+        `author`="Gelman, A., Carlin, J.", 
+        `year`=2014, 
+        `title`="Beyond Power Calculations: Assessing Type S (Sign) and Type M (Magnitude) Errors", 
+        `publisher`="Perspectives on Psychological Science: A Journal of the Association for Psychological Science", 
+        `doi`="10.1177/1745691614551642"))
