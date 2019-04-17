@@ -98,7 +98,7 @@ items:
 
 
     - name: gcTable
-      title: "Design Analysis - Naeglekirke R\u00B2"
+      title: "Design Analysis - "
       type: Table
       rows: 0
       visible: (designAnalysis)
@@ -137,7 +137,6 @@ items:
         - name: bootSE
           title: Bootstrap SE
           type: number
-          visible: (designAnalysisEffectType:nagR2)
           combineBelow: True        
         - name: label
           title: Hyp. True Effect
@@ -156,7 +155,7 @@ items:
           visible: (power)
 
     - name: coefficientsTable
-      title: "Regression Coefficients"
+      title: "Logistic Regression Coefficients"
       type: Table
       rows: 0
       columns:

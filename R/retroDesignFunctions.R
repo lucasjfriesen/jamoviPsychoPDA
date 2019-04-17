@@ -32,7 +32,7 @@
         }
         
         retroDesign.coefficients <- function(hypTrueEff, coefficient, coefficientsSE, alpha, df, sigOnly) {
-          D <- abs(coefficient - hypTrueEff/coefficientsSE)
+          D <- abs(hypTrueEff - coefficient)
           lambda <- D / coefficientsSE
           
           if (sigOnly) {
@@ -58,6 +58,6 @@
           typeM <- (exp1M + exp2M +
                       lambda * (exp3M + exp4M - 1)) /
             (lambda * (1 - exp3M + exp4M))
-          return(list("obsEff" = lambda, "typeS"=typeS, "typeM"=typeM, "power"=power, "label"=hypTrueEff))
+          return(list("obsEff" = lambda, "typeS"=typeS, "typeM"=typeM, "power"=power, "label"=hypTrueEff, "bootSE"=coefficientsSE))
         }
         

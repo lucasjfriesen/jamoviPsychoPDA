@@ -200,7 +200,8 @@ view.layout = ui.extend({
 					controls: [
 						{
 							type: DefaultControls.ComboBox,
-							name: "designAnalysisEffectType"
+							name: "designAnalysisEffectType",
+							enable: "(designAnalysis)"
 						}
 					]
 				},
@@ -218,7 +219,7 @@ view.layout = ui.extend({
 							type: DefaultControls.TextBox,
 							name: "bootSims",
 							format: FormatDef.number,
-							enable: "(designAnalysis)"
+							enable: "(designAnalysisEffectType:nagR2)"
 						}
 					]
 				}

@@ -337,7 +337,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$add(jmvcore::Table$new(
                 options=options,
                 name="gcTable",
-                title="Design Analysis - Naeglekirke R\u00B2",
+                title="Design Analysis - ",
                 rows=0,
                 visible="(designAnalysis)",
                 clearWith=list(
@@ -379,7 +379,6 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `name`="bootSE", 
                         `title`="Bootstrap SE", 
                         `type`="number", 
-                        `visible`="(designAnalysisEffectType:nagR2)", 
                         `combineBelow`=TRUE),
                     list(
                         `name`="label", 
@@ -403,7 +402,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$add(jmvcore::Table$new(
                 options=options,
                 name="coefficientsTable",
-                title="Regression Coefficients",
+                title="Logistic Regression Coefficients",
                 rows=0,
                 columns=list(
                     list(

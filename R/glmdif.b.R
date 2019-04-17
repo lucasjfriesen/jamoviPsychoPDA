@@ -314,6 +314,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 difFlagScale = self$options$difFlagScale,
                 sigOnly = self$options$designAnalysisSigOnly
               )
+              self$results$gcTable$setTitle("Design Analysis - Naeglekirke R\u00B2")
               return(GCTable)
             }
             
@@ -331,17 +332,18 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 sigOnly = self$options$designAnalysisSigOnly
               )
               
-              
+              table <- self$results$gcTable
+              table$setTitle("Design Analysis - Logistic Regression Coefficients")
               for (item in 1:length(designList)) {
-                table <- self$results$gcTable
                 subList <- as.data.frame(gcTableCoefficients[[item]])
-                # self$results$debug$setContent(list(
-                # subList, rownames(subList), model$m0$df.residual
-              # ))
+              # self$results$debug$setContent(list(subList))
                 for (i in 1:NROW(subList)) {
-                  table$addRow(rowKey = item, values = c("itemName"=designList[item],"coefficientName" = rownames(subList)[i], subList[i, ]))
+                  table$addRow(rowKey = item, values = c("itemName"=designList[item],
+                                                         "coefficientName" = rownames(subList)[i],
+                                                         subList[i, ]))
                 }
               }
+              
             }
           }
         }
@@ -465,7 +467,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             if (length(groupElementList) > 2) {
               resDescTable <- blankRow(resDescTable)
               resDescTable[nrow(resDescTable) + 1, "bob"] = paste0(
-                "(The data file provided non-binary groupings. Please see below for the recoding legend.)"
+                "(The data file provided non-binary groupings, but 'Discrete Groups (n = 2)' was selected as the Group Type . Please see below for the recoding legend.)"
               )
               resDescTable <- blankRow(resDescTable)
             }
@@ -511,21 +513,21 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           }
           resDescTable <- blankRow(resDescTable)
           
-          resDescTable[nrow(resDescTable) + 1, "bob"] =  paste0("Effect size (\u0394 Nagelkerke's R\u00B2) scale: ", switch(self$options$difFlagScale,
+          resDescTable[nrow(resDescTable) + 1, "bob"] =  paste0("Effect size (change in Nagelkerke's R\u00B2: \u0394R\u00B2) scale: ", switch(self$options$difFlagScale,
                                                                                                                             zt = "Zumbo-Thomas",
                                                                                                                             jg = "Jodoin-Gierl"))
           resDescTable[nrow(resDescTable) + 1, "bob"] =  switch(self$options$difFlagScale,
-                                                                zt = "'A': Negligible effect ('R\u00B2' 0 <> 0.13)",
-                                                                jg = "'A': Negligible effect ('R\u00B2' 0 <> 0.035)")
+                                                                zt = "'A': Negligible effect (0 \u2264 \u0394R\u00B2 \u2264 0.13)",
+                                                                jg = "'A': Negligible effect (0 \u2264 \u0394R\u00B2 \u2264 0.035)")
           resDescTable[nrow(resDescTable) + 1, "bob"] =  switch(self$options$difFlagScale,
-                                                                zt = "'B': Moderate effect ('R\u00B2' 0.13 <> 0.26)",
-                                                                jg = "'B': Moderate effect ('R\u00B2' 0.035 <> 0.07)")
+                                                                zt = "'B': Moderate effect (0.13 \u2264 \u0394R\u00B2 \u2264 0.26)",
+                                                                jg = "'B': Moderate effect (0.035 \u2264 \u0394R\u00B2 \u2264 0.07)")
           resDescTable[nrow(resDescTable) + 1, "bob"] =  switch(self$options$difFlagScale,
-                                                                zt = "'C': Large effect ('R\u00B2' 0.26 <> 1)",
-                                                                jg = "'C': Large effect ('R\u00B2' 0.07 <> 1)")
+                                                                zt = "'C': Large effect (0.26 \u2264 \u0394R\u00B2 \u2264 1)",
+                                                                jg = "'C': Large effect (0.07 \u2264 \u0394R\u00B2 \u2264 1)")
           resDescTable <- blankRow(resDescTable)
           
-          if (self$options$designAnalysis) {
+          if (self$options$designAnalysis & self$options$designAnalysisEffectType == "nagR2") {
             resDescTable[nrow(resDescTable) + 1, "bob"] = paste0(
               "Post-Data Design Analysis performed on ",
               ifelse(
@@ -538,6 +540,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               " bootstraps to create an empirical distribution for ",
               "\u0394 Naeglekirke R\u00B2."
             )
+            resDescTable <- blankRow(resDescTable)
           }
           return(resDescTable)
         }
@@ -557,8 +560,8 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     chiSquare = model$Logistik[i],
                     p = model$adjusted.p[i],
                     effSize = model$deltaR2[i],
-                    ZT = ifelse(model$adjusted.p[i] <= alpha, model$ZT[i], ""),
-                    JG = ifelse(model$adjusted.p[i] <= alpha, model$JG[i], "")
+                    ZT = ifelse(model$adjusted.p[i] <= alpha, model$ZT[i], "No flag"),
+                    JG = ifelse(model$adjusted.p[i] <= alpha, model$JG[i], "No flag")
                   )
                 )
               }
