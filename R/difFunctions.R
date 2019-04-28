@@ -283,6 +283,7 @@ Logistik <-
         cov.matM0 <- cov.matM1 <- NULL
         if (groupType == "group") {
             GROUP <- as.factor(member)
+            GROUP <- relevel(GROUP, ref = "Reference Group")
         } else {
             GROUP <- member
         }
@@ -359,7 +360,7 @@ Logistik <-
                     m1$coefficients
         }
         names <- c("(Intercept)", "Match Variable")
-        groupNames <- sort(unique(member))
+        groupNames <- sort(unique(GROUP))
         for (i in 2:length(groupNames))
             names <- c(names, paste(
                                     groupNames[i], sep = ""))

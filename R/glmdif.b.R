@@ -121,8 +121,8 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           groupElementList <- sort(unique(group))
           if (groupType_ == "groupBin") {
             groupOne <- unique(group)[1]
-            group <- ifelse(group == groupOne, "Group A", "Group Other")
-            groupOne <- "Group A"
+            group <- ifelse(group == groupOne, "Reference Group", "Contrast Group")
+            groupOne <- "Reference Group"
             groupContrasts <- unique(group)
           } else {
             groupContrasts <- self$options$groupContrasts
@@ -186,10 +186,10 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               return()
             }
             groupNames <-
-              paste0("Group ", toupper(letters[1:length(groupContrasts)]))
+              paste0("Contrast Group ", toupper(letters[1:length(groupContrasts)]))
             names(groupContrasts) <- groupNames
             names(groupElementList)[groupElementList %in%groupContrasts] <- c(groupNames)
-            names(groupElementList)[is.na(names(groupElementList))] <- "Group Other"
+            names(groupElementList)[is.na(names(groupElementList))] <- "Reference Group"
             for (i in groupElementList){
               group <- replace(group, group == i, names(groupElementList[groupElementList == i]))
             }
@@ -282,7 +282,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             pAdjustMethod = pAdjustMethod
           )
         
-        # self$results$coefficientsTable$setContent(model$coefficients)
         # self$results$debug$setContent(model)
         
         # Build GC tables ----
@@ -319,7 +318,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             }
             
             if (self$options$designAnalysisEffectType == "coefficients") {
-              # self$results$debug$setContent(model)
               
               gcTableCoefficients = designAnalysis.coefficients(
                 designList = designList,
@@ -336,7 +334,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               table$setTitle("Design Analysis - Logistic Regression Coefficients")
               for (item in 1:length(designList)) {
                 subList <- as.data.frame(gcTableCoefficients[[item]])
-              # self$results$debug$setContent(list(subList))
                 for (i in 1:NROW(subList)) {
                   table$addRow(rowKey = item, values = c("itemName"=designList[item],
                                                          "coefficientName" = rownames(subList)[i],
@@ -474,7 +471,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             
             resDescTable[nrow(resDescTable) + 1, "bob"] = paste0("Group coding: ")
             for (i in 1:length(groupElementList)) {
-              resDescTable[nrow(resDescTable) + 1, "bob"] = paste0(ifelse(i == 1, "Group A", "Group Other"),
+              resDescTable[nrow(resDescTable) + 1, "bob"] = paste0(ifelse(i == 1, "Reference Group", "Contrast Group"),
                                                                    " : ",
                                                                    groupElementList[i])
             }

@@ -52,7 +52,7 @@ options:
             A string naming the grouping variable from `data`
 
     - name: groupContrasts
-      title: Group contrasts
+      title: Contrast groups
       type: String
 
     - name: matchVar
