@@ -108,6 +108,7 @@ children:
         children:
           - type: ComboBox
             name: designAnalysisEffectType
+            enable: (designAnalysis)
       - type: LayoutBox
         margin: large
         children:
@@ -118,7 +119,7 @@ children:
           - type: TextBox
             name: bootSims
             format: number
-            enable: (designAnalysis)
+            enable: (designAnalysisEffectType:nagR2)
   - type: CollapseBox
     label: Item Response Curves
     margin: small

@@ -98,7 +98,8 @@ items:
 
 
     - name: gcTable
-      title: "Design Analysis - Naeglekirke R\u00B2"
+      title: "Design Analysis - "
+      refs: gelmanCarlin2014
       type: Table
       rows: 0
       visible: (designAnalysis)
@@ -125,6 +126,11 @@ items:
           title: Item
           type: text
           combineBelow: True
+        - name: coefficientName
+          title: Term
+          type: text
+          visible: (designAnalysisEffectType:coefficients)
+          combineBelow: True
         - name: obsEff
           title: Obs. Effect
           type: text
@@ -134,11 +140,15 @@ items:
           type: number
           combineBelow: True        
         - name: label
-          title: Effect
+          title: Hyp. True Effect
           type: text        
         - name: typeM
           title: Type-M
           type: number
+        - name: typeS
+          title: Type-S
+          type: number
+          visible: (designAnalysisEffectType:coefficients)  
         - name: power
           title: Empirical Observed Power
           type: number
@@ -146,7 +156,7 @@ items:
           visible: (power)
 
     - name: coefficientsTable
-      title: "Regression Coefficients"
+      title: "Logistic Regression Coefficients"
       type: Table
       rows: 0
       columns:

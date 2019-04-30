@@ -100,7 +100,7 @@ binaryDIF.logistic <-
                         sigThreshold = sigThreshold,
                                             m0 = PROV$m0,
                     m1 = PROV$m1,
-                    errors = PROV$coefficientsSE
+                    coefficientsSE = PROV$coefficientsSE
                     )
 
             }
@@ -233,7 +233,7 @@ binaryDIF.logistic <-
                         )),
                         m0 = logistikRes1$m0,
                         m1 = logistikRes1$m1,
-                        errors = logistikRes1$coefficientsSE
+                        coefficientsSE = logistikRes1$coefficientsSE
                         
                     )
             }
@@ -277,12 +277,13 @@ Logistik <-
             R2(m, n) / R2max(m, n)
         nGroup <- length(unique(member)) - 1
         dev <- R2full <- R2simple <- deltaR <- NULL
-        mFull <-
+        coefficientsSE <- mFull <-
             mSimple <-
             seFull <- seSimple <- matrix(0, NCOL(data), 2 + 2 * nGroup)
         cov.matM0 <- cov.matM1 <- NULL
         if (groupType == "group") {
             GROUP <- as.factor(member)
+            GROUP <- relevel(GROUP, ref = "Reference Group")
         } else {
             GROUP <- member
         }
@@ -354,20 +355,19 @@ Logistik <-
                     R2DIF(m0, NROW(data)) - R2DIF(m1, NROW(data))
                 mFull[item, 1:length(m0$coefficients)] <-
                     m0$coefficients
+                coefficientsSE[item, 1:length(m0$coefficients)] <- summary(m0)$coefficients[,2]
                 mSimple[item, 1:length(m1$coefficients)] <-
                     m1$coefficients
         }
         names <- c("(Intercept)", "Match Variable")
-        groupNames <- sort(unique(member))
+        groupNames <- sort(unique(GROUP))
         for (i in 2:length(groupNames))
             names <- c(names, paste(
                                     groupNames[i], sep = ""))
         for (i in 2:length(groupNames))
             names <- c(names, paste("Match Variable : ",
                                     groupNames[i], sep = ""))
-        colnames(mFull) <- colnames(mSimple) <- names
-        errors <- summary(m0)$coefficients[, 2]
-        names(errors) <- names
+        colnames(coefficientsSE) <- colnames(mFull) <- colnames(mSimple) <- names
             res <-
                 list(
                     stat = dev,
@@ -375,7 +375,7 @@ Logistik <-
                     m1 = m1,
                     deltaR2 = deltaR,
                     coefficients = mFull,
-                    coefficientsSE = errors,
+                    coefficientsSE = coefficientsSE,
                     criterion = criterion,
                     groupType = groupType,
                     match = ifelse(match[1] ==

@@ -52,7 +52,7 @@ options:
             A string naming the grouping variable from `data`
 
     - name: groupContrasts
-      title: Group contrasts
+      title: Contrast groups
       type: String
 
     - name: matchVar
@@ -128,8 +128,8 @@ options:
       options: 
         - name: nagR2
           title: "\u0394 Naeglekirke R\u00B2"
-        #- name: coefficients
-        #  title: Regression Coefficients 
+        - name: coefficients
+          title: Regression Coefficients 
       default: nagR2
       description:
         ui: >

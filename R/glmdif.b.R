@@ -62,12 +62,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             is.null(self$options$item)) {
           return()
         }
-        if (self$options$groupType == "groupNonBin" & length(self$options$groupContrasts) > 1){
-          for (i in 1:length(groupContrasts)){
-            self$results$DIFtable$addColumn(name = paste0("coeffMain", i), title = paste0("Main Effect: ", i), type = "number", visible = (coeffEff))
-            self$results$DIFtable$addColumn(name = paste0("coeffInt", i), title = paste0("Interaction Effect: ", i), type = "number", visible = (coeffEff))
-          }
-        }
         
         # The full DF
         data <- self$data
@@ -121,8 +115,8 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           groupElementList <- sort(unique(group))
           if (groupType_ == "groupBin") {
             groupOne <- unique(group)[1]
-            group <- ifelse(group == groupOne, "Group A", "Group Other")
-            groupOne <- "Group A"
+            group <- ifelse(group == groupOne, "Reference Group", "Contrast Group")
+            groupOne <- "Reference Group"
             groupContrasts <- unique(group)
           } else {
             groupContrasts <- self$options$groupContrasts
@@ -186,10 +180,10 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               return()
             }
             groupNames <-
-              paste0("Group ", toupper(letters[1:length(groupContrasts)]))
+              paste0("Contrast Group ", toupper(letters[1:length(groupContrasts)]))
             names(groupContrasts) <- groupNames
             names(groupElementList)[groupElementList %in%groupContrasts] <- c(groupNames)
-            names(groupElementList)[is.na(names(groupElementList))] <- "Group Other"
+            names(groupElementList)[is.na(names(groupElementList))] <- "Reference Group"
             for (i in groupElementList){
               group <- replace(group, group == i, names(groupElementList[groupElementList == i]))
             }
@@ -254,8 +248,14 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 power = GC[item, 6]
               )
             )
+            if (self$options$designAnalysisEffectType == "nagR2") {
+              table$setTitle("Design Analysis - Naeglekirke R\u00B2")
+            } else {
+              table$setTitle("Design Analysis - Logistic Regression Coefficients")
+            }
+            
             if (GC[item, 4] < GC[item, 3]) {
-              highlight(table, item, 4)
+              highlight(table, item, 5)
               table$setNote(
                 "interpretGC",
                 "Several items (flagged red) have observed effect sizes below the hypothesized true effect. For a guide to interpretation see: https://bit.ly/2I274JY"
@@ -282,7 +282,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             pAdjustMethod = pAdjustMethod
           )
         
-        # self$results$coefficientsTable$setContent(model$coefficients)
         # self$results$debug$setContent(model)
         
         # Build GC tables ----
@@ -293,53 +292,55 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             } else{
               designList <- model$names
             }
-            
-            if (is.na(designList[1])) {
-              self$results$gcTable$addRow(
-                rowKey = "doesntMatter",
-                values = list(itemName = "No items flagged as exhibitting DIF.")
+            # 
+            # if (is.na(designList[1])) {
+            #   self$results$gcTable$addRow(
+            #     rowKey = "doesntMatter",
+            #     values = list(itemName = "No items flagged as exhibitting DIF.")
+            #   )
+            #   return()
+            }
+            if (self$options$designAnalysisEffectType == "nagR2") {
+              GCTable = designAnalysis.nagR2(
+                designList = designList,
+                Data = Data,
+                group = group,
+                match = model$matchScores,
+                bootSims = bootSims,
+                type = type,
+                hypTrueEff = self$options$D,
+                alpha = alpha,
+                difFlagScale = self$options$difFlagScale,
+                sigOnly = self$options$designAnalysisSigOnly
               )
-              return()
+              return(GCTable)
             }
             
-            GCTable = designAnalysis.nagR2(
-              designList = designList,
-              Data = Data,
-              group = group,
-              match = model$matchScores,
-              bootSims = bootSims,
-              type = type,
-              hypTrueEff = self$options$D,
-              alpha = alpha,
-              difFlagScale = self$options$difFlagScale,
-              sigOnly = self$options$designAnalysisSigOnly
-            )
-            return(GCTable)
+            if (self$options$designAnalysisEffectType == "coefficients") {
+              gcTableCoefficients = designAnalysis.coefficients(
+                designList = designList,
+                coefficient = model$coefficients,
+                coefficientsSE = model$coefficientsSE,
+                alpha = self$options$alpha,
+                hypTrueEff = self$options$D,
+                difFlagScale = self$options$difFlagScale,
+                df = model$m0$df.residual,
+                sigOnly = self$options$designAnalysisSigOnly
+              )
+              
+              table <- self$results$gcTable
+              for (item in 1:length(designList)) {
+                subList <- as.data.frame(gcTableCoefficients[[item]])
+                for (i in 1:NROW(subList)) {
+                  table$addRow(rowKey = item, values = c("itemName"=designList[item],
+                                                         "coefficientName" = rownames(subList)[i],
+                                                         subList[i, ]))
+                }
+              }
+            }
           }
-          
-          # if (self$options$designAnalysisEffectType == "coefficients") {
-          #   if (self$options$designAnalysisSigOnly) {
-          #     designList <- model$names[model$DIFitems]
-          #   } else {
-          #     designList <- model$names
-          #   }
-          #   gcTableCoefficients = designAnalysis.coefficients(
-          #     designList = designList,
-          #     Data = Data,
-          #     group = group,
-          #     match = model$matchScores,
-          #     coefficients = TRUE,
-          #     bootSims = bootSims,
-          #     type = type,
-          #     hypTrueEff = self$options$D,
-          #     difFlagScale = self$options$difFlagScale
-          #   )
-          #   if (length(gcTableCoefficients) != 0) {
-          #     table <- self$results$gcTableCoefficients
-          #     buildGC(gcTableCoefficients, table)
-          #   }
-          # }
-        }
+        
+        
         # Description Results Table ----
         calculateDESCtable <- function() {
           resDescTable <- data.frame(bob = NA)
@@ -459,20 +460,18 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             if (length(groupElementList) > 2) {
               resDescTable <- blankRow(resDescTable)
               resDescTable[nrow(resDescTable) + 1, "bob"] = paste0(
-                "(The data file provided non-binary groupings. Please see below for the recoding legend.)"
+                "(The data file provided non-binary groupings, but 'Discrete Groups (n = 2)' was selected as the Group Type . Please see below for the recoding legend.)"
               )
               resDescTable <- blankRow(resDescTable)
             }
             
-            resDescTable[nrow(resDescTable) + 1, "bob"] = paste0("Group coding: ")
             for (i in 1:length(groupElementList)) {
-              resDescTable[nrow(resDescTable) + 1, "bob"] = paste0(ifelse(i == 1, "Group A", "Group Other"),
+              resDescTable[nrow(resDescTable) + 1, "bob"] = paste0(ifelse(i == 1, "Reference Group", "Contrast Group"),
                                                                    " : ",
                                                                    groupElementList[i])
             }
           } 
           if (groupType_ == "groupNonBin"){
-            resDescTable[nrow(resDescTable) + 1, "bob"] = paste0("Group coding: ")
             sortedNames <- names(groupElementList)
             names(sortedNames) <- groupElementList
             sortedNames <- sort(sortedNames)
@@ -505,21 +504,21 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           }
           resDescTable <- blankRow(resDescTable)
           
-          resDescTable[nrow(resDescTable) + 1, "bob"] =  paste0("Effect size (\u0394 Nagelkerke's R\u00B2) scale: ", switch(self$options$difFlagScale,
+          resDescTable[nrow(resDescTable) + 1, "bob"] =  paste0("Effect size (change in Nagelkerke's R\u00B2: \u0394R\u00B2) scale: ", switch(self$options$difFlagScale,
                                                                                                                             zt = "Zumbo-Thomas",
                                                                                                                             jg = "Jodoin-Gierl"))
           resDescTable[nrow(resDescTable) + 1, "bob"] =  switch(self$options$difFlagScale,
-                                                                zt = "'A': Negligible effect ('R\u00B2' 0 <> 0.13)",
-                                                                jg = "'A': Negligible effect ('R\u00B2' 0 <> 0.035)")
+                                                                zt = "'A': Negligible effect (0 \u2264 \u0394R\u00B2 \u2264 0.13)",
+                                                                jg = "'A': Negligible effect (0 \u2264 \u0394R\u00B2 \u2264 0.035)")
           resDescTable[nrow(resDescTable) + 1, "bob"] =  switch(self$options$difFlagScale,
-                                                                zt = "'B': Moderate effect ('R\u00B2' 0.13 <> 0.26)",
-                                                                jg = "'B': Moderate effect ('R\u00B2' 0.035 <> 0.07)")
+                                                                zt = "'B': Moderate effect (0.13 \u2264 \u0394R\u00B2 \u2264 0.26)",
+                                                                jg = "'B': Moderate effect (0.035 \u2264 \u0394R\u00B2 \u2264 0.07)")
           resDescTable[nrow(resDescTable) + 1, "bob"] =  switch(self$options$difFlagScale,
-                                                                zt = "'C': Large effect ('R\u00B2' 0.26 <> 1)",
-                                                                jg = "'C': Large effect ('R\u00B2' 0.07 <> 1)")
+                                                                zt = "'C': Large effect (0.26 \u2264 \u0394R\u00B2 \u2264 1)",
+                                                                jg = "'C': Large effect (0.07 \u2264 \u0394R\u00B2 \u2264 1)")
           resDescTable <- blankRow(resDescTable)
           
-          if (self$options$designAnalysis) {
+          if (self$options$designAnalysis & self$options$designAnalysisEffectType == "nagR2") {
             resDescTable[nrow(resDescTable) + 1, "bob"] = paste0(
               "Post-Data Design Analysis performed on ",
               ifelse(
@@ -532,6 +531,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               " bootstraps to create an empirical distribution for ",
               "\u0394 Naeglekirke R\u00B2."
             )
+            resDescTable <- blankRow(resDescTable)
           }
           return(resDescTable)
         }
@@ -551,8 +551,8 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                     chiSquare = model$Logistik[i],
                     p = model$adjusted.p[i],
                     effSize = model$deltaR2[i],
-                    ZT = ifelse(model$adjusted.p[i] <= alpha, model$ZT[i], ""),
-                    JG = ifelse(model$adjusted.p[i] <= alpha, model$JG[i], "")
+                    ZT = ifelse(model$adjusted.p[i] <= alpha, model$ZT[i], "No flag"),
+                    JG = ifelse(model$adjusted.p[i] <= alpha, model$JG[i], "No flag")
                   )
                 )
               }

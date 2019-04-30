@@ -83,10 +83,10 @@ designAnalysis.nagR2 <-
 
 
 designAnalysis.coefficients <- function(designList,
-                                        hypTrueEff, 
-                                        coefficient, 
-                                        observedSE, 
-                                        alpha, 
+                                        hypTrueEff,
+                                        coefficient,
+                                        coefficientsSE,
+                                        alpha,
                                         df,
                                         difFlagScale,
                                         sigOnly) {
@@ -97,52 +97,18 @@ designAnalysis.coefficients <- function(designList,
     hypTrueEff <- as.numeric(hypTrueEff)
     labels <- c("Custom Hyp.")
   }
+  retroDesignRes <- list()
   
-  GC <-
-    data.frame(
-      "label" = rep(as.character(), times = length(designList) * length(hypTrueEff)),
-      "item" = rep(as.character(), times = length(designList) * length(hypTrueEff)),
-      "obsMain" = rep(as.numeric(), times = length(designList) *
-                        length(hypTrueEff)),
-      "coeffMainSE" = rep(as.numeric(), times = length(designList) *
-                            length(hypTrueEff)),
-      "obsInt" = rep(as.numeric(), times = length(designList) *
-                       length(hypTrueEff)),
-      "coeffIntSE" = rep(as.numeric(), times = length(designList) *
-                           length(hypTrueEff)),
-      "hypTrueEff" = rep(as.numeric(), times = length(designList) *
-                           length(hypTrueEff)),
-      "typeM" = rep(as.numeric(), times = length(designList) *
-                      length(hypTrueEff)),
-      "typeS" = rep(as.numeric(), times = length(designList) *
-                      length(hypTrueEff)),
-        "power" = rep(as.numeric(), times = length(designList) *
-                        length(hypTrueEff)),
-        stringsAsFactors = FALSE
+  for (item in 1:length(designList)) {
+    retroDesignRes[[item]] =
+      retroDesign.coefficients(
+        hypTrueEff = hypTrueEff,
+        coefficient = coefficient[item,],
+        coefficientsSE = coefficientsSE[item,],
+        alpha = alpha,
+        df = df,
+        sigOnly = sigOnly
       )
-      
-      for (item in 1:length(designList)) {
-        curItem <- designList[item]
-        retroDesignRes <-
-          retroDesign.coefficients(
-            hypTrueEff = hypTrueEff[hypInd],
-            coefficient = coefficient, 
-            observedSE = observedSE, 
-            alpha = alpha, 
-            df = df,
-            sigOnly = sigOnly
-          )
-        
-        GC[item * length(hypTrueEff) - tick, 1] <-
-          labels[hypInd]
-        GC[item * length(hypTrueEff) - tick, 2] <-
-          designList[item]
-        GC[item * length(hypTrueEff) - tick, 3] <-
-          as.character((hypTrueEff[hypInd]))
-        GC[item * length(hypTrueEff) - tick, 4:7] <-
-          as.numeric(retroDesignRes)
-        tick <- tick - 1
-      }
-      
-      return(GC)
+  }
+      return(retroDesignRes)
 }

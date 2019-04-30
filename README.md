@@ -1,4 +1,3 @@
-
 # Psychometric Post-Data Analysis for Jamovi
 
 This module is a tool for performing Psychometric Post-Data Analysis.

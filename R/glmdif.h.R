@@ -88,7 +88,8 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "designAnalysisEffectType",
                 designAnalysisEffectType,
                 options=list(
-                    "nagR2"),
+                    "nagR2",
+                    "coefficients"),
                 default="nagR2")
             private$..designAnalysisSigOnly <- jmvcore::OptionBool$new(
                 "designAnalysisSigOnly",
@@ -336,7 +337,8 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$add(jmvcore::Table$new(
                 options=options,
                 name="gcTable",
-                title="Design Analysis - Naeglekirke R\u00B2",
+                title="Design Analysis - ",
+                refs="gelmanCarlin2014",
                 rows=0,
                 visible="(designAnalysis)",
                 clearWith=list(
@@ -364,6 +366,12 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `type`="text", 
                         `combineBelow`=TRUE),
                     list(
+                        `name`="coefficientName", 
+                        `title`="Term", 
+                        `type`="text", 
+                        `visible`="(designAnalysisEffectType:coefficients)", 
+                        `combineBelow`=TRUE),
+                    list(
                         `name`="obsEff", 
                         `title`="Obs. Effect", 
                         `type`="text", 
@@ -375,12 +383,17 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `combineBelow`=TRUE),
                     list(
                         `name`="label", 
-                        `title`="Effect", 
+                        `title`="Hyp. True Effect", 
                         `type`="text"),
                     list(
                         `name`="typeM", 
                         `title`="Type-M", 
                         `type`="number"),
+                    list(
+                        `name`="typeS", 
+                        `title`="Type-S", 
+                        `type`="number", 
+                        `visible`="(designAnalysisEffectType:coefficients)"),
                     list(
                         `name`="power", 
                         `title`="Empirical Observed Power", 
@@ -390,7 +403,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$add(jmvcore::Table$new(
                 options=options,
                 name="coefficientsTable",
-                title="Regression Coefficients",
+                title="Logistic Regression Coefficients",
                 rows=0,
                 columns=list(
                     list(
