@@ -248,8 +248,14 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 power = GC[item, 6]
               )
             )
+            if (self$options$designAnalysisEffectType == "nagR2") {
+              table$setTitle("Design Analysis - Naeglekirke R\u00B2")
+            } else {
+              table$setTitle("Design Analysis - Logistic Regression Coefficients")
+            }
+            
             if (GC[item, 4] < GC[item, 3]) {
-              highlight(table, item, 4)
+              highlight(table, item, 5)
               table$setNote(
                 "interpretGC",
                 "Several items (flagged red) have observed effect sizes below the hypothesized true effect. For a guide to interpretation see: https://bit.ly/2I274JY"
@@ -286,13 +292,13 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             } else{
               designList <- model$names
             }
-            
-            if (is.na(designList[1])) {
-              self$results$gcTable$addRow(
-                rowKey = "doesntMatter",
-                values = list(itemName = "No items flagged as exhibitting DIF.")
-              )
-              return()
+            # 
+            # if (is.na(designList[1])) {
+            #   self$results$gcTable$addRow(
+            #     rowKey = "doesntMatter",
+            #     values = list(itemName = "No items flagged as exhibitting DIF.")
+            #   )
+            #   return()
             }
             if (self$options$designAnalysisEffectType == "nagR2") {
               GCTable = designAnalysis.nagR2(
@@ -307,12 +313,10 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 difFlagScale = self$options$difFlagScale,
                 sigOnly = self$options$designAnalysisSigOnly
               )
-              self$results$gcTable$setTitle("Design Analysis - Naeglekirke R\u00B2")
               return(GCTable)
             }
             
             if (self$options$designAnalysisEffectType == "coefficients") {
-              
               gcTableCoefficients = designAnalysis.coefficients(
                 designList = designList,
                 coefficient = model$coefficients,
@@ -325,7 +329,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               )
               
               table <- self$results$gcTable
-              table$setTitle("Design Analysis - Logistic Regression Coefficients")
               for (item in 1:length(designList)) {
                 subList <- as.data.frame(gcTableCoefficients[[item]])
                 for (i in 1:NROW(subList)) {
@@ -334,10 +337,9 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                                                          subList[i, ]))
                 }
               }
-              
             }
           }
-        }
+        
         
         # Description Results Table ----
         calculateDESCtable <- function() {
