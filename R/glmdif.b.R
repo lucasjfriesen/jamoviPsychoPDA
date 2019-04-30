@@ -62,12 +62,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             is.null(self$options$item)) {
           return()
         }
-        if (self$options$groupType == "groupNonBin" & length(self$options$groupContrasts) > 1){
-          for (i in 1:length(groupContrasts)){
-            self$results$DIFtable$addColumn(name = paste0("coeffMain", i), title = paste0("Main Effect: ", i), type = "number", visible = (coeffEff))
-            self$results$DIFtable$addColumn(name = paste0("coeffInt", i), title = paste0("Interaction Effect: ", i), type = "number", visible = (coeffEff))
-          }
-        }
         
         # The full DF
         data <- self$data
@@ -469,7 +463,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               resDescTable <- blankRow(resDescTable)
             }
             
-            resDescTable[nrow(resDescTable) + 1, "bob"] = paste0("Group coding: ")
             for (i in 1:length(groupElementList)) {
               resDescTable[nrow(resDescTable) + 1, "bob"] = paste0(ifelse(i == 1, "Reference Group", "Contrast Group"),
                                                                    " : ",
@@ -477,7 +470,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             }
           } 
           if (groupType_ == "groupNonBin"){
-            resDescTable[nrow(resDescTable) + 1, "bob"] = paste0("Group coding: ")
             sortedNames <- names(groupElementList)
             names(sortedNames) <- groupElementList
             sortedNames <- sort(sortedNames)
