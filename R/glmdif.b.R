@@ -644,20 +644,22 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         }
         # GC state ----
         gcState <- self$results$gcTable$state
-        if (!is.null(gcState)) {
-          # ... populate the table from the state
-          if (length(gcState) != 0) {
-            table <- self$results$gcTable
-            buildGC(gcState, table)
+        if (self$options$designAnalysis){
+          if (!is.null(gcState)) {
+            # ... populate the table from the state
+            if (length(gcState) != 0) {
+              table <- self$results$gcTable
+              buildGC(gcState, table)
+            }
+          } else {
+            # ... populate the table from the state
+            gcState <- runDesignAnalysis()
+            if (length(gcState) != 0) {
+              table <- self$results$gcTable
+              buildGC(gcState, table)
+            }
+            self$results$gcTable$setState(gcState)
           }
-        } else {
-          # ... populate the table from the state
-          gcState <- runDesignAnalysis()
-          if (length(gcState) != 0) {
-            table <- self$results$gcTable
-            buildGC(gcState, table)
-          }
-          self$results$gcTable$setState(gcState)
         }
         
         table <- self$results$gcTable
