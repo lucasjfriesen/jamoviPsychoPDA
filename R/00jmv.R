@@ -15,4 +15,11 @@
         `year`=2014, 
         `title`="Beyond Power Calculations: Assessing Type S (Sign) and Type M (Magnitude) Errors", 
         `publisher`="Perspectives on Psychological Science: A Journal of the Association for Psychological Science", 
-        `doi`="10.1177/1745691614551642"))
+        `doi`="10.1177/1745691614551642"), 
+    `zumboThomas`=list(
+        `type`=NULL, 
+        `author`=NULL, 
+        `year`=NULL, 
+        `title`=NULL, 
+        `publisher`=NULL, 
+        `doi`=NULL))

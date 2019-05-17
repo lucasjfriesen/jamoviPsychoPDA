@@ -26,8 +26,11 @@
           estimate <-
             D + sample(myBoot$t, replace = T, size = 10000)
           significant <- estimate > qUpper
+          if (hypTrueEff == 0){
+            hypTrueEff <- observedSE*2
+          }
           rdRes[1, 2] <-
-            typeMError <- mean(estimate[significant]) / D
+            typeMError <- mean(estimate[significant]) / hypTrueEff
           return(rdRes)
         }
         

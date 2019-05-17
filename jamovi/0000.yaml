@@ -9,10 +9,10 @@ maintainer: <lucas.j.friesen@gmail.com>
 date: '2019-01-17'
 type: R
 description: >
-  A suite designed to enable the performance of post-data analyses in pyschometric
-  research. Currently included functions are tests for: Differential Item
-  Functioning, Retroactive Design Analysis for T-Tests of mean differences and
-  of correlations.
+  A suite designed to enable the performance of post-data analyses in
+  pyschometric research. Currently included functions are tests for:
+  Differential Item Functioning, Retroactive Design Analysis for T-Tests of mean
+  differences and of correlations.
 analyses:
   - title: Binary LogR
     name: glmDIF

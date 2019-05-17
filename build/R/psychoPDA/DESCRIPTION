@@ -1,11 +1,11 @@
 Package: psychoPDA
 Type: Package
-Title: Psychometric Post-Data Analysis
-Version: 1.2.3
+Title: Psychometrics & Post-Data Analysis
+Version: 1.0.1
 Author: Lucas Friesen
 Maintainer: Lucas Friesen <lucas.j.friesen@gmail.com>
-Description: PPDA provides a suite of modules designed to enable researchers to perform post-data analyses in psychometric validation research. Currently, these functions include: Differential Item functioning and Retroactive Design Analysis for T-Tests of mean differences and correlations.
+Description: P&PDA provides a suite of modules designed to enable researchers to perform post-data analyses in psychometric research. Currently, these functions include: Differential Item Functioning analysis.
 Encoding: UTF-8
 LazyData: true
 Imports: jmvcore (>= 0.8.5), R6, stats, ggplot2, boot
-Built: R 3.3.0; ; 2019-04-30 21:07:46 UTC; unix
+Built: R 3.3.0; ; 2019-05-16 23:04:57 UTC; unix
