@@ -189,13 +189,11 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             }
             groupOne <- names(groupContrasts)
           }
-          # self$results$debug$setContent(list(group, groupContrasts, groupElementList))
         } else {
           groupOne <- median(group)
           groupElementList <- c(min(group), max(group))
         }
         
-        # self$results$debug$setContent(list("groupContrasts"=groupContrasts, "groupElementList"=groupElementList, "group"= group))
         # Check no singular group values
         
         groupCheck <- table(group)
@@ -233,7 +231,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           table[nrow(table) + 1, "bob"] = ""
           return(table)
         }
-        
+      
         buildGC <- function(GC, table) {
           for (item in 1:nrow(GC)) {
             table$addRow(
@@ -286,19 +284,17 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         
         # Build GC tables ----
         runDesignAnalysis <- function() {
-          if (self$options$designAnalysis) {
             if (self$options$designAnalysisSigOnly) {
               designList <- model$names[model$DIFitems]
-            } else{
+            } else {
               designList <- model$names
             }
-            # 
-            # if (is.na(designList[1])) {
-            #   self$results$gcTable$addRow(
-            #     rowKey = "doesntMatter",
-            #     values = list(itemName = "No items flagged as exhibitting DIF.")
-            #   )
-            #   return()
+            if (is.na(designList[1])) {
+              self$results$gcTable$addRow(
+                rowKey = "doesntMatter",
+                values = list(itemName = "No items flagged as exhibitting DIF.")
+              )
+              return()
             }
             if (self$options$designAnalysisEffectType == "nagR2") {
               GCTable = designAnalysis.nagR2(
@@ -644,20 +640,22 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         }
         # GC state ----
         gcState <- self$results$gcTable$state
-        if (!is.null(gcState)) {
-          # ... populate the table from the state
-          if (length(gcState) != 0) {
-            table <- self$results$gcTable
-            buildGC(gcState, table)
+        if (self$options$designAnalysis){
+          if (!is.null(gcState)) {
+            # ... populate the table from the state
+            if (length(gcState) != 0) {
+              table <- self$results$gcTable
+              buildGC(gcState, table)
+            }
+          } else {
+            # ... populate the table from the state
+            gcState <- runDesignAnalysis()
+            if (length(gcState) != 0) {
+              table <- self$results$gcTable
+              buildGC(gcState, table)
+            }
+            self$results$gcTable$setState(gcState)
           }
-        } else {
-          # ... populate the table from the state
-          gcState <- runDesignAnalysis()
-          if (length(gcState) != 0) {
-            table <- self$results$gcTable
-            buildGC(gcState, table)
-          }
-          self$results$gcTable$setState(gcState)
         }
         
         table <- self$results$gcTable

@@ -358,7 +358,8 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "designAnalysisSigOnly",
                     "bootSims",
                     "D",
-                    "groupContrasts"),
+                    "groupContrasts",
+                    "designAnalysisEffectType"),
                 columns=list(
                     list(
                         `name`="itemName", 

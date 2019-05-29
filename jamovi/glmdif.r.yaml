@@ -121,6 +121,7 @@ items:
           - bootSims
           - D
           - groupContrasts
+          - designAnalysisEffectType
       columns:
         - name: itemName
           title: Item

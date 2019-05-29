@@ -8,4 +8,4 @@ Description: P&PDA provides a suite of modules designed to enable researchers to
 Encoding: UTF-8
 LazyData: true
 Imports: jmvcore (>= 0.8.5), R6, stats, ggplot2, boot
-Built: R 3.3.0; ; 2019-05-16 23:04:57 UTC; unix
+Built: R 3.3.0; ; 2019-05-29 16:54:41 UTC; unix
