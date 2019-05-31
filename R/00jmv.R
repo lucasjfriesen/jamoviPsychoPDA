@@ -6,7 +6,7 @@
         `type`="software", 
         `author`="Friesen, L., Kroc, E., Zumbo, B. D.", 
         `year`=2019, 
-        `title`="PsychoPDA: Binary Differential Item Functioning", 
+        `title`="Psychometrics & Post-Data Analysis: Binary Differential Item Functioning", 
         `publisher`="[jamovi module]. Retrieved from https://github.com/lucasjfriesen/jamoviPsychoPDA", 
         `url`="https://github.com/lucasjfriesen/jamoviPsychoPDA"), 
     `gelmanCarlin2014`=list(
@@ -17,9 +17,8 @@
         `publisher`="Perspectives on Psychological Science: A Journal of the Association for Psychological Science", 
         `doi`="10.1177/1745691614551642"), 
     `zumboThomas`=list(
-        `type`=NULL, 
-        `author`=NULL, 
-        `year`=NULL, 
-        `title`=NULL, 
-        `publisher`=NULL, 
-        `doi`=NULL))
+        `type`="paper", 
+        `author`="Zumbo, B. D., Thomas, R. D.", 
+        `year`=1997, 
+        `title`="A measure of effect size for a model-based approach for studying DIF", 
+        `publisher`="Working Paper of the Edgeworth Laboratory for Quantitative Behavioral Science; University of Northern British Columbia: Prince George, B.C."))

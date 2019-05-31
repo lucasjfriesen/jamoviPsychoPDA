@@ -25,6 +25,7 @@ view.layout = ui.extend({
     controls: [
 		{
 			type: DefaultControls.VariableSupplier,
+			name: "itemSupplier",
 			label: "Data variables",
 			persistentItems: false,
 			stretchFactor: 1,
@@ -237,6 +238,9 @@ view.layout = ui.extend({
 					populate: "manual",
 					persistentItems: false,
 					stretchFactor: 1,
+					events: [
+						{ onEvent: 'update', execute: require('./glmDIF.events').onUpdate_plotVarsSupplier }
+					],
 					controls: [
 						{
 							type: DefaultControls.TargetLayoutBox,

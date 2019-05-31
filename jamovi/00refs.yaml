@@ -15,11 +15,10 @@ refs:
         publisher: 'Perspectives on Psychological Science: A Journal of the Association for Psychological Science'
         doi: 10.1177/1745691614551642
     zumboThomas:
-        type:
-        author:
-        year:
-        title:
-        publisher:
-        doi:
+        type: 'paper'
+        author: Zumbo, B. D., Thomas, R. D.
+        year: 1997
+        title: 'A measure of effect size for a model-based approach for studying DIF'
+        publisher: 'Working Paper of the Edgeworth Laboratory for Quantitative Behavioral Science; University of Northern British Columbia: Prince George, B.C.'
 
 ...

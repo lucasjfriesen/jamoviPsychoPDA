@@ -280,8 +280,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             pAdjustMethod = pAdjustMethod
           )
         
-        # self$results$debug$setContent(model)
-        
         # Build GC tables ----
         runDesignAnalysis <- function() {
             if (self$options$designAnalysisSigOnly) {

@@ -68,6 +68,7 @@ items:
           type: text
 
         - name: ZT
+          refs: zumboThomas
           title: Zumbo-Thomas
           type: text
           visible: (difFlagScale:zt)

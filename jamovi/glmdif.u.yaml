@@ -7,9 +7,10 @@ events:
   update: './glmDIF.events::update'
 children:
   - type: VariableSupplier
+    name: itemSupplier
     label: Data variables
     persistentItems: false
-    stretchFactor: 1
+    stretchFactor: 1  
     children:
       - type: TargetLayoutBox
         label: Item(s) for Analysis
@@ -130,6 +131,8 @@ children:
         populate: manual
         persistentItems: false
         stretchFactor: 1
+        events:
+          update: './glmDIF.events::onUpdate_plotVarsSupplier'
         children:
           - type: TargetLayoutBox
             children:

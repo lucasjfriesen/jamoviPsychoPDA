@@ -311,6 +311,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `type`="text"),
                     list(
                         `name`="ZT", 
+                        `refs`="zumboThomas", 
                         `title`="Zumbo-Thomas", 
                         `type`="text", 
                         `visible`="(difFlagScale:zt)"),

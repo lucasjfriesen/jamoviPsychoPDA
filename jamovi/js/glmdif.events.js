@@ -1,14 +1,18 @@
 const events = {
     update: function(ui) {
-        populatePlotVarsICCSupplier(ui, this);
+        updatePlotVarsICCSupplier(ui, this);
     },
 
     onChange_item: function(ui) {
-        populatePlotVarsICCSupplier(ui, this);
-    }
+        updatePlotVarsICCSupplier(ui, this);
+    },
+    
+    onUpdate_plotVarsSupplier: function(ui) {
+        updatePlotVarsICCSupplier(ui, this);
+    },
 };
 
-let populatePlotVarsICCSupplier = function(ui, context) {
+let updatePlotVarsICCSupplier = function(ui, context) {
     let b1 = context.cloneArray(ui.item.value(), []);
     b1 = context.valuesToItems(b1, FormatDef.variable);
     ui.plotVarsICCSupplier.setValue(b1);
