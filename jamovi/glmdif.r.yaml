@@ -97,6 +97,34 @@ items:
           format: zto
           visible: (nagEff)
 
+- name: coefficientsTable
+      title: "Logistic Regression Coefficients"
+      type: Table
+      rows: 0
+      columns:
+        - name: itemName
+          title: Item
+          type: text
+      visible: False
+      clearWith: 
+          - item
+          - group
+          - matchVar
+          - anchor
+          - groupType
+          - difFlagScale
+          - type
+          - criterion
+          - alpha
+          - nIter
+          - purify
+          - pAdjustMethod
+          - designAnalysis
+          - designAnalysisSigOnly
+          - bootSims
+          - D
+          - twoGroups
+          - groupContrasts
 
     - name: gcTable
       title: "Design Analysis - "
@@ -156,35 +184,6 @@ items:
           type: number
           format: (zto)
           visible: (power)
-
-    - name: coefficientsTable
-      title: "Logistic Regression Coefficients"
-      type: Table
-      rows: 0
-      columns:
-        - name: itemName
-          title: Item
-          type: text
-      visible: False
-      clearWith: 
-          - item
-          - group
-          - matchVar
-          - anchor
-          - groupType
-          - difFlagScale
-          - type
-          - criterion
-          - alpha
-          - nIter
-          - purify
-          - pAdjustMethod
-          - designAnalysis
-          - designAnalysisSigOnly
-          - bootSims
-          - D
-          - twoGroups
-          - groupContrasts
 
     - name: ICCplots
       title: Item Response Curves - Based on Logistic Regression

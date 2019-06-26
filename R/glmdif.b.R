@@ -233,25 +233,23 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         }
       
         buildGC <- function(GC, table) {
-          for (item in 1:nrow(GC)) {
-            table$addRow(
-              rowKey = item,
-              values = list(
-                label = GC[item, 1],
-                itemName = GC[item, 2],
-                obsEff = GC[item, 4],
-                bootSE = GC[item, 7],
-                hypTrueEff = GC[item, 3],
-                typeM = GC[item, 5],
-                power = GC[item, 6]
-              )
-            )
-            if (self$options$designAnalysisEffectType == "nagR2") {
+          
+          if (self$options$designAnalysisEffectType == "nagR2"){
+            for (item in 1:nrow(GC)) {
               table$setTitle("Design Analysis - Naeglekirke R\u00B2")
-            } else {
-              table$setTitle("Design Analysis - Logistic Regression Coefficients")
+              table$addRow(
+                rowKey = item,
+                values = list(
+                  label = GC[item, 1],
+                  itemName = GC[item, 2],
+                  obsEff = GC[item, 4],
+                  bootSE = GC[item, 7],
+                  hypTrueEff = GC[item, 3],
+                  typeM = GC[item, 5],
+                  power = GC[item, 6]
+                )
+              )
             }
-            
             if (GC[item, 4] < GC[item, 3]) {
               highlight(table, item, 5)
               table$setNote(
@@ -259,8 +257,21 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 "Several items (flagged red) have observed effect sizes below the hypothesized true effect. For a guide to interpretation see: https://bit.ly/2I274JY"
               )
             }
+            } else {
+            table$setTitle("Design Analysis - Logistic Regression Coefficients")
+              self$results$debug$setContent(self$options$designAnalysisEffectType)
+              designList = GC[[1]]
+              GC = GC[[2]]
+              for (item in 1:length(designList)) {
+                subList <- as.data.frame(GC[[item]])
+                for (i in 1:NROW(subList)) {
+                  table$addRow(rowKey = item, values = c("itemName"=designList[item],
+                                                         "coefficientName" = rownames(subList)[i],
+                                                         subList[i, ]))
+                }
+              }
+            }
           }
-        }
         
         # Model ----
         model <-
@@ -321,16 +332,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 df = model$m0$df.residual,
                 sigOnly = self$options$designAnalysisSigOnly
               )
-              
-              table <- self$results$gcTable
-              for (item in 1:length(designList)) {
-                subList <- as.data.frame(gcTableCoefficients[[item]])
-                for (i in 1:NROW(subList)) {
-                  table$addRow(rowKey = item, values = c("itemName"=designList[item],
-                                                         "coefficientName" = rownames(subList)[i],
-                                                         subList[i, ]))
-                }
-              }
+              return(list(designList, gcTableCoefficients))
             }
           }
         
