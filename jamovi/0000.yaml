@@ -27,6 +27,12 @@ analyses:
 
       diferentially on that item.
     menuSubgroup: Differential Item Functioning
+  - title: TestROC
+    name: TestROC
+    ns: psychoPDA
+    menuGroup: PPDA
+    menuTitle: TestROC
+    menuSubgroup: Measure Diagnostics
 datasets:
   - name: DIF
     path: dataverbal.csv

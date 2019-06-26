@@ -1,0 +1,69 @@
+---
+name:  TestROC
+title: TestROC
+jrs:   '1.1'
+
+items:
+    - name: debug
+      type: Preformatted
+
+    - name: instructions
+      type: Html
+
+    - name: procedureNotes
+      type: Html
+
+    - name: resultsTable
+      refs: thieleCutpoint
+      title: Results Table
+      type: Array
+      template:
+        type: Table
+        rows: 0
+        columns:
+          #- name: scaleName
+          #  title: Scale
+          #  type: text
+          - name: cutpoint
+            title: Cutpoint
+            type: text
+          - name: sensitivity
+            title: 'Sensitivity (%)'
+            type: text
+          - name: specificity
+            title: 'Specificity (%)'
+            type: text
+          - name: ppv
+            title: 'PPV (%)'
+            type: text
+          - name: npv
+            title: 'NPV (%)'
+            type: text
+          - name: youden
+            title: Youden's index
+            type: number
+          - name: AUC
+            title: AUC
+            type: number
+          - name: metricValue
+            title: Metric Score
+            type: number
+          
+    - name: plotROC
+      type: Array
+      title: ROC Curves
+      template:
+        type: Image
+        width:  550
+        height: 450
+        renderFun: .plotROC
+        visible: (plotROC)
+        requiresData: TRUE
+
+    - name: sensSpecTable
+      title: Sensitivity & Specificity
+      type: Array
+      visible: False
+      template:
+        type: Html
+...

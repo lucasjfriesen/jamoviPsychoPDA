@@ -7,5 +7,5 @@ Maintainer: Lucas Friesen <lucas.j.friesen@gmail.com>
 Description: P&PDA provides a suite of modules designed to enable researchers to perform post-data analyses in psychometric research. Currently, these functions include: Differential Item Functioning analysis.
 Encoding: UTF-8
 LazyData: true
-Imports: jmvcore (>= 0.8.5), R6, stats, ggplot2, boot
-Built: R 3.3.0; ; 2019-05-31 22:10:48 UTC; unix
+Imports: jmvcore (>= 0.8.5), R6, stats, ggplot2, boot, cutpointr
+Built: R 3.3.0; ; 2019-06-22 14:34:58 UTC; unix
