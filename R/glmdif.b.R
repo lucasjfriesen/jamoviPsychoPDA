@@ -270,6 +270,10 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                                                          subList[i, ]))
                 }
               }
+              table$setNote(
+                "interpretGC",
+                "Coefficients have been transformed into absolute value SD units for Type-M/Type-S error calculations"
+              )
             }
           }
         

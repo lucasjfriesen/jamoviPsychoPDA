@@ -235,8 +235,8 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
         instructions = function() private$.items[["instructions"]],
         DESCtable = function() private$.items[["DESCtable"]],
         DIFtable = function() private$.items[["DIFtable"]],
-        gcTable = function() private$.items[["gcTable"]],
         coefficientsTable = function() private$.items[["coefficientsTable"]],
+        gcTable = function() private$.items[["gcTable"]],
         ICCplots = function() private$.items[["ICCplots"]]),
     private = list(),
     public=list(
@@ -337,6 +337,36 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `visible`="(nagEff)"))))
             self$add(jmvcore::Table$new(
                 options=options,
+                name="coefficientsTable",
+                title="Logistic Regression Coefficients",
+                rows=0,
+                columns=list(
+                    list(
+                        `name`="itemName", 
+                        `title`="Item", 
+                        `type`="text")),
+                visible=FALSE,
+                clearWith=list(
+                    "item",
+                    "group",
+                    "matchVar",
+                    "anchor",
+                    "groupType",
+                    "difFlagScale",
+                    "type",
+                    "criterion",
+                    "alpha",
+                    "nIter",
+                    "purify",
+                    "pAdjustMethod",
+                    "designAnalysis",
+                    "designAnalysisSigOnly",
+                    "bootSims",
+                    "D",
+                    "twoGroups",
+                    "groupContrasts")))
+            self$add(jmvcore::Table$new(
+                options=options,
                 name="gcTable",
                 title="Design Analysis - ",
                 refs="gelmanCarlin2014",
@@ -402,36 +432,6 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `type`="number", 
                         `format`="(zto)", 
                         `visible`="(power)"))))
-            self$add(jmvcore::Table$new(
-                options=options,
-                name="coefficientsTable",
-                title="Logistic Regression Coefficients",
-                rows=0,
-                columns=list(
-                    list(
-                        `name`="itemName", 
-                        `title`="Item", 
-                        `type`="text")),
-                visible=FALSE,
-                clearWith=list(
-                    "item",
-                    "group",
-                    "matchVar",
-                    "anchor",
-                    "groupType",
-                    "difFlagScale",
-                    "type",
-                    "criterion",
-                    "alpha",
-                    "nIter",
-                    "purify",
-                    "pAdjustMethod",
-                    "designAnalysis",
-                    "designAnalysisSigOnly",
-                    "bootSims",
-                    "D",
-                    "twoGroups",
-                    "groupContrasts")))
             self$add(jmvcore::Array$new(
                 options=options,
                 name="ICCplots",
@@ -536,8 +536,8 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$DESCtable} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$DIFtable} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$gcTable} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$coefficientsTable} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$gcTable} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$ICCplots} \tab \tab \tab \tab \tab an array of images \cr
 #' }
 #'

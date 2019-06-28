@@ -97,7 +97,7 @@ items:
           format: zto
           visible: (nagEff)
 
-- name: coefficientsTable
+    - name: coefficientsTable
       title: "Logistic Regression Coefficients"
       type: Table
       rows: 0
