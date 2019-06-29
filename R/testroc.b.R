@@ -47,20 +47,43 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           return()
         } else {
           self$results$instructions$setVisible(visible = FALSE)
-          self$results$procedureNotes$setContent(paste0(
-            "<p> The TestROC analysis has been completed using the following specifications: ", "</p>",
+          procedureNotes <- paste0(
+            "<html>
+            <body>
+            <p>Procedure Notes</p>
+            <hr>",
+            "<p> The TestROC optimal cutpoint analysis has been completed using the following specifications: ", 
+            "<p>&nbsp;</p>",
             "<p> Measure Variable(s): ", paste(unlist(self$options$dependentVars), collapse = ", "),"</p>",
-            "<p> Class Variable: ", self$options$classVar,"</p>",
-            "<p> Sub-Group Variable: ", self$options$subGroup,"</p>",
+            "<p> Class Variable: ", self$options$classVar,"</p>")
+          # Was there subgrouping?
+          if (!is.null(self$options$subGroup)){
+            procedureNotes <- paste0(procedureNotes,
+            "<p> Sub-Group Variable: ", self$options$subGroup,"</p>")
+          }
+           procedureNotes <- paste0(procedureNotes, 
+            "<p>&nbsp;</p>",
             "<p> Method: ", self$options$method,"</p>",
             "<p> All Observed Cutpoints: ", self$options$allObserved,"</p>",
             "<p> Metric: ", self$options$metric,"</p>",
-            "<p> Direction: ", self$options$direction,"</p>",
+            "<p> Direction (relative to cutpoint): ", self$options$direction,"</p>",
+            "<p> Tie Breakers: ", self$options$break_ties,"</p>",
             # "<p>  Positive Class: ", results$pos_class,"</p>",
-            # "<p>  Metric Tolerance: ", results$tol_metric,"</p>",
-            "<p> Bootstrap Runs: ", self$options$boot_runs,"</p>",
-            "<p> Tie Breakers: ", self$options$break_ties,"</p>"
-          ))
+            "<p>  Metric Tolerance: ", self$options$tol_metric,"</p>",
+            "<p>&nbsp;</p>")
+          # If bootstrapping happened
+          if (self$options$boot_runs != 0){
+            procedureNotes <- paste0(procedureNotes,
+            "<p> Bootstrap Runs: ", self$options$boot_runs,"</p>")
+          }
+          # Close the notes
+          procedureNotes <- paste0(procedureNotes,
+            "<hr />
+            <p>For more information on how calculations are performed and interpretting results, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/testROC' target = '_blank'>documentation</a></p>
+            </body>
+            </html>"
+          )
+          self$results$procedureNotes$setContent(procedureNotes)
         }
         
         # Var handling ----
@@ -85,7 +108,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           "cutpointr::maximize_spline_metric",
           "cutpointr::minimize_spline_metric"
         )) {
-          tol_metric = 1e-06
+          tol_metric = self$options$tol_metric
         } else {
           tol_metric = NULL
         }
@@ -124,12 +147,12 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           
           if (is.null(subGroup)){
             dependentVar = as.numeric(data[, var])
-            classVar = data[, self$options$classVar]
+            classVar = as.numeric(data[, self$options$classVar])
           } else {
             dependentVar = as.numeric(data[subGroup == strsplit(var, split = "_")[[1]][2],
                                 names(data) == strsplit(var, split = "_")[[1]][1]])
-            classVar = data[subGroup == strsplit(var, split = "_")[[1]][2],
-                                self$options$classVar]
+            classVar = as.numeric(data[subGroup == strsplit(var, split = "_")[[1]][2],
+                                self$options$classVar])
           }
           
           
@@ -144,12 +167,14 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             direction = direction,
             pos_class = 1,
             # use_midpoints = use_midpoints,
-            tol_metric = 0.5,
+            tol_metric = 0.05,
             boot_runs = boot_runs,
             break_ties = break_ties,
             na.rm = TRUE
           )
           
+          # self$results$debug$setContent(results)
+
           if (!self$options$allObserved) {
             resultsToDisplay <- sort(unlist(results$optimal_cutpoint))
           } else {

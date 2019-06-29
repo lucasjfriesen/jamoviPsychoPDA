@@ -116,9 +116,9 @@ options:
         - name: median
           title: Median optimal cutpoint
 
-#    - name: tol_metric
-#      title: Tolerance metric
-#      type: Number
+    - name: tol_metric
+      title: Tolerance metric
+      type: Number
 
     - name: direction
       title: Direction (relative to optimal cutpoint)

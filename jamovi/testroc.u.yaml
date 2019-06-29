@@ -61,6 +61,9 @@ children:
             name: method
           - type: ComboBox
             name: metric
+          - type: TextBox
+            name: tol_metric
+            format: number
           - type: ComboBox
             name: break_ties
           - type: ComboBox
@@ -75,3 +78,4 @@ children:
           - type: TextBox
             name: boot_runs
             format: number
+

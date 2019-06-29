@@ -15,6 +15,7 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             metric = NULL,
             boot_runs = NULL,
             break_ties = NULL,
+            tol_metric = NULL,
             direction = NULL,
             plotROC = TRUE,
             displaySE = TRUE,
@@ -89,6 +90,9 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "c",
                     "mean",
                     "median"))
+            private$..tol_metric <- jmvcore::OptionNumber$new(
+                "tol_metric",
+                tol_metric)
             private$..direction <- jmvcore::OptionList$new(
                 "direction",
                 direction,
@@ -121,6 +125,7 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..metric)
             self$.addOption(private$..boot_runs)
             self$.addOption(private$..break_ties)
+            self$.addOption(private$..tol_metric)
             self$.addOption(private$..direction)
             self$.addOption(private$..plotROC)
             self$.addOption(private$..displaySE)
@@ -137,6 +142,7 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         metric = function() private$..metric$value,
         boot_runs = function() private$..boot_runs$value,
         break_ties = function() private$..break_ties$value,
+        tol_metric = function() private$..tol_metric$value,
         direction = function() private$..direction$value,
         plotROC = function() private$..plotROC$value,
         displaySE = function() private$..displaySE$value,
@@ -152,6 +158,7 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..metric = NA,
         ..boot_runs = NA,
         ..break_ties = NA,
+        ..tol_metric = NA,
         ..direction = NA,
         ..plotROC = NA,
         ..displaySE = NA,
@@ -276,6 +283,7 @@ TestROCBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param metric .
 #' @param boot_runs .
 #' @param break_ties .
+#' @param tol_metric .
 #' @param direction .
 #' @param plotROC .
 #' @param displaySE .
@@ -303,6 +311,7 @@ TestROC <- function(
     metric,
     boot_runs,
     break_ties,
+    tol_metric,
     direction,
     plotROC = TRUE,
     displaySE = TRUE,
@@ -333,6 +342,7 @@ TestROC <- function(
         metric = metric,
         boot_runs = boot_runs,
         break_ties = break_ties,
+        tol_metric = tol_metric,
         direction = direction,
         plotROC = plotROC,
         displaySE = displaySE,
