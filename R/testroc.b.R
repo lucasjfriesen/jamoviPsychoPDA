@@ -79,7 +79,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           # Close the notes
           procedureNotes <- paste0(procedureNotes,
             "<hr />
-            <p>For more information on how calculations are performed and interpretting results, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/testROC' target = '_blank'>documentation</a></p>
+            <p>For more information on how calculations are performed and interpretting results, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/testROC_gettingStarted.html' target = '_blank'>documentation</a></p>
             </body>
             </html>"
           )
