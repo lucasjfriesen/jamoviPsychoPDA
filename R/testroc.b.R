@@ -92,15 +92,17 @@ TestROCClass <- if (requireNamespace('jmvcore'))
         if (self$options$method == "oc_manual") {
           method = "cutpointr::oc_manual"
           method = eval(parse(text = method))
-          score = as.numeric(self$options$specifyCutScore)
+          if (self$options$specifyCutScore == ""){
+            stop("Please specify a cut score for using this method.")
+          } else {
+            score = as.numeric(self$options$specifyCutScore)
+          }
         } else {
           method = paste0("cutpointr::", self$options$method)
-          method = eval(parse(text = method))
           score = NULL
         }
         
-        metric = paste0("cutpointr::", self$options$metric)
-        if (metric %in% c(
+        if (method %in% c(
           "cutpointr::maximize_metric",
           "cutpointr::minimize_metric",
           "cutpointr::maximize_loess_metric",
@@ -112,6 +114,11 @@ TestROCClass <- if (requireNamespace('jmvcore'))
         } else {
           tol_metric = NULL
         }
+        
+        method = eval(parse(text = method))
+        
+        metric = paste0("cutpointr::", self$options$metric)
+        
         metric = eval(parse(text = metric))
         
         direction = self$options$direction
@@ -167,7 +174,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             direction = direction,
             pos_class = 1,
             # use_midpoints = use_midpoints,
-            tol_metric = 0.05,
+            tol_metric = tol_metric,
             boot_runs = boot_runs,
             break_ties = break_ties,
             na.rm = TRUE

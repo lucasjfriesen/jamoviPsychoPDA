@@ -487,7 +487,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb19-10" title="10"><span class="kw">my_summarise</span>(df, g1)</a>
 <a class="sourceLine" id="cb19-11" title="11"><span class="co">#&gt; &lt;quosure&gt;</span></a>
 <a class="sourceLine" id="cb19-12" title="12"><span class="co">#&gt; expr: ^group_var</span></a>
-<a class="sourceLine" id="cb19-13" title="13"><span class="co">#&gt; env:  0x7fc08f920820</span></a>
+<a class="sourceLine" id="cb19-13" title="13"><span class="co">#&gt; env:  0x7fd03be6b0a8</span></a>
 <a class="sourceLine" id="cb19-14" title="14"><span class="co">#&gt; Error: Column `group_var` is unknown</span></a></code></pre></div>
 <p>I’ve added a <code>print()</code> call to make it obvious what’s going wrong here: <code>quo(group_var)</code> always returns <code>~group_var</code>. It is being too literal! We want it to substitute the value that the user supplied, i.e. to return <code>~g1</code>.</p>
 <p>By analogy to strings, we don’t want <code>&quot;&quot;</code>, instead we want some function that turns an argument into a string. That’s the job of <code>enquo()</code>. <code>enquo()</code> uses some dark magic to look at the argument, see what the user typed, and return that value as a quosure. (Technically, this works because function arguments are evaluated lazily, using a special data structure called a <strong>promise</strong>.)</p>
@@ -674,18 +674,18 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" title="1">x1</a>
 <a class="sourceLine" id="cb32-2" title="2"><span class="co">#&gt; &lt;quosure&gt;</span></a>
 <a class="sourceLine" id="cb32-3" title="3"><span class="co">#&gt; expr: ^x</span></a>
-<a class="sourceLine" id="cb32-4" title="4"><span class="co">#&gt; env:  0x7fc090aaed08</span></a>
+<a class="sourceLine" id="cb32-4" title="4"><span class="co">#&gt; env:  0x7fd021469c08</span></a>
 <a class="sourceLine" id="cb32-5" title="5">x2</a>
 <a class="sourceLine" id="cb32-6" title="6"><span class="co">#&gt; &lt;quosure&gt;</span></a>
 <a class="sourceLine" id="cb32-7" title="7"><span class="co">#&gt; expr: ^x</span></a>
-<a class="sourceLine" id="cb32-8" title="8"><span class="co">#&gt; env:  0x7fc090afb8d8</span></a></code></pre></div>
+<a class="sourceLine" id="cb32-8" title="8"><span class="co">#&gt; env:  0x7fd0214b0900</span></a></code></pre></div>
 <p>But if you inspect the environments using <code>rlang::get_env()</code> — they’re different.</p>
 <div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" title="1"><span class="kw">library</span>(rlang)</a>
 <a class="sourceLine" id="cb33-2" title="2"></a>
 <a class="sourceLine" id="cb33-3" title="3"><span class="kw">get_env</span>(x1)</a>
-<a class="sourceLine" id="cb33-4" title="4"><span class="co">#&gt; &lt;environment: 0x7fc090aaed08&gt;</span></a>
+<a class="sourceLine" id="cb33-4" title="4"><span class="co">#&gt; &lt;environment: 0x7fd021469c08&gt;</span></a>
 <a class="sourceLine" id="cb33-5" title="5"><span class="kw">get_env</span>(x2)</a>
-<a class="sourceLine" id="cb33-6" title="6"><span class="co">#&gt; &lt;environment: 0x7fc090afb8d8&gt;</span></a></code></pre></div>
+<a class="sourceLine" id="cb33-6" title="6"><span class="co">#&gt; &lt;environment: 0x7fd0214b0900&gt;</span></a></code></pre></div>
 <p>Further, when we evaluate those formulas using <code>rlang::eval_tidy()</code>, we see that they yield different values:</p>
 <div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" title="1"><span class="kw">eval_tidy</span>(x1)</a>
 <a class="sourceLine" id="cb34-2" title="2"><span class="co">#&gt; [1] 10</span></a>

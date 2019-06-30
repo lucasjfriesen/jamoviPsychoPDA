@@ -11,11 +11,11 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             subGroup = NULL,
             method = "maximize_metric",
             allObserved = NULL,
-            specifyCutScore = NULL,
+            specifyCutScore = "",
             metric = NULL,
             boot_runs = NULL,
             break_ties = NULL,
-            tol_metric = NULL,
+            tol_metric = 0.05,
             direction = NULL,
             plotROC = TRUE,
             displaySE = TRUE,
@@ -58,7 +58,8 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 allObserved)
             private$..specifyCutScore <- jmvcore::OptionString$new(
                 "specifyCutScore",
-                specifyCutScore)
+                specifyCutScore,
+                default="")
             private$..metric <- jmvcore::OptionList$new(
                 "metric",
                 metric,
@@ -66,7 +67,6 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "sum_sens_spec",
                     "accuracy",
                     "youden",
-                    "sum_sens_spec",
                     "sum_ppv_npv",
                     "prod_sens_spec",
                     "prod_ppv_npv",
@@ -92,7 +92,8 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "median"))
             private$..tol_metric <- jmvcore::OptionNumber$new(
                 "tol_metric",
-                tol_metric)
+                tol_metric,
+                default=0.05)
             private$..direction <- jmvcore::OptionList$new(
                 "direction",
                 direction,
@@ -307,11 +308,11 @@ TestROC <- function(
     subGroup,
     method = "maximize_metric",
     allObserved,
-    specifyCutScore,
+    specifyCutScore = "",
     metric,
     boot_runs,
     break_ties,
-    tol_metric,
+    tol_metric = 0.05,
     direction,
     plotROC = TRUE,
     displaySE = TRUE,

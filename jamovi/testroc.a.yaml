@@ -57,19 +57,18 @@ options:
     - name: specifyCutScore
       title: Specify cut score
       type: String
+      default: ""
 
     - name: metric
       title: Metric
       type: List
       options:
-        - name: sum_sens_spec
-          title: "Sum Sens-Spec"
+        - name: sum_sens_spec        
+          title: 'Sum: Sens/Spec'
         - name: accuracy
           title: Accuracy
         - name: youden
           title: Youden-Index
-        - name: sum_sens_spec        
-          title: 'Sum: Sens/Spec'
         - name: sum_ppv_npv
           title: 'Sum: PPV/NPV'
         - name: prod_sens_spec
@@ -119,6 +118,7 @@ options:
     - name: tol_metric
       title: Tolerance metric
       type: Number
+      default: 0.05
 
     - name: direction
       title: Direction (relative to optimal cutpoint)

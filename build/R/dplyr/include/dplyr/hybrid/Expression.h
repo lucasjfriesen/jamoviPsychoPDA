@@ -139,6 +139,9 @@ public:
     if (TYPEOF(head) == CLOSXP && Rf_inherits(head, "inline_colwise_function")) {
       dot_alias = CADR(expr);
       expr = CADR(Rf_getAttrib(head, symbols::formula));
+      if (TYPEOF(expr) != LANGSXP) {
+        return;
+      }
       head = CAR(expr);
     }
 
@@ -358,9 +361,6 @@ private:
       }
       data = subset->get_data() ;
     }
-
-    // only treat very simple columns as columns, leave other to R
-    if (Rf_isObject(data) || Rf_isS4(data) || RCPP_GET_CLASS(data) != R_NilValue) return false;
 
     column.data = data;
     column.is_desc = desc;
