@@ -36,10 +36,12 @@ Download the 'DIF.jmo' file and use the sideload function in jamovi,
 
 or
 
-You can clone this repository and compile the module within R with 
+You can clone this repository and compile the module within R with `jmvtools`.
 
 ```
 install.packages('jmvtools', repos=c('https://repo.jamovi.org', 'https://cran.r-project.org'))
+
+setwd(directory/of/cloned/repo)
 
 jmvtools::install()
 
