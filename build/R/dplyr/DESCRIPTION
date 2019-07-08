@@ -37,4 +37,5 @@ Author: Hadley Wickham [aut, cre] (<https://orcid.org/0000-0003-4757-117X>),
 Maintainer: Hadley Wickham <hadley@rstudio.com>
 Repository: CRAN
 Date/Publication: 2019-06-29 04:50:03 UTC
-Built: R 3.3.0; x86_64-apple-darwin13.4.0; 2019-06-29 19:40:53 UTC; unix
+Built: R 3.4.1; x86_64-w64-mingw32; 2019-07-04 03:30:24 UTC; windows
+Archs: x64
