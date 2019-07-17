@@ -1,7 +1,7 @@
 exportPattern("^[[:alpha:]]+")
 import(stats)
 import(ggplot2)
-import(cutpointr)
+import(Rcpp)
 export(glmDIF)
 export(glmDIFClass)
 export(glmDIFOptions)
