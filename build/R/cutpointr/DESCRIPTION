@@ -29,5 +29,4 @@ Author: Christian Thiele [aut, cre]
 Maintainer: Christian Thiele <c.thiele@gmx-topmail.de>
 Repository: CRAN
 Date/Publication: 2019-03-27 10:10:03 UTC
-Built: R 3.4.4; x86_64-w64-mingw32; 2019-04-25 22:18:01 UTC; windows
-Archs: i386, x64
+Built: R 3.3.0; x86_64-apple-darwin13.4.0; 2019-07-17 21:46:41 UTC; unix
