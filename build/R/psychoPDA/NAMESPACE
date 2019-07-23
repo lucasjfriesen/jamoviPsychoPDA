@@ -8,3 +8,11 @@ export(glmDIFOptions)
 export(TestROC)
 export(TestROCClass)
 export(TestROCOptions)
+
+export(rdTTest)
+export(rdTTestClass)
+export(rdTTestOptions)
+
+export(ttestCor)
+export(ttestCorClass)
+export(ttestCorOptions)

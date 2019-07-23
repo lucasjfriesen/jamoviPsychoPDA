@@ -1,0 +1,84 @@
+---	
+name:  ttestCor	
+title: T-Test for Correlations	
+jrs:   '1.1'	
+
+items:	
+    #- name: debug	
+    #  title: debug	
+    #  type: Preformatted	
+
+    - name: instructions	
+      title: Instructions	
+      type: Html
+
+    - name: rdTTestCor	
+      title: Retroactive Design Analysis | Correlations	
+      type:  Table	
+      rows: 0	
+      columns: 	
+        - name: label	
+          title: Label	
+          type: text	
+        - name: obsCor	
+          title: Obs. Correlation	
+          type: number	
+        - name: obsN	
+          title: N	
+          type: number	
+        - name: hypTrueCor	
+          title: Hyp. True Correlation	
+          type: number	
+        - name: obsSE	
+          title: Obs. SE	
+          type: number	
+        - name: hypTrueEffSD	
+          title: D	
+          type: number	
+        - name: typeS	
+          title: Type-S	
+          type: number	
+          format: zto,pvalue	
+        - name: typeM	
+          title: Type-M	
+          type: number	
+        - name: power	
+          title: Emp. Obs. Power	
+          type: number	
+          format: zto,pvalue	
+
+    - name: plotHTE	
+      title: Sensitivity - Hypothesized True Effect	
+      type: Image	
+      visible: (sensHyp)	
+      width:  800	
+      height: 600	
+      renderFun: .plotHTE	
+
+    - name: plotN	
+      title: Sensitivity - Sample Size	
+      type: Image	
+      visible: (sensN)	
+      width:  800	
+      height: 600	
+      renderFun: .plotN	
+
+    - name: plotObs	
+      title: Sensitivity - Observed Correlation	
+      type: Image	
+      visible: (sensObs)	
+      width:  800	
+      height: 600	
+      renderFun: .plotObs	
+
+    - name: plotHTEViz	
+      title: Sensitivity - Viz	
+      type: Array	
+      items: 0	
+      template:	
+        type: Image	
+        width:  800	
+        height: 600	
+        renderFun: .plotHTEViz	
+        visible: (HTEViz)	
+        requiresData: TRUE	

@@ -33,6 +33,18 @@ analyses:
     menuGroup: PPDA
     menuTitle: TestROC
     menuSubgroup: Measure Diagnostics
+  - title: T-Test for Mean Differences
+    name: rdTTest
+    ns: psychoPDA
+    menuGroup: PPDA
+    menuSubgroup: Design Analysis
+    menuTitle: T-Test for Mean Differences
+  - title: T-Test for Correlations
+    name: ttestCor
+    ns: psychoPDA
+    menuGroup: PPDA
+    menuSubgroup: Design Analysis
+    menuTitle: T-Test for Correlations
 datasets:
   - name: DIF
     path: dataverbal.csv

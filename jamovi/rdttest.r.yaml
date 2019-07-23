@@ -1,0 +1,71 @@
+---	
+name:  rdTTest	
+title: T-Test	
+jrs:   '1.1'	
+
+items:	
+    #- name: debug	
+    #  title: debug	
+    #  type: Preformatted	
+
+    - name: instructions	
+      title: Instructions	
+      type: Html
+
+    - name: rdTTest	
+      title: Retroactive Design Analysis | Mean Differences	
+      type:  Table	
+      rows: 0	
+      columns: 	
+        - name: label	
+          title: Label	
+          type: number	
+        - name: D	
+          title: Hyp. True Difference	
+          type: text	
+        - name: typeS	
+          title: Type-S	
+          type: number	
+        - name: typeM	
+          title: Type-M	
+          type: number	
+        - name: power	
+          title: Observed Power	
+          type: number	
+
+
+    - name: plotHTE	
+      title: Sensitivity - Hypothesized True Effect	
+      type: Image	
+      visible: (sensHyp)	
+      width:  800	
+      height: 600	
+      renderFun: .plotHTE	
+
+    - name: plotN	
+      title: Sensitivity - Sample Size	
+      type: Image	
+      visible: (sensN)	
+      width:  800	
+      height: 600	
+      renderFun: .plotN	
+
+    - name: plotSE	
+      title: Sensitivity - Standard Error	
+      type: Image	
+      visible: (sensSE)	
+      width:  800	
+      height: 600	
+      renderFun: .plotSE	
+
+    - name: plotHTEViz	
+      title: Sensitivity - Viz	
+      type: Array	
+      items: (hypTrueEff)	
+      template:	
+        type: Image	
+        width:  800	
+        height: 600	
+        renderFun: .plotHTEViz	
+        visible: (HTEViz)	
+        requiresData: TRUE

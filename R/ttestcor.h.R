@@ -12,9 +12,9 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             observedCor = NULL,
             n = NULL,
             alpha = 0.05,
-            sensHyp = FALSE,
-            sensN = FALSE,
-            sensObs = FALSE,
+            sensHyp = TRUE,
+            sensN = TRUE,
+            sensObs = TRUE,
             HTEViz = FALSE,
             bootSims = 10000,
             lengthOut = 1000,
@@ -66,15 +66,15 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             private$..sensHyp <- jmvcore::OptionBool$new(
                 "sensHyp",
                 sensHyp,
-                default=FALSE)
+                default=TRUE)
             private$..sensN <- jmvcore::OptionBool$new(
                 "sensN",
                 sensN,
-                default=FALSE)
+                default=TRUE)
             private$..sensObs <- jmvcore::OptionBool$new(
                 "sensObs",
                 sensObs,
-                default=FALSE)
+                default=TRUE)
             private$..HTEViz <- jmvcore::OptionBool$new(
                 "HTEViz",
                 HTEViz,
@@ -141,7 +141,6 @@ ttestCorOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
 ttestCorResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
-        debug = function() private$.items[["debug"]],
         instructions = function() private$.items[["instructions"]],
         rdTTestCor = function() private$.items[["rdTTestCor"]],
         plotHTE = function() private$.items[["plotHTE"]],
@@ -155,15 +154,10 @@ ttestCorResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="T-Test for Correlations")
-            self$add(jmvcore::Preformatted$new(
-                options=options,
-                name="debug",
-                title="debug"))
             self$add(jmvcore::Html$new(
                 options=options,
                 name="instructions",
-                title="Instructions",
-                visible=TRUE))
+                title="Instructions"))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="rdTTestCor",
@@ -264,7 +258,7 @@ ttestCorBase <- if (requireNamespace('jmvcore')) R6::R6Class(
                 completeWhenFilled = FALSE)
         }))
 
-#' Correlations
+#' T-Test for Correlations
 #'
 #' 
 #' @param data .
@@ -283,7 +277,6 @@ ttestCorBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param corType .
 #' @return A results object containing:
 #' \tabular{llllll}{
-#'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$rdTTestCor} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$plotHTE} \tab \tab \tab \tab \tab an image \cr
@@ -307,9 +300,9 @@ ttestCor <- function(
     observedCor,
     n,
     alpha = 0.05,
-    sensHyp = FALSE,
-    sensN = FALSE,
-    sensObs = FALSE,
+    sensHyp = TRUE,
+    sensN = TRUE,
+    sensObs = TRUE,
     HTEViz = FALSE,
     bootSims = 10000,
     lengthOut = 1000,

@@ -5,13 +5,14 @@
 
 
 
+
 rdTTestClass <- if (requireNamespace('jmvcore'))
   R6::R6Class(
     "rdTTestClass",
     inherit = rdTTestBase,
     private = list(
       .run = function() {
-          if (is.null(self$options$labelVar) |
+        if (is.null(self$options$labelVar) |
             is.null(self$options$hypTrueEff) |
             (is.null(self$options$observedP) &
              is.null(self$options$observedSE))) {
@@ -31,6 +32,7 @@ rdTTestClass <- if (requireNamespace('jmvcore'))
             </head>
             <body>
             <div class='instructions'>
+            <p><b>THIS IS IN TESTING. BETA, ALPHA, W/E. NOT FINAL. CAVEAT EMPTOR</b></p>
             <p>Welcome to PsychoPDA's T-Test Design Analysis module. To get started:</p>
             <ol>
             <li>Input the 'Label'.<br /><br /></li>
@@ -41,8 +43,9 @@ rdTTestClass <- if (requireNamespace('jmvcore'))
             <p>If you encounter any errors, or have questions, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/meanDiffDA.html' target = '_blank'>documentation</a></p>
             </div>
             </body>
-            </html>")
-            return()
+            </html>"
+          )
+          return()
         } else {
           self$results$instructions$setVisible(visible = FALSE)
         }
@@ -79,38 +82,6 @@ rdTTestClass <- if (requireNamespace('jmvcore'))
           observedSE <- observedP / z
         }
         
-        retroDesign <- function(D,
-                                observedSE,
-                                alpha,
-                                df,
-                                nSims) {
-          z <- qt(1 - alpha / 2, df)
-          p.hi <- 1 - pt(z - D / observedSE, df)
-          p.lo <- pt(-z - D / observedSE, df)
-          power <- p.hi + p.lo
-          typeS <- p.lo / power
-          lambda <- D / observedSE
-          typeM <-
-            (dt(lambda + z, df = df) + dt(lambda - z, df = df) +
-               lambda * (pt(lambda + z, df = df) + pt(lambda - z, df = df) - 1)) /
-            (lambda * (1 - pt(lambda + z, df = df) + pt(lambda - z, df = df)))
-          return(list(
-            power = power,
-            typeS = typeS,
-            typeM = typeM
-          ))
-        }
-        
-        retroDesignEmp <- function(D,
-                                observedSE,
-                                alpha,
-                                df,
-                                nSims) {
-          z <- qt(1 - alpha / 2, df)
-          estimate <- D + observedSE * rt(nSims, df)
-          return(list(estimate, rep(D, times = nSims), rep(z, times = nSims), rep(observedSE, times = nSims)))
-        }  
-          
         # Sensitivity ----
         
         
@@ -186,29 +157,35 @@ rdTTestClass <- if (requireNamespace('jmvcore'))
           imageHTE$setState(plotData)
         }
         
-       if (self$options$HTEViz) {
-         for (i in 1:length(hypTrueEff)){
-          self$results$plotHTEViz$addItem(i)
-         }
-          resultsHTEViz <- data.frame("estimate" = as.numeric(), "D" = as.numeric(),"observedSE" = as.numeric(), "z" = as.numeric())
+        if (self$options$HTEViz) {
+          for (i in 1:length(hypTrueEff)) {
+            self$results$plotHTEViz$addItem(i)
+          }
+          resultsHTEViz <-
+            data.frame(
+              "estimate" = as.numeric(),
+              "D" = as.numeric(),
+              "observedSE" = as.numeric(),
+              "z" = as.numeric()
+            )
           # c("estimate", "observedSE", "z")
           
           for (i in 1:nrow(data)) {
             resultsHTEViz <- retroDesignEmp(hypTrueEff[i],
-                                      observedSE[i],
-                                      alpha,
-                                      df[i],
-                                      nSims)
+                                            observedSE[i],
+                                            alpha,
+                                            df[i],
+                                            nSims)
             
             # self$results$debug$setContent(self$results$plotHTEViz$length.)
             resultsHTEViz <- as.data.frame(resultsHTEViz)
             
-            colnames(resultsHTEViz) = c("estimate", "D","observedSE", "z")
+            colnames(resultsHTEViz) = c("estimate", "D", "observedSE", "z")
             
             imageHTEViz <- self$results$plotHTEViz$get(index = i)
             imageHTEViz$setState(resultsHTEViz)
           }
-
+          
         }
         
         # Proposed N ----
@@ -299,7 +276,7 @@ rdTTestClass <- if (requireNamespace('jmvcore'))
           return()
         }
         plotData <- imageHTE$state
-
+        
         plot <- ggplot(plotData) +
           geom_line(aes(
             x = sensVar,
@@ -312,11 +289,12 @@ rdTTestClass <- if (requireNamespace('jmvcore'))
             y = power * (max(typeM)),
             colour = "power"
           )) +
-          scale_y_continuous(name = "Type-M", sec.axis = sec_axis(name = "Type-S/Power", trans = ~./max(plotData$typeM))) +
+          scale_y_continuous(name = "Type-M",
+                             sec.axis = sec_axis(name = "Type-S/Power", trans = ~ . / max(plotData$typeM))) +
           scale_x_continuous(name = "Propsed HTE +/- 2 Observed SE") +
           theme_classic() +
-          facet_wrap( ~ hypTrueGroup, scales = "free")
-
+          facet_wrap(~ hypTrueGroup, scales = "free")
+        
         print(plot)
         # ggplotly(plot)
         TRUE
@@ -342,10 +320,11 @@ rdTTestClass <- if (requireNamespace('jmvcore'))
             y = power * (max(typeM)),
             colour = "power"
           )) +
-          scale_y_continuous(name = "Type-M", sec.axis = sec_axis(name = "Type-S/Power", trans = ~./max(plotData$typeM))) +
+          scale_y_continuous(name = "Type-M",
+                             sec.axis = sec_axis(name = "Type-S/Power", trans = ~ . / max(plotData$typeM))) +
           scale_x_continuous(name = "Half to Double Observed N") +
           theme_classic() +
-          facet_wrap(~ hypTrueGroup, scales = "free")
+          facet_wrap( ~ hypTrueGroup, scales = "free")
         
         print(plot)
         # ggplotly(plot)
@@ -376,10 +355,11 @@ rdTTestClass <- if (requireNamespace('jmvcore'))
             y = power * (max(typeM)),
             colour = "power"
           )) +
-          scale_y_continuous(name = "Type-M", sec.axis = sec_axis(name = "Type-S/Power", trans = ~./max(plotData$typeM))) +
+          scale_y_continuous(name = "Type-M",
+                             sec.axis = sec_axis(name = "Type-S/Power", trans = ~ . / max(plotData$typeM))) +
           scale_x_continuous(name = "10% to Double Observed SE") +
           theme_classic() +
-          facet_wrap(~ hypTrueGroup, scales = "free")
+          facet_wrap( ~ hypTrueGroup, scales = "free")
         
         print(plot)
         # ggplotly(plot)
@@ -387,31 +367,40 @@ rdTTestClass <- if (requireNamespace('jmvcore'))
       },
       .plotHTEViz = function(imageHTEViz, ...)
       {
-        
         plotData <- imageHTEViz$state
         
-        plot <- ggplot(plotData, aes(x = seq_along(estimate), y = estimate)) +
-        geom_point(pch = ifelse((plotData$estimate > plotData$observedSE * plotData$z) &
-                                  (!plotData$estimate < -plotData$observedSE * plotData$z),
-                                15,
-                                ifelse((!plotData$estimate > plotData$observedSE * plotData$z) &
-                                         (plotData$estimate < -plotData$observedSE * plotData$z), 17,
-                                       ifelse((!plotData$estimate > plotData$observedSE * plotData$z) &
-                                                (!plotData$estimate < -plotData$observedSE * plotData$z), 16, 16
-                                       ))
-        ),
-        col = ifelse((!plotData$estimate > plotData$observedSE * plotData$z) &
-                       (!plotData$estimate < -plotData$observedSE * plotData$z), "grey", "black")) +
-        geom_hline(yintercept = plotData$observedSE * plotData$z, size = 1) +
-        geom_hline(yintercept = -plotData$observedSE * plotData$z, size = 1) +
-        geom_hline(yintercept = plotData$D,
-                   linetype = "dashed",
-                   size = 1) +
-        xlab("n") +
+        plot <-
+          ggplot(plotData, aes(x = seq_along(estimate), y = estimate)) +
+          geom_point(pch = ifelse((plotData$estimate > plotData$observedSE * plotData$z) &
+                                    (!plotData$estimate < -plotData$observedSE * plotData$z),
+                                  15,
+                                  ifelse((!plotData$estimate > plotData$observedSE * plotData$z) &
+                                           (plotData$estimate < -plotData$observedSE * plotData$z),
+                                         17,
+                                         ifelse((!plotData$estimate > plotData$observedSE * plotData$z) &
+                                                  (!plotData$estimate < -plotData$observedSE * plotData$z),
+                                                16,
+                                                16
+                                         )
+                                  )
+          ),
+          col = ifelse((!plotData$estimate > plotData$observedSE * plotData$z) &
+                         (!plotData$estimate < -plotData$observedSE * plotData$z),
+                       "grey",
+                       "black"
+          )) +
+          geom_hline(yintercept = plotData$observedSE * plotData$z,
+                     size = 1) +
+          geom_hline(yintercept = -plotData$observedSE * plotData$z,
+                     size = 1) +
+          geom_hline(yintercept = plotData$D,
+                     linetype = "dashed",
+                     size = 1) +
+          xlab("n") +
           ggtitle(unique(plotData$D))
-
+        
         print(plot)
         TRUE
       }
+          )
     )
-  )

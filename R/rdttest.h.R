@@ -9,14 +9,13 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             labelVar = NULL,
             hypTrueEff = NULL,
             observedSE = NULL,
-            observedEff = NULL,
             observedP = NULL,
             n = NULL,
             alpha = 0.05,
             nSims = 10000,
-            sensHyp = FALSE,
-            sensN = FALSE,
-            sensSE = FALSE,
+            sensHyp = TRUE,
+            sensN = TRUE,
+            sensSE = TRUE,
             HTEViz = FALSE, ...) {
 
             super$initialize(
@@ -38,13 +37,6 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             private$..observedSE <- jmvcore::OptionVariable$new(
                 "observedSE",
                 observedSE,
-                suggested=list(
-                    "continuous"),
-                permitted=list(
-                    "numeric"))
-            private$..observedEff <- jmvcore::OptionVariable$new(
-                "observedEff",
-                observedEff,
                 suggested=list(
                     "continuous"),
                 permitted=list(
@@ -74,15 +66,15 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             private$..sensHyp <- jmvcore::OptionBool$new(
                 "sensHyp",
                 sensHyp,
-                default=FALSE)
+                default=TRUE)
             private$..sensN <- jmvcore::OptionBool$new(
                 "sensN",
                 sensN,
-                default=FALSE)
+                default=TRUE)
             private$..sensSE <- jmvcore::OptionBool$new(
                 "sensSE",
                 sensSE,
-                default=FALSE)
+                default=TRUE)
             private$..HTEViz <- jmvcore::OptionBool$new(
                 "HTEViz",
                 HTEViz,
@@ -91,7 +83,6 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..labelVar)
             self$.addOption(private$..hypTrueEff)
             self$.addOption(private$..observedSE)
-            self$.addOption(private$..observedEff)
             self$.addOption(private$..observedP)
             self$.addOption(private$..n)
             self$.addOption(private$..alpha)
@@ -105,7 +96,6 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         labelVar = function() private$..labelVar$value,
         hypTrueEff = function() private$..hypTrueEff$value,
         observedSE = function() private$..observedSE$value,
-        observedEff = function() private$..observedEff$value,
         observedP = function() private$..observedP$value,
         n = function() private$..n$value,
         alpha = function() private$..alpha$value,
@@ -118,7 +108,6 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..labelVar = NA,
         ..hypTrueEff = NA,
         ..observedSE = NA,
-        ..observedEff = NA,
         ..observedP = NA,
         ..n = NA,
         ..alpha = NA,
@@ -132,7 +121,6 @@ rdTTestOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
 rdTTestResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
-        debug = function() private$.items[["debug"]],
         instructions = function() private$.items[["instructions"]],
         rdTTest = function() private$.items[["rdTTest"]],
         plotHTE = function() private$.items[["plotHTE"]],
@@ -146,15 +134,10 @@ rdTTestResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="T-Test")
-            self$add(jmvcore::Preformatted$new(
-                options=options,
-                name="debug",
-                title="debug"))
             self$add(jmvcore::Html$new(
                 options=options,
                 name="instructions",
-                title="Instructions",
-                visible=TRUE))
+                title="Instructions"))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="rdTTest",
@@ -237,14 +220,13 @@ rdTTestBase <- if (requireNamespace('jmvcore')) R6::R6Class(
                 completeWhenFilled = FALSE)
         }))
 
-#' Mean Differences
+#' T-Test for Mean Differences
 #'
 #' 
 #' @param data .
 #' @param labelVar .
 #' @param hypTrueEff .
 #' @param observedSE .
-#' @param observedEff .
 #' @param observedP .
 #' @param n .
 #' @param alpha .
@@ -255,7 +237,6 @@ rdTTestBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param HTEViz .
 #' @return A results object containing:
 #' \tabular{llllll}{
-#'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$rdTTest} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$plotHTE} \tab \tab \tab \tab \tab an image \cr
@@ -276,14 +257,13 @@ rdTTest <- function(
     labelVar,
     hypTrueEff,
     observedSE,
-    observedEff,
     observedP,
     n,
     alpha = 0.05,
     nSims = 10000,
-    sensHyp = FALSE,
-    sensN = FALSE,
-    sensSE = FALSE,
+    sensHyp = TRUE,
+    sensN = TRUE,
+    sensSE = TRUE,
     HTEViz = FALSE) {
 
     if ( ! requireNamespace('jmvcore'))
@@ -292,7 +272,6 @@ rdTTest <- function(
     if ( ! missing(labelVar)) labelVar <- jmvcore::resolveQuo(jmvcore::enquo(labelVar))
     if ( ! missing(hypTrueEff)) hypTrueEff <- jmvcore::resolveQuo(jmvcore::enquo(hypTrueEff))
     if ( ! missing(observedSE)) observedSE <- jmvcore::resolveQuo(jmvcore::enquo(observedSE))
-    if ( ! missing(observedEff)) observedEff <- jmvcore::resolveQuo(jmvcore::enquo(observedEff))
     if ( ! missing(observedP)) observedP <- jmvcore::resolveQuo(jmvcore::enquo(observedP))
     if ( ! missing(n)) n <- jmvcore::resolveQuo(jmvcore::enquo(n))
     if (missing(data))
@@ -301,7 +280,6 @@ rdTTest <- function(
             `if`( ! missing(labelVar), labelVar, NULL),
             `if`( ! missing(hypTrueEff), hypTrueEff, NULL),
             `if`( ! missing(observedSE), observedSE, NULL),
-            `if`( ! missing(observedEff), observedEff, NULL),
             `if`( ! missing(observedP), observedP, NULL),
             `if`( ! missing(n), n, NULL))
 
@@ -310,7 +288,6 @@ rdTTest <- function(
         labelVar = labelVar,
         hypTrueEff = hypTrueEff,
         observedSE = observedSE,
-        observedEff = observedEff,
         observedP = observedP,
         n = n,
         alpha = alpha,

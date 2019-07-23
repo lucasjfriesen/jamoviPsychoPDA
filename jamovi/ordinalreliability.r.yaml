@@ -1,0 +1,11 @@
+---
+name:  ordinalReliability
+title: Ordinal Reliability
+jrs:   '1.1'
+
+items:
+    - name:  text
+      title: Ordinal Reliability
+      type:  Preformatted
+
+...
