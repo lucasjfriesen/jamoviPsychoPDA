@@ -8,4 +8,82 @@ items:
       title: Ordinal Reliability
       type:  Preformatted
 
+    - name: summaryTableAlpha
+      title: Ordinal Alpha
+      type: Table
+      rows: 1
+      columns:
+        - name: raw_alpha
+          title: raw_alpha
+          type: number
+        - name: std.alpha
+          title: std.alpha
+          type: number
+        - name: G6
+          title: G6(smc)
+          type: number
+        - name: average_r
+          title: average_r
+          type: number
+        - name: SN
+          title: SN
+          type: number
+        - name: median_r
+          title: median_r
+          type: number
+
+    - name: summaryTableGuttman
+      title: Ordinal Guttman
+      type: Table
+      rows: 1
+      columns:
+        - name: maxSHR
+          title: Max Split-Half (lambda 4)
+          type: number
+        - name: guttmanL6
+          title: Lambda 6
+          type: number
+        - name: avgSHR
+          title: Average Split-Half
+          type: number
+        - name: alpha
+          title: Alpha (lambda 3)
+          type: number
+        - name: minSHR
+          title: Min Split-Half (beta)
+          type: number
+
+    - name: summaryTableOmega
+      title: Ordinal Omega
+      type: Table
+      rows: 1
+      columns:
+        - name: omega_h
+          title: omega_h
+          type: number
+        - name: omega.lim
+          title: omega.lim
+          type: number
+        - name: alpha
+          title: alpha
+          type: number
+        - name: omega.tot
+          title: omega.tot
+          type: number
+        - name: G6
+          title: G6
+          type: number
+
+    - name: summaryTableTheta
+      title: Ordinal Theta
+      type: Table
+      rows: 1
+      columns:
+        - name: ordinalTheta
+          title: ordinalTheta
+          type: number
+
+    - name: polychoricRho
+      title: polychoricRho
+      type: Preformatted
 ...

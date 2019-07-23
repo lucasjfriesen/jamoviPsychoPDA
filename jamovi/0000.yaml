@@ -1,5 +1,5 @@
 ---
-title: Psychometric Post-Data Analysis
+title: Psychometrics & Post-Data Analysis
 name: psychoPDA
 version: 1.0.0
 jms: '1.0'
@@ -10,9 +10,7 @@ date: '2019-01-17'
 type: R
 description: >
   A suite designed to enable the performance of post-data analyses in
-  pyschometric research. Currently included functions are tests for:
-  Differential Item Functioning, Retroactive Design Analysis for T-Tests of mean
-  differences and of correlations.
+  pyschometric research.
 analyses:
   - title: Binary LogR
     name: glmDIF
@@ -45,6 +43,12 @@ analyses:
     menuGroup: PPDA
     menuSubgroup: Design Analysis
     menuTitle: T-Test for Correlations
+  - title: Ordinal Reliability
+    name: ordinalReliability
+    ns: psychoPDA
+    menuGroup: PPDA
+    menuTitle: Ordinal Reliability
+    menuSubgroup: Measure Diagnostics
 datasets:
   - name: DIF
     path: dataverbal.csv

@@ -6,10 +6,8 @@ ordinalReliabilityOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Options,
     public = list(
         initialize = function(
-            dep = NULL,
-            group = NULL,
-            alt = "notequal",
-            varEq = TRUE, ...) {
+            items = NULL,
+            groups = NULL, ...) {
 
             super$initialize(
                 package='psychoPDA',
@@ -17,46 +15,33 @@ ordinalReliabilityOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 requiresData=TRUE,
                 ...)
 
-            private$..dep <- jmvcore::OptionVariable$new(
-                "dep",
-                dep)
-            private$..group <- jmvcore::OptionVariable$new(
-                "group",
-                group)
-            private$..alt <- jmvcore::OptionList$new(
-                "alt",
-                alt,
-                options=list(
-                    "notequal",
-                    "onegreater",
-                    "twogreater"),
-                default="notequal")
-            private$..varEq <- jmvcore::OptionBool$new(
-                "varEq",
-                varEq,
-                default=TRUE)
+            private$..items <- jmvcore::OptionVariables$new(
+                "items",
+                items)
+            private$..groups <- jmvcore::OptionVariable$new(
+                "groups",
+                groups)
 
-            self$.addOption(private$..dep)
-            self$.addOption(private$..group)
-            self$.addOption(private$..alt)
-            self$.addOption(private$..varEq)
+            self$.addOption(private$..items)
+            self$.addOption(private$..groups)
         }),
     active = list(
-        dep = function() private$..dep$value,
-        group = function() private$..group$value,
-        alt = function() private$..alt$value,
-        varEq = function() private$..varEq$value),
+        items = function() private$..items$value,
+        groups = function() private$..groups$value),
     private = list(
-        ..dep = NA,
-        ..group = NA,
-        ..alt = NA,
-        ..varEq = NA)
+        ..items = NA,
+        ..groups = NA)
 )
 
 ordinalReliabilityResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
-        text = function() private$.items[["text"]]),
+        text = function() private$.items[["text"]],
+        summaryTableAlpha = function() private$.items[["summaryTableAlpha"]],
+        summaryTableGuttman = function() private$.items[["summaryTableGuttman"]],
+        summaryTableOmega = function() private$.items[["summaryTableOmega"]],
+        summaryTableTheta = function() private$.items[["summaryTableTheta"]],
+        polychoricRho = function() private$.items[["polychoricRho"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -67,7 +52,103 @@ ordinalReliabilityResults <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$add(jmvcore::Preformatted$new(
                 options=options,
                 name="text",
-                title="Ordinal Reliability"))}))
+                title="Ordinal Reliability"))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="summaryTableAlpha",
+                title="Ordinal Alpha",
+                rows=1,
+                columns=list(
+                    list(
+                        `name`="raw_alpha", 
+                        `title`="raw_alpha", 
+                        `type`="number"),
+                    list(
+                        `name`="std.alpha", 
+                        `title`="std.alpha", 
+                        `type`="number"),
+                    list(
+                        `name`="G6", 
+                        `title`="G6(smc)", 
+                        `type`="number"),
+                    list(
+                        `name`="average_r", 
+                        `title`="average_r", 
+                        `type`="number"),
+                    list(
+                        `name`="SN", 
+                        `title`="SN", 
+                        `type`="number"),
+                    list(
+                        `name`="median_r", 
+                        `title`="median_r", 
+                        `type`="number"))))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="summaryTableGuttman",
+                title="Ordinal Guttman",
+                rows=1,
+                columns=list(
+                    list(
+                        `name`="maxSHR", 
+                        `title`="Max Split-Half (lambda 4)", 
+                        `type`="number"),
+                    list(
+                        `name`="guttmanL6", 
+                        `title`="Lambda 6", 
+                        `type`="number"),
+                    list(
+                        `name`="avgSHR", 
+                        `title`="Average Split-Half", 
+                        `type`="number"),
+                    list(
+                        `name`="alpha", 
+                        `title`="Alpha (lambda 3)", 
+                        `type`="number"),
+                    list(
+                        `name`="minSHR", 
+                        `title`="Min Split-Half (beta)", 
+                        `type`="number"))))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="summaryTableOmega",
+                title="Ordinal Omega",
+                rows=1,
+                columns=list(
+                    list(
+                        `name`="omega_h", 
+                        `title`="omega_h", 
+                        `type`="number"),
+                    list(
+                        `name`="omega.lim", 
+                        `title`="omega.lim", 
+                        `type`="number"),
+                    list(
+                        `name`="alpha", 
+                        `title`="alpha", 
+                        `type`="number"),
+                    list(
+                        `name`="omega.tot", 
+                        `title`="omega.tot", 
+                        `type`="number"),
+                    list(
+                        `name`="G6", 
+                        `title`="G6", 
+                        `type`="number"))))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="summaryTableTheta",
+                title="Ordinal Theta",
+                rows=1,
+                columns=list(
+                    list(
+                        `name`="ordinalTheta", 
+                        `title`="ordinalTheta", 
+                        `type`="number"))))
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="polychoricRho",
+                title="polychoricRho"))}))
 
 ordinalReliabilityBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     "ordinalReliabilityBase",
@@ -92,40 +173,45 @@ ordinalReliabilityBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'
 #' 
 #' @param data .
-#' @param dep .
-#' @param group .
-#' @param alt .
-#' @param varEq .
+#' @param items .
+#' @param groups .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$text} \tab \tab \tab \tab \tab a preformatted \cr
+#'   \code{results$summaryTableAlpha} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$summaryTableGuttman} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$summaryTableOmega} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$summaryTableTheta} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$polychoricRho} \tab \tab \tab \tab \tab a preformatted \cr
 #' }
+#'
+#' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
+#'
+#' \code{results$summaryTableAlpha$asDF}
+#'
+#' \code{as.data.frame(results$summaryTableAlpha)}
 #'
 #' @export
 ordinalReliability <- function(
     data,
-    dep,
-    group,
-    alt = "notequal",
-    varEq = TRUE) {
+    items,
+    groups) {
 
     if ( ! requireNamespace('jmvcore'))
         stop('ordinalReliability requires jmvcore to be installed (restart may be required)')
 
-    if ( ! missing(dep)) dep <- jmvcore::resolveQuo(jmvcore::enquo(dep))
-    if ( ! missing(group)) group <- jmvcore::resolveQuo(jmvcore::enquo(group))
+    if ( ! missing(items)) items <- jmvcore::resolveQuo(jmvcore::enquo(items))
+    if ( ! missing(groups)) groups <- jmvcore::resolveQuo(jmvcore::enquo(groups))
     if (missing(data))
         data <- jmvcore::marshalData(
             parent.frame(),
-            `if`( ! missing(dep), dep, NULL),
-            `if`( ! missing(group), group, NULL))
+            `if`( ! missing(items), items, NULL),
+            `if`( ! missing(groups), groups, NULL))
 
 
     options <- ordinalReliabilityOptions$new(
-        dep = dep,
-        group = group,
-        alt = alt,
-        varEq = varEq)
+        items = items,
+        groups = groups)
 
     results <- ordinalReliabilityResults$new(
         options = options)

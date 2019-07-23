@@ -16,3 +16,7 @@ export(rdTTestOptions)
 export(ttestCor)
 export(ttestCorClass)
 export(ttestCorOptions)
+
+export(ordinalReliability)
+export(ordinalReliabilityClass)
+export(ordinalReliabilityOptions)
