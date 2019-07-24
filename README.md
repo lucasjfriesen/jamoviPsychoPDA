@@ -32,11 +32,16 @@ You will first need to download [jamovi](https://www.jamovi.org/download.html).
 
 Next either:
 
-Download the 'DIF.jmo' file and use the sideload function in jamovi, 
+For the current stable version download the correct file from your operating system in the 'versions' folder.
 
 or
 
-You can clone this repository and compile the module within R with `jmvtools`.
+For the most up-to-date version download the 'psychoPDA.jmo' file.
+
+Once the file is downloaded, use jamovi's sideload function to install the module.
+
+
+Alternatively, You can clone this repository and compile the module within R with `jmvtools`.
 
 ```
 install.packages('jmvtools', repos=c('https://repo.jamovi.org', 'https://cran.r-project.org'))
@@ -56,4 +61,4 @@ See https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/
 
 ## Installation
 
-TBD
+If the jamovi crashes shortly after or intermittently after installation, you may have downloaded the wrong OS version. Ensure you downloaded the correct file from the 'versions' folder.
