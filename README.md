@@ -11,13 +11,12 @@ The current tools available are:
 - *TestROC* (Measure Diagnostics)
     The TestROC module provides an interface to the cutpointR R-package. This module enables researchers in psychosocial validation work to assess the optimal cutpoints of measures. _Additional info to come_
 
-To be added:
+In testing:
 - Design Analysis for:
 	- T-Test for Mean differences
 	- T-Test for Correlations
-	- Chi^2 Test Type-S/Type-M
 
-- Everything else
+- Reliability analysis for ordinal measures
 
 <img src="docs/i1.png" class="img-responsive" alt="">
 
