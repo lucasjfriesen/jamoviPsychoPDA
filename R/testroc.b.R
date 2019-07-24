@@ -6,6 +6,9 @@
 
 
 
+
+
+
 # This file is a generated template, your changes will not be overwritten
 
 TestROCClass <- if (requireNamespace('jmvcore'))
@@ -22,7 +25,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             "<html>
             <head>
             <style>
-            
+
             div.instructions {
             width: 500px;
             height: 225px;
@@ -52,32 +55,68 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             <body>
             <p>Procedure Notes</p>
             <hr>",
-            "<p> The TestROC optimal cutpoint analysis has been completed using the following specifications: ", 
+            "<p> The TestROC optimal cutpoint analysis has been completed using the following specifications: ",
             "<p>&nbsp;</p>",
-            "<p> Measure Variable(s): ", paste(unlist(self$options$dependentVars), collapse = ", "),"</p>",
-            "<p> Class Variable: ", self$options$classVar,"</p>")
-          # Was there subgrouping?
-          if (!is.null(self$options$subGroup)){
-            procedureNotes <- paste0(procedureNotes,
-            "<p> Sub-Group Variable: ", self$options$subGroup,"</p>")
+            "<p> Measure Variable(s): ",
+            paste(unlist(self$options$dependentVars), collapse = ", "),
+            "</p>",
+            "<p> Class Variable: ",
+            self$options$classVar,
+            "</p>")
+          if (self$options$positiveClass == ""){
+            procedureNotes <- paste0(
+              procedureNotes,
+              "<p> Positive Class: Default ... '1' if numeric, first alphabetical option if characters",
+              "</p>")
+          } else {
+            procedureNotes <- paste0(
+              procedureNotes,
+              "<p> Positive Class: ",
+              self$options$positiveClass,
+              "</p>")
           }
-           procedureNotes <- paste0(procedureNotes, 
-            "<p>&nbsp;</p>",
-            "<p> Method: ", self$options$method,"</p>",
-            "<p> All Observed Cutpoints: ", self$options$allObserved,"</p>",
-            "<p> Metric: ", self$options$metric,"</p>",
-            "<p> Direction (relative to cutpoint): ", self$options$direction,"</p>",
-            "<p> Tie Breakers: ", self$options$break_ties,"</p>",
-            # "<p>  Positive Class: ", results$pos_class,"</p>",
-            "<p>  Metric Tolerance: ", self$options$tol_metric,"</p>",
-            "<p>&nbsp;</p>")
-          # If bootstrapping happened
-          if (self$options$boot_runs != 0){
+
+          # Was there subgrouping?
+          if (!is.null(self$options$subGroup)) {
             procedureNotes <- paste0(procedureNotes,
-            "<p> Bootstrap Runs: ", self$options$boot_runs,"</p>")
+                                     "<p> Sub-Group Variable: ",
+                                     self$options$subGroup,
+                                     "</p>")
+          }
+          procedureNotes <- paste0(
+            procedureNotes,
+            "<p>&nbsp;</p>",
+            "<p> Method: ",
+            self$options$method,
+            "</p>",
+            "<p> All Observed Cutpoints: ",
+            self$options$allObserved,
+            "</p>",
+            "<p> Metric: ",
+            self$options$metric,
+            "</p>",
+            "<p> Direction (relative to cutpoint): ",
+            self$options$direction,
+            "</p>",
+            "<p> Tie Breakers: ",
+            self$options$break_ties,
+            "</p>",
+            # "<p>  Positive Class: ", results$pos_class,"</p>",
+            "<p>  Metric Tolerance: ",
+            self$options$tol_metric,
+            "</p>",
+            "<p>&nbsp;</p>"
+          )
+          # If bootstrapping happened
+          if (self$options$boot_runs != 0) {
+            procedureNotes <- paste0(procedureNotes,
+                                     "<p> Bootstrap Runs: ",
+                                     self$options$boot_runs,
+                                     "</p>")
           }
           # Close the notes
-          procedureNotes <- paste0(procedureNotes,
+          procedureNotes <- paste0(
+            procedureNotes,
             "<hr />
             <p>For more information on how calculations are performed and interpretting results, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/testROC_gettingStarted.html' target = '_blank'>documentation</a></p>
             </body>
@@ -88,11 +127,11 @@ TestROCClass <- if (requireNamespace('jmvcore'))
         
         # Var handling ----
         data = self$data
-
+        
         if (self$options$method == "oc_manual") {
           method = "cutpointr::oc_manual"
           method = eval(parse(text = method))
-          if (self$options$specifyCutScore == ""){
+          if (self$options$specifyCutScore == "") {
             stop("Please specify a cut score for using this method.")
           } else {
             score = as.numeric(self$options$specifyCutScore)
@@ -137,7 +176,8 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           subGroup = data[, self$options$subGroup]
           classVar = data[, self$options$classVar]
           uniqueGroups <- unique(subGroup)
-          vars <- apply(expand.grid(vars, uniqueGroups), 1, paste, collapse="_")
+          vars <-
+            apply(expand.grid(vars, uniqueGroups), 1, paste, collapse = "_")
         } else {
           subGroup = NULL
         }
@@ -145,25 +185,24 @@ TestROCClass <- if (requireNamespace('jmvcore'))
         aucList = list()
         
         for (var in vars) {
-          
-          if (!var %in% self$results$resultsTable$itemKeys){
+          if (!var %in% self$results$resultsTable$itemKeys) {
             self$results$sensSpecTable$addItem(key = var)
             self$results$resultsTable$addItem(key = var)
             self$results$plotROC$addItem(key = var)
           }
           
-          if (is.null(subGroup)){
+          if (is.null(subGroup)) {
             dependentVar = as.numeric(data[, var])
             classVar = as.numeric(data[, self$options$classVar])
           } else {
             dependentVar = as.numeric(data[subGroup == strsplit(var, split = "_")[[1]][2],
-                                names(data) == strsplit(var, split = "_")[[1]][1]])
+                                           names(data) == strsplit(var, split = "_")[[1]][1]])
             classVar = as.numeric(data[subGroup == strsplit(var, split = "_")[[1]][2],
-                                self$options$classVar])
+                                       self$options$classVar])
           }
           
           
-        # Caclulations ----
+          # Caclulations ----
           results = cutpointr::cutpointr(
             x = dependentVar,
             class = classVar,
@@ -181,7 +220,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           )
           
           # self$results$debug$setContent(results)
-
+          
           if (!self$options$allObserved) {
             resultsToDisplay <- sort(unlist(results$optimal_cutpoint))
           } else {
@@ -193,13 +232,18 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             confusionMatrixForTable <- results$roc_curve[[1]]
           
           if (!self$options$allObserved) {
-            confusionMatrixForTable = confusionMatrixForTable[confusionMatrixForTable$x.sorted %in% resultsToDisplay, ]
+            confusionMatrixForTable = confusionMatrixForTable[confusionMatrixForTable$x.sorted %in% resultsToDisplay,]
           }
           if (self$options$sensSpecTable) {
             self$results$sensSpecTable$setVisible(TRUE)
             sensSpecRes <-
               print.sensSpecTable(
-                Title = paste0("Scale: ", var, " | Score: ", confusionMatrixForTable$x.sorted),
+                Title = paste0(
+                  "Scale: ",
+                  var,
+                  " | Score: ",
+                  confusionMatrixForTable$x.sorted
+                ),
                 TP = confusionMatrixForTable$tp,
                 FP = confusionMatrixForTable$fp,
                 TN = confusionMatrixForTable$tn,
@@ -258,7 +302,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
               fn = confusionMatrix$fn
             )
           
-          metricList <- 
+          metricList <-
             metric(
               tp = confusionMatrix$tp,
               fp = confusionMatrix$fp,
@@ -281,33 +325,49 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           
           aucList[[var]] = results$AUC
           
-          # self$results$debug$setContent(resultsToReturn)
+          
+          
           # Results table ----
           table <- self$results$resultsTable$get(key = var)
           for (row in resultsToDisplay) {
             table$setTitle(paste0("Scale: ", var))
-            table$addRow(rowKey = row, value = resultsToReturn[resultsToReturn$cutpoint == row, ])
+            table$addRow(rowKey = row, value = resultsToReturn[resultsToReturn$cutpoint == row,])
           }
-        # Plotting Data ----
-        if (self$options$plotROC) {
-          image <- self$results$plotROC$get(key = var)
-          image$setTitle(paste0("ROC Curve: ", var))
-          image$setState(
-            data.frame(
-              #scaleName = rep(var, times = length(sensList)),
-              cutpoint = confusionMatrix$x.sorted,
-              sensitivity = sensList,
-              specificity = specList,
-              ppv = ppvList,
-              npv = npvList,
-              AUC = results$AUC,
-              youden = youdenList,
-              stringsAsFactors = FALSE # FUCK
+          
+          # Plotting Data ----
+          if (self$options$plotROC) {
+            image <- self$results$plotROC$get(key = var)
+            image$setTitle(paste0("ROC Curve: ", var))
+            image$setState(
+              data.frame(
+                #scaleName = rep(var, times = length(sensList)),
+                cutpoint = confusionMatrix$x.sorted,
+                sensitivity = sensList,
+                specificity = specList,
+                ppv = ppvList,
+                npv = npvList,
+                AUC = results$AUC,
+                youden = youdenList,
+                stringsAsFactors = FALSE # FUCK
+              )
             )
-          )
+          }
         }
-        }
+        
+        # DeLong Test ----
 
+        if (self$options$delongTest == TRUE) {
+          delongResults <- deLong.test(
+            data = data.frame(lapply(data[, vars], as.numeric)),
+            classVar = classVar,
+            ref = NULL,
+            pos_class = 1,
+            conf.level = 0.95
+          )
+          
+          self$results$delongTest$setContent()
+        }
+        
         
       },
       .plotROC = function(image, ggtheme, theme, ...) {
@@ -322,15 +382,11 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           ggplot2::ggplot(plotData, ggplot2::aes(x = 1 - specificity, y = sensitivity)) +
           ggplot2::geom_point() +
           ggplot2::geom_line() +
-          ggplot2::ggtitle(
-            paste0("Scale: ", self$options$dependentVars),
-            subtitle = paste0("AUC: ", round(plotData$AUC[1],3))
-          ) +
+          ggplot2::ggtitle(paste0("Scale: ", self$options$dependentVars),
+                           subtitle = paste0("AUC: ", round(plotData$AUC[1], 3))) +
           ggplot2::xlab("1 - Specificity") +
           ggplot2::ylab("Sensitivity") +
-          ggtheme + ggplot2::theme(
-            plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5)
-          )
+          ggtheme + ggplot2::theme(plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5))
         if (self$options$smoothing) {
           if (self$options$displaySE) {
             plot = plot +
@@ -343,5 +399,5 @@ TestROCClass <- if (requireNamespace('jmvcore'))
         print(plot)
         TRUE
       }
-          )
     )
+  )

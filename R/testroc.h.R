@@ -20,7 +20,9 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             plotROC = TRUE,
             displaySE = TRUE,
             smoothing = TRUE,
-            sensSpecTable = FALSE, ...) {
+            sensSpecTable = FALSE,
+            delongTest = FALSE,
+            positiveClass = "", ...) {
 
             super$initialize(
                 package='psychoPDA',
@@ -116,6 +118,14 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "sensSpecTable",
                 sensSpecTable,
                 default=FALSE)
+            private$..delongTest <- jmvcore::OptionBool$new(
+                "delongTest",
+                delongTest,
+                default=FALSE)
+            private$..positiveClass <- jmvcore::OptionString$new(
+                "positiveClass",
+                positiveClass,
+                default="")
 
             self$.addOption(private$..dependentVars)
             self$.addOption(private$..classVar)
@@ -132,6 +142,8 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..displaySE)
             self$.addOption(private$..smoothing)
             self$.addOption(private$..sensSpecTable)
+            self$.addOption(private$..delongTest)
+            self$.addOption(private$..positiveClass)
         }),
     active = list(
         dependentVars = function() private$..dependentVars$value,
@@ -148,7 +160,9 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         plotROC = function() private$..plotROC$value,
         displaySE = function() private$..displaySE$value,
         smoothing = function() private$..smoothing$value,
-        sensSpecTable = function() private$..sensSpecTable$value),
+        sensSpecTable = function() private$..sensSpecTable$value,
+        delongTest = function() private$..delongTest$value,
+        positiveClass = function() private$..positiveClass$value),
     private = list(
         ..dependentVars = NA,
         ..classVar = NA,
@@ -164,7 +178,9 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..plotROC = NA,
         ..displaySE = NA,
         ..smoothing = NA,
-        ..sensSpecTable = NA)
+        ..sensSpecTable = NA,
+        ..delongTest = NA,
+        ..positiveClass = NA)
 )
 
 TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
@@ -174,6 +190,7 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
         instructions = function() private$.items[["instructions"]],
         procedureNotes = function() private$.items[["procedureNotes"]],
         resultsTable = function() private$.items[["resultsTable"]],
+        delongTest = function() private$.items[["delongTest"]],
         plotROC = function() private$.items[["plotROC"]],
         sensSpecTable = function() private$.items[["sensSpecTable"]]),
     private = list(),
@@ -188,7 +205,8 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 name="debug"))
             self$add(jmvcore::Html$new(
                 options=options,
-                name="instructions"))
+                name="instructions",
+                visible=TRUE))
             self$add(jmvcore::Html$new(
                 options=options,
                 name="procedureNotes"))
@@ -233,6 +251,11 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                             `name`="metricValue", 
                             `title`="Metric Score", 
                             `type`="number")))))
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="delongTest",
+                title="DeLong Test of Difference between AUCs",
+                visible="(delongTest)"))
             self$add(jmvcore::Array$new(
                 options=options,
                 name="plotROC",
@@ -290,12 +313,15 @@ TestROCBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param displaySE .
 #' @param smoothing .
 #' @param sensSpecTable .
+#' @param delongTest .
+#' @param positiveClass .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$procedureNotes} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$resultsTable} \tab \tab \tab \tab \tab an array of tables \cr
+#'   \code{results$delongTest} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$plotROC} \tab \tab \tab \tab \tab an array of images \cr
 #'   \code{results$sensSpecTable} \tab \tab \tab \tab \tab an array of htmls \cr
 #' }
@@ -317,7 +343,9 @@ TestROC <- function(
     plotROC = TRUE,
     displaySE = TRUE,
     smoothing = TRUE,
-    sensSpecTable = FALSE) {
+    sensSpecTable = FALSE,
+    delongTest = FALSE,
+    positiveClass = "") {
 
     if ( ! requireNamespace('jmvcore'))
         stop('TestROC requires jmvcore to be installed (restart may be required)')
@@ -348,7 +376,9 @@ TestROC <- function(
         plotROC = plotROC,
         displaySE = displaySE,
         smoothing = smoothing,
-        sensSpecTable = sensSpecTable)
+        sensSpecTable = sensSpecTable,
+        delongTest = delongTest,
+        positiveClass = positiveClass)
 
     results <- TestROCResults$new(
         options = options)

@@ -54,6 +54,8 @@ children:
     margin: small
     collapsed: true
     children:
+      - type: CheckBox
+        name: delongTest
       - type: LayoutBox
         margin: large
         children:
@@ -78,4 +80,9 @@ children:
           - type: TextBox
             name: boot_runs
             format: number
-
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: TextBox
+        name: positiveClass
+        format: string

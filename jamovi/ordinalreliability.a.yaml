@@ -17,4 +17,29 @@ options:
       title: Grouping Variable
       type: Variable
 
+    - name: alphaTable
+      type: Bool
+      title: Ordinal Alpha
+      default: false
+
+    - name: thetaTable
+      type: Bool
+      title: Ordinal Theta
+      default: false
+
+    - name: omegaTable
+      type: Bool
+      title: Ordinal Omega
+      default: false
+
+    - name: guttmanTable
+      type: Bool
+      title: Ordinal Guttman
+      default: false
+
+    - name: PolyTable
+      type: Bool
+      title: Ordinal Polychoric Matrix
+      default: false
+
 ...

@@ -18,7 +18,7 @@ items:
       type:  Table
       rows: 0
       refs: binaryDIF
-      clearWith: 
+      clearWith:
           - item
           - group
           - matchVar
@@ -37,7 +37,7 @@ items:
           - D
           - twoGroups
           - groupContrasts
-      columns: 
+      columns:
         - name: bob
           title: ""
           type: text
@@ -46,7 +46,7 @@ items:
       title: Differential Item Functioning Analysis
       type: Table
       rows:  (item)
-      clearWith: 
+      clearWith:
           - item
           - group
           - matchVar
@@ -106,7 +106,7 @@ items:
           title: Item
           type: text
       visible: False
-      clearWith: 
+      clearWith:
           - item
           - group
           - matchVar
@@ -132,7 +132,7 @@ items:
       type: Table
       rows: 0
       visible: (designAnalysis)
-      clearWith: 
+      clearWith:
           - item
           - group
           - matchVar
@@ -168,17 +168,17 @@ items:
         - name: bootSE
           title: Bootstrap SE
           type: number
-          combineBelow: True        
+          combineBelow: True
         - name: label
           title: Hyp. True Effect
-          type: text        
+          type: text
         - name: typeM
           title: Type-M
           type: number
         - name: typeS
           title: Type-S
           type: number
-          visible: (designAnalysisEffectType:coefficients)  
+          visible: (designAnalysisEffectType:coefficients)
         - name: power
           title: Empirical Observed Power
           type: number
@@ -196,7 +196,7 @@ items:
           renderFun: .plotICC
           visible: (plotVarsICC)
           requiresData: TRUE
-          clearWith: 
+          clearWith:
               - item
               - group
               - matchVar

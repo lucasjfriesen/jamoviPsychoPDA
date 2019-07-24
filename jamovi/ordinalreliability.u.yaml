@@ -21,3 +21,16 @@ children:
             name: groups
             maxItemCount: 1
             isTarget: true
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: CheckBox
+        name: alphaTable
+      - type: CheckBox
+        name: thetaTable
+      - type: CheckBox
+        name: omegaTable
+      - type: CheckBox
+        name: guttmanTable
+      - type: CheckBox
+        name: PolyTable

@@ -4,13 +4,18 @@ title: Ordinal Reliability
 jrs:   '1.1'
 
 items:
-    - name:  text
-      title: Ordinal Reliability
-      type:  Preformatted
+    #- name:  text
+    #  title: Ordinal Reliability
+    #  type:  Preformatted
+
+    - name: instructions
+      type: Html
+      visible: True
 
     - name: summaryTableAlpha
       title: Ordinal Alpha
       type: Table
+      visible: alphaTable
       rows: 1
       columns:
         - name: raw_alpha
@@ -35,6 +40,7 @@ items:
     - name: summaryTableGuttman
       title: Ordinal Guttman
       type: Table
+      visible: guttmanTable
       rows: 1
       columns:
         - name: maxSHR
@@ -56,6 +62,7 @@ items:
     - name: summaryTableOmega
       title: Ordinal Omega
       type: Table
+      visible: omegaTable
       rows: 1
       columns:
         - name: omega_h
@@ -77,6 +84,7 @@ items:
     - name: summaryTableTheta
       title: Ordinal Theta
       type: Table
+      visible: thetaTable
       rows: 1
       columns:
         - name: ordinalTheta
@@ -86,4 +94,5 @@ items:
     - name: polychoricRho
       title: polychoricRho
       type: Preformatted
+      visible: polyTable
 ...

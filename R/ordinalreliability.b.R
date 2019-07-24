@@ -8,8 +8,37 @@ ordinalReliabilityClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         .run = function() {
           
             if (is.null(self$options$items)){
-                return()
-            }
+                self$results$instructions$setContent(
+                    "<html>
+                    <head>
+                    <style>
+                    
+                    div.instructions {
+                    width: 500px;
+                    height: 225px;
+                    display: flex;
+                    flex-wrap: wrap;
+                    align-content: center;
+                    }
+                    </style>
+                    </head>
+                    <body>
+                    <div class='instructions'>
+                    <p><b>THIS IS IN TESTING. BETA, ALPHA, W/E. NOT FINAL. CAVEAT EMPTOR</b></p>
+                    <p>Welcome to PsychoPDA's Ordinal Reliability module. To get started:</p>
+                    <ol>
+                    <li>Input the 'Items'.<br /><br /></li>
+                    <li>(Optional)Input the 'Grouping Variable'.<br /><br /></li>
+                    </ol>
+                    <p>If you encounter any errors, or have questions, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/ordinalReliability.html' target = '_blank'>documentation</a></p>
+                    </div>
+                    </body>
+                    </html>"
+                  )
+          return()
+        } else {
+          self$results$instructions$setVisible(visible = FALSE)
+        }
             
           data = self$data
           

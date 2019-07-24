@@ -9,6 +9,7 @@ items:
 
     - name: instructions
       type: Html
+      visible: True
 
     - name: procedureNotes
       type: Html
@@ -48,7 +49,12 @@ items:
           - name: metricValue
             title: Metric Score
             type: number
-          
+
+    - name: delongTest
+      title: DeLong Test of Difference between AUCs
+      type: Preformatted
+      visible: (delongTest)
+
     - name: plotROC
       type: Array
       title: ROC Curves
@@ -66,4 +72,5 @@ items:
       visible: False
       template:
         type: Html
+
 ...

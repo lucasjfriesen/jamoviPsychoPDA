@@ -7,7 +7,12 @@ ordinalReliabilityOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
     public = list(
         initialize = function(
             items = NULL,
-            groups = NULL, ...) {
+            groups = NULL,
+            alphaTable = FALSE,
+            thetaTable = FALSE,
+            omegaTable = FALSE,
+            guttmanTable = FALSE,
+            PolyTable = FALSE, ...) {
 
             super$initialize(
                 package='psychoPDA',
@@ -21,22 +26,57 @@ ordinalReliabilityOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             private$..groups <- jmvcore::OptionVariable$new(
                 "groups",
                 groups)
+            private$..alphaTable <- jmvcore::OptionBool$new(
+                "alphaTable",
+                alphaTable,
+                default=FALSE)
+            private$..thetaTable <- jmvcore::OptionBool$new(
+                "thetaTable",
+                thetaTable,
+                default=FALSE)
+            private$..omegaTable <- jmvcore::OptionBool$new(
+                "omegaTable",
+                omegaTable,
+                default=FALSE)
+            private$..guttmanTable <- jmvcore::OptionBool$new(
+                "guttmanTable",
+                guttmanTable,
+                default=FALSE)
+            private$..PolyTable <- jmvcore::OptionBool$new(
+                "PolyTable",
+                PolyTable,
+                default=FALSE)
 
             self$.addOption(private$..items)
             self$.addOption(private$..groups)
+            self$.addOption(private$..alphaTable)
+            self$.addOption(private$..thetaTable)
+            self$.addOption(private$..omegaTable)
+            self$.addOption(private$..guttmanTable)
+            self$.addOption(private$..PolyTable)
         }),
     active = list(
         items = function() private$..items$value,
-        groups = function() private$..groups$value),
+        groups = function() private$..groups$value,
+        alphaTable = function() private$..alphaTable$value,
+        thetaTable = function() private$..thetaTable$value,
+        omegaTable = function() private$..omegaTable$value,
+        guttmanTable = function() private$..guttmanTable$value,
+        PolyTable = function() private$..PolyTable$value),
     private = list(
         ..items = NA,
-        ..groups = NA)
+        ..groups = NA,
+        ..alphaTable = NA,
+        ..thetaTable = NA,
+        ..omegaTable = NA,
+        ..guttmanTable = NA,
+        ..PolyTable = NA)
 )
 
 ordinalReliabilityResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
-        text = function() private$.items[["text"]],
+        instructions = function() private$.items[["instructions"]],
         summaryTableAlpha = function() private$.items[["summaryTableAlpha"]],
         summaryTableGuttman = function() private$.items[["summaryTableGuttman"]],
         summaryTableOmega = function() private$.items[["summaryTableOmega"]],
@@ -49,14 +89,15 @@ ordinalReliabilityResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="Ordinal Reliability")
-            self$add(jmvcore::Preformatted$new(
+            self$add(jmvcore::Html$new(
                 options=options,
-                name="text",
-                title="Ordinal Reliability"))
+                name="instructions",
+                visible=TRUE))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="summaryTableAlpha",
                 title="Ordinal Alpha",
+                visible="alphaTable",
                 rows=1,
                 columns=list(
                     list(
@@ -87,6 +128,7 @@ ordinalReliabilityResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="summaryTableGuttman",
                 title="Ordinal Guttman",
+                visible="guttmanTable",
                 rows=1,
                 columns=list(
                     list(
@@ -113,6 +155,7 @@ ordinalReliabilityResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="summaryTableOmega",
                 title="Ordinal Omega",
+                visible="omegaTable",
                 rows=1,
                 columns=list(
                     list(
@@ -139,6 +182,7 @@ ordinalReliabilityResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="summaryTableTheta",
                 title="Ordinal Theta",
+                visible="thetaTable",
                 rows=1,
                 columns=list(
                     list(
@@ -148,7 +192,8 @@ ordinalReliabilityResults <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$add(jmvcore::Preformatted$new(
                 options=options,
                 name="polychoricRho",
-                title="polychoricRho"))}))
+                title="polychoricRho",
+                visible="polyTable"))}))
 
 ordinalReliabilityBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     "ordinalReliabilityBase",
@@ -175,9 +220,14 @@ ordinalReliabilityBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param data .
 #' @param items .
 #' @param groups .
+#' @param alphaTable .
+#' @param thetaTable .
+#' @param omegaTable .
+#' @param guttmanTable .
+#' @param PolyTable .
 #' @return A results object containing:
 #' \tabular{llllll}{
-#'   \code{results$text} \tab \tab \tab \tab \tab a preformatted \cr
+#'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$summaryTableAlpha} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$summaryTableGuttman} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$summaryTableOmega} \tab \tab \tab \tab \tab a table \cr
@@ -195,7 +245,12 @@ ordinalReliabilityBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 ordinalReliability <- function(
     data,
     items,
-    groups) {
+    groups,
+    alphaTable = FALSE,
+    thetaTable = FALSE,
+    omegaTable = FALSE,
+    guttmanTable = FALSE,
+    PolyTable = FALSE) {
 
     if ( ! requireNamespace('jmvcore'))
         stop('ordinalReliability requires jmvcore to be installed (restart may be required)')
@@ -211,7 +266,12 @@ ordinalReliability <- function(
 
     options <- ordinalReliabilityOptions$new(
         items = items,
-        groups = groups)
+        groups = groups,
+        alphaTable = alphaTable,
+        thetaTable = thetaTable,
+        omegaTable = omegaTable,
+        guttmanTable = guttmanTable,
+        PolyTable = PolyTable)
 
     results <- ordinalReliabilityResults$new(
         options = options)

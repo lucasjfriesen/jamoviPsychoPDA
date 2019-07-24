@@ -24,7 +24,7 @@ options:
     - name: method
       title: Method
       type: List
-      options: 
+      options:
         - name: oc_manual
           title: "Custom cut score"
         - name: maximize_metric
@@ -53,7 +53,7 @@ options:
     - name: allObserved
       title: All observed scores
       type: Bool
-      
+
     - name: specifyCutScore
       title: Specify cut score
       type: String
@@ -63,7 +63,7 @@ options:
       title: Metric
       type: List
       options:
-        - name: sum_sens_spec        
+        - name: sum_sens_spec
           title: 'Sum: Sens/Spec'
         - name: accuracy
           title: Accuracy
@@ -73,7 +73,7 @@ options:
           title: 'Sum: PPV/NPV'
         - name: prod_sens_spec
           title: 'Prod: Sens/Spec'
-        - name: prod_ppv_npv  
+        - name: prod_ppv_npv
           title: 'Prod: PPV/NPV'
         - name: cohens_kappa
           title: "Cohen's Kappa"
@@ -149,4 +149,13 @@ options:
       type: Bool
       default: False
 
+    - name: delongTest
+      title: DeLong Test
+      type: Bool
+      default: False
+
+    - name: positiveClass
+      title: Positive Class
+      type: String
+      default: ""
 ...
