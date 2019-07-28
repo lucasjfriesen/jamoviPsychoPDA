@@ -42,7 +42,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             </head>
             <body>
             <div class='instructions'>
-            <p>Welcome to PsychoPDA's Binary Differential Functioning Analysis. To get started:</p>
+            <p>Welcome to PsychoPDA's Binary Differential Functioning analysis. To get started:</p>
             <ol>
             <li>Place items to be assessed for DIF in the 'Item(s) for analysis' slot.<br /><br /></li>
             <li>[<em>Optional</em>] Place the remaining measure items in the 'Anchor Items' slot. This is not needed if a Matching Variable is supplied.<br /><br /></li>

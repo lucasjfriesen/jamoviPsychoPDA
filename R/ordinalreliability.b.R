@@ -24,8 +24,8 @@ ordinalReliabilityClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                     </head>
                     <body>
                     <div class='instructions'>
-                    <p><b>This component is still in development. Please report any errors or requests <a href='https://github.com/lucasjfriesen/jamoviPsychoPDA/issues' target = '_blank'>here</a></b></p>
-                    <p>Welcome to PsychoPDA's Ordinal Reliability module. To get started:</p>
+                    <p><b>This analysis is still in development. Please report any errors or requests <a href='https://github.com/lucasjfriesen/jamoviPsychoPDA/issues' target = '_blank'>here</a></b></p>
+                    <p>Welcome to PsychoPDA's Ordinal Reliability analysis To get started:</p>
                     <ol>
                     <li>Input the 'Items'.<br /><br /></li>
                     <li>(Optional)Input the 'Grouping Variable'.<br /><br /></li>

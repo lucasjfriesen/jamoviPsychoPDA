@@ -37,8 +37,8 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             </head>
             <body>
             <div class='instructions'>
-            <p><b>This component is still in development. Please report any errors or requests <a href='https://github.com/lucasjfriesen/jamoviPsychoPDA/issues' target = '_blank'>here</a></b></p>
-            <p>Welcome to PsychoPDA's Test ROC module. To get started:</p>
+            <p><b>This analysis is still in development. Please report any errors or requests <a href='https://github.com/lucasjfriesen/jamoviPsychoPDA/issues' target = '_blank'>here</a></b></p>
+            <p>Welcome to PsychoPDA's Test ROC analysis To get started:</p>
             <ol>
             <li>Place the responses in the 'Dependent Variable' slot.<br /><br /></li>
             <li>Place the classification in the 'Class Variable' slot.<br /><br /></li>
