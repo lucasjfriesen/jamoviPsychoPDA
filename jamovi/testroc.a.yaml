@@ -1,6 +1,6 @@
 ---
 name:  TestROC
-title: TestROC
+title: Test ROC
 menuGroup: PPDA
 version: '1.0.0'
 jas: '1.2'
@@ -140,22 +140,22 @@ options:
       default: True
 
     - name: smoothing
-      title: LOESS Smoothing
+      title: LOESS smoothing
       type: Bool
       default: True
 
     - name: sensSpecTable
-      title: Sensitivity-Specificity Tables
+      title: Sensitivity-specificity tables
       type: Bool
       default: False
 
     - name: delongTest
-      title: DeLong Test
+      title: DeLong test
       type: Bool
       default: False
 
     - name: positiveClass
-      title: Positive Class
+      title: Positive class
       type: String
       default: ""
 ...

@@ -16,11 +16,15 @@ TestROCClass <- if (requireNamespace('jmvcore'))
     "TestROCClass",
     inherit = TestROCBase,
     private = list(
+      .init = function(){
+        if (is.null(self$options$classVar) ||
+          is.null(self$options$dependentVars)) {
+            self$results$resultsTable$setVisible(visible = TRUE)
+        }
+      },
       .run = function() {
         if (is.null(self$options$classVar) ||
             is.null(self$options$dependentVars)) {
-          self$results$resultsTable$setVisible(visible = FALSE)
-          self$results$sensSpecTable$setVisible(visible = FALSE)
           self$results$instructions$setContent(
             "<html>
             <head>
@@ -40,10 +44,11 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             <p><b>This analysis is still in development. Please report any errors or requests <a href='https://github.com/lucasjfriesen/jamoviPsychoPDA/issues' target = '_blank'>here</a></b></p>
             <p>Welcome to PsychoPDA's Test ROC analysis To get started:</p>
             <ol>
-            <li>Place the responses in the 'Dependent Variable' slot.<br /><br /></li>
-            <li>Place the classification in the 'Class Variable' slot.<br /><br /></li>
-            <li>[<em>Optional</em>] Place a grouping variable in the 'Grouping Variable' slot.<br /><br /></li>
-            <p>If you encounter any errors, or have questions, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/testROC' target = '_blank'>documentation</a></p>
+            <li>Place the responses in the 'Dependent Variable' slot<br /><br /></li>
+            <li>Place the classification in the 'Class Variable' slo.<br /><br /></li>
+            <li>[<em>Optional</em>] Place a grouping variable in the 'Grouping Variable' slot<br /><br /></li>
+            </ol>
+            <p>If you encounter any errors, or have questions, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/measureDiagnostics_testROC_gettingStarted.html' target = '_blank'>documentation.</a></p>
             </div>
             </body>
             </html>"

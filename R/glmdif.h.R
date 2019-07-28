@@ -243,7 +243,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
             super$initialize(
                 options=options,
                 name="",
-                title="Differential Item Functioning")
+                title="Differential Item Functioning - Binary Logistic Regression")
             self$add(jmvcore::Html$new(
                 options=options,
                 name="instructions",
@@ -253,6 +253,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="DESCtable",
                 title="Procedure Notes",
+                visible=FALSE,
                 rows=0,
                 refs="binaryDIF",
                 clearWith=list(
@@ -282,7 +283,8 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$add(jmvcore::Table$new(
                 options=options,
                 name="DIFtable",
-                title="Differential Item Functioning Analysis",
+                title="Differential Item Functioning Analysis - Binary Logistic Regresion",
+                visible=FALSE,
                 rows="(item)",
                 clearWith=list(
                     "item",

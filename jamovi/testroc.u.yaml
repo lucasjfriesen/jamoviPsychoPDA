@@ -33,6 +33,9 @@ children:
     children:
       - type: CheckBox
         name: allObserved
+      - type: TextBox
+        name: positiveClass
+        format: string
   - type: CollapseBox
     label: Visualization
     margin: small
@@ -80,9 +83,3 @@ children:
           - type: TextBox
             name: boot_runs
             format: number
-  - type: LayoutBox
-    margin: large
-    children:
-      - type: TextBox
-        name: positiveClass
-        format: string

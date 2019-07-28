@@ -1,6 +1,6 @@
 ---
 name:  glmDIF
-title: Differential Item Functioning
+title: Differential Item Functioning - Binary Logistic Regression
 jrs:   '1.1'
 
 items:
@@ -16,6 +16,7 @@ items:
     - name:  DESCtable
       title: Procedure Notes
       type:  Table
+      visible: false
       rows: 0
       refs: binaryDIF
       clearWith:
@@ -43,8 +44,9 @@ items:
           type: text
 
     - name:  DIFtable
-      title: Differential Item Functioning Analysis
+      title: Differential Item Functioning Analysis - Binary Logistic Regresion
       type: Table
+      visible: false
       rows:  (item)
       clearWith:
           - item

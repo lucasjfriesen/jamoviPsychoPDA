@@ -35,12 +35,12 @@ rdTTestClass <- if (requireNamespace('jmvcore'))
             <p><b>This analysis is still in development. Please report any errors or requests <a href='https://github.com/lucasjfriesen/jamoviPsychoPDA/issues' target = '_blank'>here</a></b></p>
             <p>Welcome to PsychoPDA's T-Test Design Analysis module. To get started:</p>
             <ol>
-            <li>Input the 'Label'.<br /><br /></li>
-            <li>Input the 'Observed Effect'.<br /><br /></li>
-            <li>Input the 'Hypothesized True Effect.<br /><br /></li>
+            <li>Input the 'Label'<br /><br /></li>
+            <li>Input the 'Observed Effect'<br /><br /></li>
+            <li>Input the 'Hypothesized True Effect<br /><br /></li>
             <li>Input ONE OF 'Observed Standard Error' OR 'Observed P-Value'</li>
             </ol>
-            <p>If you encounter any errors, or have questions, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/meanDiffDA.html' target = '_blank'>documentation</a></p>
+            <p>If you encounter any errors, or have questions, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/meanDiffDA.html' target = '_blank'>documentation</a>.</p>
             </div>
             </body>
             </html>"

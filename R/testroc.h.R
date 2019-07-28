@@ -215,6 +215,7 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 name="resultsTable",
                 refs="thieleCutpoint",
                 title="Results Table",
+                visible=FALSE,
                 template=jmvcore::Table$new(
                     options=options,
                     rows=0,
@@ -294,7 +295,7 @@ TestROCBase <- if (requireNamespace('jmvcore')) R6::R6Class(
                 completeWhenFilled = FALSE)
         }))
 
-#' TestROC
+#' Test ROC
 #'
 #' 
 #' @param data .

@@ -20,12 +20,15 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
     inherit = glmDIFBase,
     private = list(
       .init = function() {
+        if (!is.null(self$options$group) &
+            !is.null(self$data) & !is.null(self$options$item)) {
+          self$results$DESCtable$setVisible(visible = TRUE)
+          self$results$DIFtable$setVisible(visible = TRUE)
+        }
       },
       .run = function() {
       if (is.null(self$options$group) |
             is.null(self$data) | is.null(self$options$item)) {
-          self$results$DESCtable$setVisible(visible = FALSE)
-          self$results$DIFtable$setVisible(visible = FALSE)
           self$results$instructions$setContent(
             "<html>
             <head>
@@ -49,27 +52,22 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             <li>[<em>Optional</em>] Place an external matching variable in the 'Matching Variable' slot. The measure total score will be calculated and used for matching if this option is omitted.<br /><br /></li>
             <li>Place the grouping variable in the 'Grouping Variable' slot.</li>
             </ol>
-            <p>If you encounter any errors, or have questions, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/differentialItemFunctioning.html' target = '_blank'>documentation</a></p>
+            <p>If you encounter any errors, or have questions, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/DIF_index.html' target = '_blank'>documentation</a></p>
             </div>
             </body>
             </html>")
-        } else {
-          self$results$instructions$setVisible(visible = FALSE)
-        }
-        
-        if (is.null(self$options$group) |
+          if (is.null(self$options$group) |
             is.null(self$data) |
             is.null(self$options$item)) {
           return()
         }
+        } else {
+          self$results$instructions$setVisible(visible = FALSE)
+        }
         
         # The full DF
         data <- self$data
-        # error <- jmvcore::extractErrorMessage(try(rowSums(sapply(x, as.numeric)), silent = TRUE))
-        # if (error == "'x' must be an array of at least two dimensions"){
-        #   stop("Your data is missing.",
-        #       call. = FALSE)
-        # }
+
         # Data frame containing all items selected for analysis
         Data <-
           data.frame(jmvcore::toNumeric(data[, self$options$item]))

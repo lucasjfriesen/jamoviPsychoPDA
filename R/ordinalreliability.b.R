@@ -27,10 +27,10 @@ ordinalReliabilityClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                     <p><b>This analysis is still in development. Please report any errors or requests <a href='https://github.com/lucasjfriesen/jamoviPsychoPDA/issues' target = '_blank'>here</a></b></p>
                     <p>Welcome to PsychoPDA's Ordinal Reliability analysis To get started:</p>
                     <ol>
-                    <li>Input the 'Items'.<br /><br /></li>
-                    <li>(Optional)Input the 'Grouping Variable'.<br /><br /></li>
+                    <li>Input the 'Items'<br /><br /></li>
+                    <li>(Optional)Input the 'Grouping Variable'<br /><br /></li>
                     </ol>
-                    <p>If you encounter any errors, or have questions, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/ordinalReliability.html' target = '_blank'>documentation</a></p>
+                    <p>If you encounter any errors, or have questions, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/ordinalReliability.html' target = '_blank'>documentation</a>.</p>
                     </div>
                     </body>
                     </html>"

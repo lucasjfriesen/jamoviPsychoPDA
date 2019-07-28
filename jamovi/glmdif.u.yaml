@@ -10,7 +10,7 @@ children:
     name: itemSupplier
     label: Data variables
     persistentItems: false
-    stretchFactor: 1  
+    stretchFactor: 1
     children:
       - type: TargetLayoutBox
         label: Item(s) for Analysis
@@ -42,7 +42,7 @@ children:
             isTarget: true
   - type: CollapseBox
     label: DIF Analysis
-    margin: small
+    margin: normal
     collapsed: true
     children:
       - type: LayoutBox
@@ -54,12 +54,25 @@ children:
                 name: type
               - type: ComboBox
                 name: criterion
-              - type: ComboBox
-                name: groupType
-              - type: TextBox
-                name: groupContrasts
-                format: string
-                enable: '(groupType:groupNonBin)'
+              - name: groupType_cont
+                type: RadioButton
+                optionName: groupType
+                optionPart: cont
+              - type: RadioButton
+                name: groupType_binary
+                optionName: groupType
+                optionPart: groupBin
+                label: Discrete Groups (n = 2)
+              - type: RadioButton
+                name: groupType_nonBinary
+                optionName: groupType
+                optionPart: groupNonBin
+                label: Discrete Groups (n > 2)
+                children:
+                - type: TextBox
+                  name: groupContrasts
+                  format: string
+                  enable: '(groupType:groupNonBin)'
               - type: ComboBox
                 name: difFlagScale
               - type: TextBox
@@ -80,13 +93,14 @@ children:
               - type: CheckBox
                 name: purify
                 enable: (anchor)
-              - type: TextBox
-                name: nIter
-                format: number
-                enable: (purify)
+                children:
+                  - type: TextBox
+                    name: nIter
+                    format: number
+                    enable: (purify)
   - type: CollapseBox
     label: Design Analysis
-    margin: small
+    margin: normal
     collapsed: true
     children:
       - type: LayoutBox
@@ -94,10 +108,13 @@ children:
         children:
           - type: Label
             label: N.B. | Computationally Instensive
-            margin: large
             children:
               - type: CheckBox
                 name: designAnalysis
+              - type: TextBox
+                name: bootSims
+                format: number
+                enable: '(designAnalysisEffectType:nagR2)'
               - type: CheckBox
                 name: designAnalysisSigOnly
                 enable: (designAnalysis)
@@ -117,13 +134,9 @@ children:
             name: D
             format: string
             enable: (designAnalysis)
-          - type: TextBox
-            name: bootSims
-            format: number
-            enable: (designAnalysisEffectType:nagR2)
   - type: CollapseBox
     label: Item Response Curves
-    margin: small
+    margin: normal
     collapsed: true
     children:
       - type: VariableSupplier

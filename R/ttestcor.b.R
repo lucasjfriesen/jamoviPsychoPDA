@@ -34,12 +34,12 @@ ttestCorClass <- if (requireNamespace('jmvcore'))
             <p><b>This analysis is still in development. Please report any errors or requests <a href='https://github.com/lucasjfriesen/jamoviPsychoPDA/issues' target = '_blank'>here</a></b></p>
             <p>Welcome to PsychoPDA's T-Test Design Analysis analysis To get started:</p>
             <ol>
-            <li>Input the 'Label'.<br /><br /></li>
-            <li>Input the 'Hypothesized True Correlation'.<br /><br /></li>
-            <li>Input the 'Sample Size'.<br /><br /></li>
+            <li>Input the 'Label'<br /><br /></li>
+            <li>Input the 'Hypothesized True Correlation'<br /><br /></li>
+            <li>Input the 'Sample Size'<br /><br /></li>
             <li>Input ONE OF 'Observed Correlation' OR 'Observed Standard Error'</li>
             </ol>
-            <p>If you encounter any errors, or have questions, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/meanDiffDA.html' target = '_blank'>documentation</a></p>
+            <p>If you encounter any errors, or have questions, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/meanDiffDA.html' target = '_blank'>documentation</a>.</p>
             </div>
             </body>
             </html>"

@@ -25,11 +25,11 @@ analyses:
 
       diferentially on that item.
     menuSubgroup: Differential Item Functioning
-  - title: TestROC
+  - title: Test ROC
     name: TestROC
     ns: psychoPDA
     menuGroup: PPDA
-    menuTitle: TestROC
+    menuTitle: Test ROC
     menuSubgroup: Measure Diagnostics
   - title: T-Test for Mean Differences
     name: rdTTest
@@ -50,6 +50,7 @@ analyses:
     ns: psychoPDA
     menuGroup: PPDA
     menuTitle: Ordinal Reliability
+    hidden: true
     menuSubgroup: Measure Diagnostics
 datasets:
   - name: DIF

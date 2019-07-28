@@ -84,7 +84,7 @@ view.layout = ui.extend({
 		{
 			type: DefaultControls.CollapseBox,
 			label: "DIF Analysis",
-			margin: "small",
+			margin: "normal",
 			collapsed: true,
 			controls: [
 				{
@@ -103,14 +103,32 @@ view.layout = ui.extend({
 									name: "criterion"
 								},
 								{
-									type: DefaultControls.ComboBox,
-									name: "groupType"
+									name: "groupType_cont",
+									type: DefaultControls.RadioButton,
+									optionName: "groupType",
+									optionPart: "cont"
 								},
 								{
-									type: DefaultControls.TextBox,
-									name: "groupContrasts",
-									format: FormatDef.string,
-									enable: "(groupType:groupNonBin)"
+									type: DefaultControls.RadioButton,
+									name: "groupType_binary",
+									optionName: "groupType",
+									optionPart: "groupBin",
+									label: "Discrete Groups (n = 2)"
+								},
+								{
+									type: DefaultControls.RadioButton,
+									name: "groupType_nonBinary",
+									optionName: "groupType",
+									optionPart: "groupNonBin",
+									label: "Discrete Groups (n > 2)",
+									controls: [
+										{
+											type: DefaultControls.TextBox,
+											name: "groupContrasts",
+											format: FormatDef.string,
+											enable: "(groupType:groupNonBin)"
+										}
+									]
 								},
 								{
 									type: DefaultControls.ComboBox,
@@ -148,13 +166,15 @@ view.layout = ui.extend({
 								{
 									type: DefaultControls.CheckBox,
 									name: "purify",
-									enable: "(anchor)"
-								},
-								{
-									type: DefaultControls.TextBox,
-									name: "nIter",
-									format: FormatDef.number,
-									enable: "(purify)"
+									enable: "(anchor)",
+									controls: [
+										{
+											type: DefaultControls.TextBox,
+											name: "nIter",
+											format: FormatDef.number,
+											enable: "(purify)"
+										}
+									]
 								}
 							]
 						}
@@ -165,7 +185,7 @@ view.layout = ui.extend({
 		{
 			type: DefaultControls.CollapseBox,
 			label: "Design Analysis",
-			margin: "small",
+			margin: "normal",
 			collapsed: true,
 			controls: [
 				{
@@ -175,11 +195,16 @@ view.layout = ui.extend({
 						{
 							type: DefaultControls.Label,
 							label: "N.B. | Computationally Instensive",
-							margin: "large",
 							controls: [
 								{
 									type: DefaultControls.CheckBox,
 									name: "designAnalysis"
+								},
+								{
+									type: DefaultControls.TextBox,
+									name: "bootSims",
+									format: FormatDef.number,
+									enable: "(designAnalysisEffectType:nagR2)"
 								},
 								{
 									type: DefaultControls.CheckBox,
@@ -215,12 +240,6 @@ view.layout = ui.extend({
 							name: "D",
 							format: FormatDef.string,
 							enable: "(designAnalysis)"
-						},
-						{
-							type: DefaultControls.TextBox,
-							name: "bootSims",
-							format: FormatDef.number,
-							enable: "(designAnalysisEffectType:nagR2)"
 						}
 					]
 				}
@@ -229,7 +248,7 @@ view.layout = ui.extend({
 		{
 			type: DefaultControls.CollapseBox,
 			label: "Item Response Curves",
-			margin: "small",
+			margin: "normal",
 			collapsed: true,
 			controls: [
 				{

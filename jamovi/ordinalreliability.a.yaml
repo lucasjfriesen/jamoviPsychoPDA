@@ -19,27 +19,27 @@ options:
 
     - name: alphaTable
       type: Bool
-      title: Ordinal Alpha
+      title: Ordinal alpha
       default: false
 
     - name: thetaTable
       type: Bool
-      title: Ordinal Theta
+      title: Ordinal theta
       default: false
 
     - name: omegaTable
       type: Bool
-      title: Ordinal Omega
+      title: Ordinal omega
       default: false
 
     - name: guttmanTable
       type: Bool
-      title: Ordinal Guttman
+      title: Ordinal guttman
       default: false
 
     - name: polyTable
       type: Bool
-      title: Ordinal Polychoric Matrix
+      title: Ordinal polychoric matrix
       default: false
 
 ...
