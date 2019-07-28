@@ -38,6 +38,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             <body>
             <div class='instructions'>
             <p>Welcome to PsychoPDA's Test ROC module. To get started:</p>
+            <p><b>This component is still in development. Please report any errors or requests < a href='https://github.com/lucasjfriesen/jamoviPsychoPDA/issues' target = '_blank'>here</a></b></p>
             <ol>
             <li>Place the responses in the 'Dependent Variable' slot.<br /><br /></li>
             <li>Place the classification in the 'Class Variable' slot.<br /><br /></li>
@@ -365,7 +366,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             conf.level = 0.95
           )
           
-          self$results$delongTest$setContent()
+          self$results$delongTest$setContent(paste0(capture.output(print.DeLong(delongResults))))
         }
         
         

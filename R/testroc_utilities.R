@@ -295,5 +295,4 @@ print.DeLong <-
          format.pval(x$global.p, digits = digits),
          "\n"
       ))
-      invisible(x)
    }

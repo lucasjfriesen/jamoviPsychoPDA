@@ -259,7 +259,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             }
             } else {
             table$setTitle("Design Analysis - Logistic Regression Coefficients")
-              self$results$debug$setContent(self$options$designAnalysisEffectType)
+              # self$results$debug$setContent(self$options$designAnalysisEffectType)
               designList = GC[[1]]
               GC = GC[[2]]
               for (item in 1:length(designList)) {

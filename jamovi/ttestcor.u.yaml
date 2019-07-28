@@ -1,6 +1,6 @@
 title: T-Test for Correlations
 name: ttestCor
-jus: '3.0'
+jus: '2.0'
 stage: 0
 compilerMode: aggressive
 children:

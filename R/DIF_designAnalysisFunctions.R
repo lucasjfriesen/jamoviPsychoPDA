@@ -79,9 +79,6 @@ designAnalysis.nagR2 <-
     return(GC)
   }
 
-
-
-
 designAnalysis.coefficients <- function(designList,
                                         hypTrueEff,
                                         coefficient,

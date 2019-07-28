@@ -32,7 +32,7 @@ rdTTestClass <- if (requireNamespace('jmvcore'))
             </head>
             <body>
             <div class='instructions'>
-            <p><b>THIS IS IN TESTING. BETA, ALPHA, W/E. NOT FINAL. CAVEAT EMPTOR</b></p>
+            <p><b>This component is still in development. Please report any errors or requests <a href='https://github.com/lucasjfriesen/jamoviPsychoPDA/issues' target = '_blank'>here</a></b></p>
             <p>Welcome to PsychoPDA's T-Test Design Analysis module. To get started:</p>
             <ol>
             <li>Input the 'Label'.<br /><br /></li>
@@ -169,7 +169,7 @@ rdTTestClass <- if (requireNamespace('jmvcore'))
               "z" = as.numeric()
             )
           # c("estimate", "observedSE", "z")
-          
+          # HTE Viz ----
           for (i in 1:nrow(data)) {
             resultsHTEViz <- retroDesignEmp(hypTrueEff[i],
                                             observedSE[i],
@@ -372,26 +372,26 @@ rdTTestClass <- if (requireNamespace('jmvcore'))
         plot <-
           ggplot(plotData, aes(x = seq_along(estimate), y = estimate)) +
           geom_point(pch = ifelse((plotData$estimate > plotData$observedSE * plotData$z) &
-                                    (!plotData$estimate < -plotData$observedSE * plotData$z),
+                                    (!plotData$estimate < (-1 * plotData$observedSE) * plotData$z),
                                   15,
                                   ifelse((!plotData$estimate > plotData$observedSE * plotData$z) &
-                                           (plotData$estimate < -plotData$observedSE * plotData$z),
+                                           (plotData$estimate < (-1 * plotData$observedSE) * plotData$z),
                                          17,
                                          ifelse((!plotData$estimate > plotData$observedSE * plotData$z) &
-                                                  (!plotData$estimate < -plotData$observedSE * plotData$z),
+                                                  (!plotData$estimate < (-1 * plotData$observedSE) * plotData$z),
                                                 16,
                                                 16
                                          )
                                   )
           ),
           col = ifelse((!plotData$estimate > plotData$observedSE * plotData$z) &
-                         (!plotData$estimate < -plotData$observedSE * plotData$z),
+                         (!plotData$estimate < (-1 * plotData$observedSE) * plotData$z),
                        "grey",
                        "black"
           )) +
           geom_hline(yintercept = plotData$observedSE * plotData$z,
                      size = 1) +
-          geom_hline(yintercept = -plotData$observedSE * plotData$z,
+          geom_hline(yintercept = (-1 * plotData$observedSE) * plotData$z,
                      size = 1) +
           geom_hline(yintercept = plotData$D,
                      linetype = "dashed",
