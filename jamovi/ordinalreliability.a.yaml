@@ -37,7 +37,7 @@ options:
       title: Ordinal Guttman
       default: false
 
-    - name: PolyTable
+    - name: polyTable
       type: Bool
       title: Ordinal Polychoric Matrix
       default: false

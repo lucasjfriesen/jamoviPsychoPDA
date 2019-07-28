@@ -33,4 +33,4 @@ children:
       - type: CheckBox
         name: guttmanTable
       - type: CheckBox
-        name: PolyTable
+        name: polyTable
