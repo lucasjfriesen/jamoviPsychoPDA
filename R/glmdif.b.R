@@ -248,13 +248,13 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 )
               )
             }
-            if (GC[item, 4] < GC[item, 3]) {
-              highlight(table, item, 5)
-              table$setNote(
-                "interpretGC",
-                "Several items (flagged red) have observed effect sizes below the hypothesized true effect. For a guide to interpretation see: https://bit.ly/2I274JY"
-              )
-            }
+            # if (GC[item, 4] < GC[item, 3]) {
+            #   highlight(table, item, 5)
+            #   table$setNote(
+            #     "interpretGC",
+            #     "Several items (flagged red) have observed effect sizes below the hypothesized true effect. For a guide to interpretation see: https://bit.ly/2I274JY"
+            #   )
+            # }
             } else {
             table$setTitle("Design Analysis - Logistic Regression Coefficients")
               # self$results$debug$setContent(self$options$designAnalysisEffectType)

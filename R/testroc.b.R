@@ -331,8 +331,6 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           
           aucList[[var]] = results$AUC
           
-          
-          
           # Results table ----
           table <- self$results$resultsTable$get(key = var)
           for (row in resultsToDisplay) {
@@ -341,7 +339,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           }
           
           # Plotting Data ----
-          if (self$options$plotROC) {
+          if (self$options$plotROC & class(results == "cutpointr")) {
             image <- self$results$plotROC$get(key = var)
             image$setTitle(paste0("ROC Curve: ", var))
             image$setState(
