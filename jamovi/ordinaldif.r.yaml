@@ -4,8 +4,220 @@ title: Ordinal LogR
 jrs:   '1.1'
 
 items:
-    - name:  text
-      title: Ordinal LogR
-      type:  Preformatted
+    #- name: debug
+    #  title: debug
+    #  type: Preformatted
+
+    - name: instructions
+      title: Instructions
+      type: Html
+      visible: True
+
+    - name:  DESCtable
+      title: Procedure Notes
+      type:  Table
+      visible: false
+      rows: 0
+      refs: binaryDIF
+      clearWith:
+          - item
+          - group
+          - matchVar
+          - anchor
+          - groupType
+          - difFlagScale
+          - type
+          - criterion
+          - alpha
+          - nIter
+          - purify
+          - pAdjustMethod
+          - designAnalysis
+          - designAnalysisSigOnly
+          - bootSims
+          - D
+          - twoGroups
+          - groupContrasts
+      columns:
+        - name: bob
+          title: ""
+          type: text
+
+    - name:  DIFtable
+      title: Differential Item Functioning Analysis - Ordinal Logistic Regresion
+      type: Table
+      visible: false
+      rows:  (item)
+      clearWith:
+          - item
+          - group
+          - matchVar
+          - anchor
+          - groupType
+          - difFlagScale
+          - type
+          - criterion
+          - alpha
+          - nIter
+          - purify
+          - pAdjustMethod
+          - twoGroups
+          - groupContrasts
+
+      columns:
+        - name: item
+          title: Item
+          type: text
+
+        - name: ZT
+          refs: zumboThomas
+          title: Zumbo-Thomas
+          type: text
+          visible: (difFlagScale:zt)
+
+        - name: JG
+          title: Jodoin-Gierl
+          type: text
+          visible: (difFlagScale:jg)
+
+        #- name: difType
+        #  title: Result
+        #  type: text
+
+        - name: p
+          title: P-value
+          type: number
+          format: zto,pvalue
+
+        - name: chiSquare
+          title: "\u03A7\u00B2 Stat."
+          type: number
+
+        - name: effSize
+          title: "\u0394 R\u00B2"
+          type: number
+          format: zto
+          visible: (nagEff)
+
+    - name: coefficientsTable
+      title: "Ordinal Logistic Regression Coefficients"
+      type: Table
+      rows: 0
+      columns:
+        - name: itemName
+          title: Item
+          type: text
+      visible: False
+      clearWith:
+          - item
+          - group
+          - matchVar
+          - anchor
+          - groupType
+          - difFlagScale
+          - type
+          - criterion
+          - alpha
+          - nIter
+          - purify
+          - pAdjustMethod
+          - designAnalysis
+          - designAnalysisSigOnly
+          - bootSims
+          - D
+          - twoGroups
+          - groupContrasts
+
+    - name: gcTable
+      title: "Design Analysis - "
+      refs: gelmanCarlin2014
+      type: Table
+      rows: 0
+      visible: (designAnalysis)
+      clearWith:
+          - item
+          - group
+          - matchVar
+          - anchor
+          - groupType
+          - difFlagScale
+          - type
+          - criterion
+          - alpha
+          - nIter
+          - purify
+          - pAdjustMethod
+          - designAnalysis
+          - designAnalysisSigOnly
+          - bootSims
+          - D
+          - groupContrasts
+          - designAnalysisEffectType
+      columns:
+        - name: itemName
+          title: Item
+          type: text
+          combineBelow: True
+        - name: coefficientName
+          title: Term
+          type: text
+          visible: (designAnalysisEffectType:coefficients)
+          combineBelow: True
+        - name: obsEff
+          title: Obs. Effect
+          type: text
+          combineBelow: True
+        - name: bootSE
+          title: Bootstrap SE
+          type: number
+          combineBelow: True
+        - name: label
+          title: Classification
+          type: text
+        - name: hypTrueEff
+          title: Hyp. True Effect
+          type: number
+        - name: typeM
+          title: Type-M Error
+          type: number
+        - name: typeS
+          title: Type-S Error
+          type: number
+          visible: (designAnalysisEffectType:coefficients)
+        - name: estimatedTE
+          title: Est. True Effect
+          type: number
+        - name: power
+          title: Empirical Observed Power
+          type: number
+          format: (zto)
+          visible: (power)
+
+    - name: ICCplots
+      title: Item Response Curves - Based on Ordinal Logistic Regression
+      type: Array
+      items: (plotVarsICC)
+      template:
+          type: Image
+          width:  550
+          height: 450
+          renderFun: .plotICC
+          visible: (plotVarsICC)
+          requiresData: TRUE
+          clearWith:
+              - item
+              - group
+              - matchVar
+              - anchor
+              - groupType
+              - difFlagScale
+              - type
+              - criterion
+              - alpha
+              - nIter
+              - purify
+              - pAdjustMethod
+              - twoGroups
+              - groupContrasts
 
 ...

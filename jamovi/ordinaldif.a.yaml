@@ -1,36 +1,278 @@
 ---
 name:  ordinaldif
 title: Ordinal LogR
-menuGroup: jamoviPsychoPDA
+menuGroup: PPDA
+menuSubgroup: Differential Item Functioning
 version: '1.0.0'
 jas: '1.2'
 
 options:
     - name: data
       type: Data
+      description:
+          ui: >
+            The raw data with rows as test takers and item, grouping, and matching variables as columns.
+          R: >
+            The raw data with rows as test takers and item, grouping, and matching variables as columns
 
-    - name: dep
-      title: Dependent Variable
-      type: Variable
+    - name: item
+      title: Items
+      type: Variables
+      suggested:
+        - ordinal
+      permitted:
+        - factor
+        - numeric
+      description:
+          ui: >
+            Items which are to be assessed for DIF.
+          R: >
+            A vector of strings naming the item columns from `data` which are to be assessed for DIF
 
     - name: group
-      title: Grouping Variable
+      title: Grouping variable
       type: Variable
+      suggested:
+        - nominal
+      permitted:
+        - factor
+        - numeric
+      description:
+          ui: >
+            The grouping variable.
+          R: >
+            A string naming the grouping variable from `data`
 
-    - name: alt
-      title: Alternative hypothesis
+    - name: groupContrasts
+      title: Contrast groups
+      type: String
+
+    - name: matchVar
+      title: Matching variable
+      type: Variable
+      suggested:
+        - continuous
+      permitted:
+        - factor
+        - numeric
+      description:
+          ui: >
+            The matching variable.
+          R: >
+            A string naming the matching variable from `data`
+
+    - name: anchor
+      title: Anchor item(s)
+      type: Variables
+      suggested:
+        - continuous
+      permitted:
+        - numeric
+      description:
+          ui: >
+            The anchor items for use in purification. This will be ignored if an external matching variable is supplied.
+          R: >
+            a vector of strings naming the anchor item columns from `data` for use in purification. This will be ignored if an external matching variable is supplied
+
+    - name: groupType
+      title: Group type
       type: List
       options:
-        - title: Not equal
-          name:  notequal
-        - title: One greater
-          name:  onegreater
-        - title: Two greater
-          name:  twogreater
-      default: notequal
+      - name: groupBin
+        title: Discrete groups (n = 2)
+      - name: groupNonBin
+        title: Discrete groups (n > 2)
+      - name: cont
+        title: Continuous groups
+      description:
+        ui: >
+          Either "discrete" (default) to specify that group membership is made of two (or more than two) groups, or "continuous" to indicate that group membership is based on a continuous criterion.
+        R: >
+          Either "discrete" (default) to specify that group membership is made of two (or more than two) groups, or "continuous" to indicate that group membership is based on a continuous criterion.
 
-    - name: varEq
-      title: Assume equal variances
+    - name: difFlagScale
+      title: Evaluation scale
+      type: List
+      options:
+        - name: zt
+          title: Zumbo-Thomas
+        - name: jg
+          title: Jodoin-Gierl
+      description:
+        ui: >
+          The effect size criterion scale to be used in assigning 'level' to flagged items.
+        R: >
+          The effect size criterion scale to be used in assigning 'level' to flagged items
+
+
+    - name: designAnalysis
+      type: Bool
+      title: Design analysis
+      default: false
+      description:
+        ui: >
+          True/False, perform a design analysis. NB: Computationally intensive.
+        R: >
+          True/False, perform a design analysis. NB: Computationally intensive
+
+    - name: designAnalysisEffectType
+      type: List
+      title: Effect type
+      options:
+        - name: nagR2
+          title: "\u0394 Naeglekirke R\u00B2"
+        - name: coefficients
+          title: Regression Coefficients
+      default: nagR2
+      description:
+        ui: >
+          In progress
+        R: >
+          In progress
+
+    - name: designAnalysisSigOnly
+      type: Bool
+      title: Flagged items only
+      default: true
+      description:
+        ui: >
+          True/False, should only items which have been flagged for exhibitting DIF be considered in the Design Analysis?
+        R: >
+          True/False, should only items which have been flagged for exhibitting DIF be considered in the Design Analysis?
+
+
+    - name: bootSims
+      title: Bootstrap N
+      type: Number
+      default: 1000
+      description:
+        ui: >
+          Number of bootstrap simulations to perform.
+        R: >
+          Number of bootstrap simulations to perform
+
+    - name: power
+      type: Bool
+      title: Empirical observed power
+      default: false
+      description:
+        ui:
+          True/False, display the empirical observed power.
+        R: >
+          True/False, display the empirical observed power
+
+    - name: D
+      title: Hypothesized true effect size
+      type: String
+      default: ''
+      description:
+        ui: >
+          A character string indicating the hypothesized True Effect to be used in Design Analysis. Left blank will default to the category thresholds of the DIF scale selected.
+        R: >
+          A character string indicating the hypothesized True Effect to be used in Design Analysis. Left blank will default to the category thresholds of the DIF scale selected
+
+    - name: type
+      title: Type
+      type: List
+      options:
+      - name: udif
+        title: Uniform DIF
+      - name: nudif
+        title: Non-Uniform DIF
+      - name: both
+        title: Uniform and Non-Uniform DIF
+      default: both
+      description:
+        ui: >
+          A character string specifying which DIF effects must be tested. Possible values are "both" (default), "udif" and "nudif".
+        R: >
+          A character string specifying which DIF effects must be tested. Possible values are "both" (default), "udif" and "nudif"
+
+    - name: criterion
+      title: Flagging criterion
+      type: List
+      options:
+      - name: "Wald"
+        title: Wald Statistic
+      - name: "LRT"
+        title: "Likelihood Ratio Test"
+      description:
+        ui: >
+          A character string specifying which DIF statistic is computed. Possible values are "LRT" (default) or "Wald".
+        R: >
+          A character string specifying which DIF statistic is computed. Possible values are "LRT" (default) or "Wald"
+
+    - name: nagEff
+      title: "Naeglekirke R\u00B2"
       type: Bool
       default: true
+
+    - name: coeffEff
+      title: Regression coefficients
+      type: Bool
+      default: FALSE
+
+    - name: alpha
+      title: Alpha
+      type: Number
+      default: 0.05
+      description:
+        ui: >
+          Significance level.
+        R: >
+          Significance level
+
+    - name: purify
+      title: Item purification
+      type: Bool
+      default: FALSE
+      description:
+        ui: >
+          Should the method be used iteratively to purify the set of anchor items? (default is FALSE). Ignored if an external matching variable is supplied.
+        R: >
+          Should the method be used iteratively to purify the set of anchor items? (default is FALSE). Ignored if an external matching variable is supplied
+
+    - name: nIter
+      title: Number of iterations
+      type: Number
+      default: 10
+      description:
+        ui: >
+          The maximal number of iterations in the item purification process. (default is 10).
+        R: >
+          The maximal number of iterations in the item purification process. (default is 10)
+
+    - name: pAdjustMethod
+      title: P-value adjustment method
+      type: List
+      options:
+        - name: bonferroni
+          title: Bonferroni
+        - name: holm
+          title: Holm
+        - name: hochberg
+          title: Hochberg
+        - name: hommel
+          title: Hommel
+        - name: BH
+          title: Benjamini-Hochberg
+        - name: BY
+          title: Benjamini-Yekutieli
+        - name: none
+          title: None
+      default: none
+      description:
+        ui: >
+          Either none (default) or the acronym of the method for p-value adjustment for multiple comparisons
+        R: >
+          Either none (default) or the acronym of the method for p-value adjustment for multiple comparisons.
+
+    - name: plotVarsICC
+      type: Variables
+      description:
+          ui: >
+            Items for plotting Item Response Curves.
+          R: >
+            A vector of strings naming the item columns for plotting Item Response Curves
+
 ...

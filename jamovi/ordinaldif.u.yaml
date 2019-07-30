@@ -2,17 +2,35 @@ title: Ordinal LogR
 name: ordinaldif
 jus: '3.0'
 stage: 0
-compilerMode: aggressive
+compilerMode: tame
+#events:
+#  update: './glmDIF.events::update'
 children:
   - type: VariableSupplier
+    name: itemSupplier
+    label: Data variables
     persistentItems: false
     stretchFactor: 1
     children:
       - type: TargetLayoutBox
-        label: Dependent Variable
+        label: Item(s) for Analysis
         children:
           - type: VariablesListBox
-            name: dep
+            name: item
+            isTarget: true
+#            events:
+#              change: './glmDIF.events::onChange_item'
+      - type: TargetLayoutBox
+        label: Anchor Items
+        children:
+          - type: VariablesListBox
+            name: anchor
+            isTarget: true
+      - type: TargetLayoutBox
+        label: Matching Variable
+        children:
+          - type: VariablesListBox
+            name: matchVar
             maxItemCount: 1
             isTarget: true
       - type: TargetLayoutBox
@@ -22,13 +40,144 @@ children:
             name: group
             maxItemCount: 1
             isTarget: true
-  - type: LayoutBox
-    margin: large
+  - type: CollapseBox
+    label: DIF Analysis
+    margin: normal
+    collapsed: true
     children:
-      - type: ComboBox
-        name: alt
-  - type: LayoutBox
-    margin: large
+      - type: LayoutBox
+        stretchFactor: 1
+        margin: large
+        children:
+          - type: Label
+            label: Analysis
+            fitToGrid: true
+            cell:
+              column: 0
+              row: 0
+            children:
+              - type: ComboBox
+                name: type
+              - type: ComboBox
+                name: criterion
+              - type: ComboBox
+                name: difFlagScale
+              - type: TextBox
+                name: alpha
+                format: number
+              - type: ComboBox
+                name: pAdjustMethod
+          - type: Label
+            label: Grouping variable
+            fitToGrid: true
+            cell:
+              column: 0
+              row: 1
+            children:
+              - name: groupType_cont
+                type: RadioButton
+                optionName: groupType
+                optionPart: cont
+              - type: RadioButton
+                name: groupType_binary
+                optionName: groupType
+                optionPart: groupBin
+                label: Discrete groups (n = 2)
+              - type: RadioButton
+                name: groupType_nonBinary
+                optionName: groupType
+                optionPart: groupNonBin
+                label: Discrete groups (n > 2)
+                children:
+                  - type: TextBox
+                    name: groupContrasts
+                    format: string
+                    enable: '(groupType:groupNonBin)'
+          - type: Label
+            label: Effect type
+            fitToGrid: true
+            cell:
+              column: 0
+              row: 2
+            children:
+              - type: CheckBox
+                name: nagEff
+              - type: CheckBox
+                name: coeffEff
+          - type: Label
+            label: Purification
+            fitToGrid: true
+            cell:
+              column: 0
+              row: 3
+            children:
+              - type: CheckBox
+                name: purify
+                enable: (anchor)
+                children:
+                  - type: TextBox
+                    name: nIter
+                    format: number
+                    enable: (purify)
+  - type: CollapseBox
+    label: Design Analysis
+    margin: normal
+    collapsed: true
     children:
-      - type: CheckBox
-        name: varEq
+      - type: LayoutBox
+        stretchFactor: 1
+        margin: large
+        children:
+          - type: Label
+            label: Analysis
+            fitToGrid: true
+            cell:
+              column: 0
+              row: 0
+            children:
+              - type: Label
+                label: N.B. | Computationally Instensive
+                children:
+                  - type: CheckBox
+                    name: designAnalysis
+                  - type: ComboBox
+                    name: designAnalysisEffectType
+                  - type: TextBox
+                    name: D
+                    format: string
+                  - type: TextBox
+                    name: bootSims
+                    format: number
+
+          - type: Label
+            label: Advanced
+            fitToGrid: true
+            cell:
+              column: 0
+              row: 1
+            children:
+              - type: CheckBox
+                name: designAnalysisSigOnly
+              - type: LayoutBox
+                margin: large
+                children:
+                  - type: CheckBox
+                    name: power
+  - type: CollapseBox
+    label: Item Response Curves
+    margin: normal
+    collapsed: true
+    children:
+      - type: VariableSupplier
+        name: plotVarsICCSupplier
+#        populate: manual
+        persistentItems: false
+        stretchFactor: 1
+#        events:
+#          update: './glmDIF.events::onUpdate_plotVarsSupplier'
+        children:
+          - type: TargetLayoutBox
+            children:
+              - type: VariablesListBox
+                name: plotVarsICC
+                isTarget: true

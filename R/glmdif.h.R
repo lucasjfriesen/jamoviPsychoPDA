@@ -328,14 +328,14 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `type`="number"),
                     list(
                         `name`="effSize", 
-                        `title`="\u0394 Naeglekirke R\u00B2", 
+                        `title`="\u0394 R\u00B2", 
                         `type`="number", 
                         `format`="zto", 
                         `visible`="(nagEff)"))))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="coefficientsTable",
-                title="Logistic Regression Coefficients",
+                title="Binary Logistic Regression Coefficients",
                 rows=0,
                 columns=list(
                     list(

@@ -55,7 +55,7 @@ analyses:
   - title: Ordinal LogR
     name: ordinaldif
     ns: psychoPDA
-    menuGroup: jamoviPsychoPDA
+    menuGroup: PPDA
     menuTitle: Ordinal LogR
     hidden: true
     menuSubgroup: Differential Item Functioning

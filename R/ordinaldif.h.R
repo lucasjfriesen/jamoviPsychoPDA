@@ -6,10 +6,28 @@ ordinaldifOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Options,
     public = list(
         initialize = function(
-            dep = NULL,
+            item = NULL,
             group = NULL,
-            alt = "notequal",
-            varEq = TRUE, ...) {
+            groupContrasts = NULL,
+            matchVar = NULL,
+            anchor = NULL,
+            groupType = NULL,
+            difFlagScale = NULL,
+            designAnalysis = FALSE,
+            designAnalysisEffectType = "nagR2",
+            designAnalysisSigOnly = TRUE,
+            bootSims = 1000,
+            power = FALSE,
+            D = "",
+            type = "both",
+            criterion = NULL,
+            nagEff = TRUE,
+            coeffEff = FALSE,
+            alpha = 0.05,
+            purify = FALSE,
+            nIter = 10,
+            pAdjustMethod = "none",
+            plotVarsICC = NULL, ...) {
 
             super$initialize(
                 package='psychoPDA',
@@ -17,46 +35,210 @@ ordinaldifOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 requiresData=TRUE,
                 ...)
 
-            private$..dep <- jmvcore::OptionVariable$new(
-                "dep",
-                dep)
+            private$..item <- jmvcore::OptionVariables$new(
+                "item",
+                item,
+                suggested=list(
+                    "ordinal"),
+                permitted=list(
+                    "factor",
+                    "numeric"))
             private$..group <- jmvcore::OptionVariable$new(
                 "group",
-                group)
-            private$..alt <- jmvcore::OptionList$new(
-                "alt",
-                alt,
+                group,
+                suggested=list(
+                    "nominal"),
+                permitted=list(
+                    "factor",
+                    "numeric"))
+            private$..groupContrasts <- jmvcore::OptionString$new(
+                "groupContrasts",
+                groupContrasts)
+            private$..matchVar <- jmvcore::OptionVariable$new(
+                "matchVar",
+                matchVar,
+                suggested=list(
+                    "continuous"),
+                permitted=list(
+                    "factor",
+                    "numeric"))
+            private$..anchor <- jmvcore::OptionVariables$new(
+                "anchor",
+                anchor,
+                suggested=list(
+                    "continuous"),
+                permitted=list(
+                    "numeric"))
+            private$..groupType <- jmvcore::OptionList$new(
+                "groupType",
+                groupType,
                 options=list(
-                    "notequal",
-                    "onegreater",
-                    "twogreater"),
-                default="notequal")
-            private$..varEq <- jmvcore::OptionBool$new(
-                "varEq",
-                varEq,
+                    "groupBin",
+                    "groupNonBin",
+                    "cont"))
+            private$..difFlagScale <- jmvcore::OptionList$new(
+                "difFlagScale",
+                difFlagScale,
+                options=list(
+                    "zt",
+                    "jg"))
+            private$..designAnalysis <- jmvcore::OptionBool$new(
+                "designAnalysis",
+                designAnalysis,
+                default=FALSE)
+            private$..designAnalysisEffectType <- jmvcore::OptionList$new(
+                "designAnalysisEffectType",
+                designAnalysisEffectType,
+                options=list(
+                    "nagR2",
+                    "coefficients"),
+                default="nagR2")
+            private$..designAnalysisSigOnly <- jmvcore::OptionBool$new(
+                "designAnalysisSigOnly",
+                designAnalysisSigOnly,
                 default=TRUE)
+            private$..bootSims <- jmvcore::OptionNumber$new(
+                "bootSims",
+                bootSims,
+                default=1000)
+            private$..power <- jmvcore::OptionBool$new(
+                "power",
+                power,
+                default=FALSE)
+            private$..D <- jmvcore::OptionString$new(
+                "D",
+                D,
+                default="")
+            private$..type <- jmvcore::OptionList$new(
+                "type",
+                type,
+                options=list(
+                    "udif",
+                    "nudif",
+                    "both"),
+                default="both")
+            private$..criterion <- jmvcore::OptionList$new(
+                "criterion",
+                criterion,
+                options=list(
+                    "Wald",
+                    "LRT"))
+            private$..nagEff <- jmvcore::OptionBool$new(
+                "nagEff",
+                nagEff,
+                default=TRUE)
+            private$..coeffEff <- jmvcore::OptionBool$new(
+                "coeffEff",
+                coeffEff,
+                default=FALSE)
+            private$..alpha <- jmvcore::OptionNumber$new(
+                "alpha",
+                alpha,
+                default=0.05)
+            private$..purify <- jmvcore::OptionBool$new(
+                "purify",
+                purify,
+                default=FALSE)
+            private$..nIter <- jmvcore::OptionNumber$new(
+                "nIter",
+                nIter,
+                default=10)
+            private$..pAdjustMethod <- jmvcore::OptionList$new(
+                "pAdjustMethod",
+                pAdjustMethod,
+                options=list(
+                    "bonferroni",
+                    "holm",
+                    "hochberg",
+                    "hommel",
+                    "BH",
+                    "BY",
+                    "none"),
+                default="none")
+            private$..plotVarsICC <- jmvcore::OptionVariables$new(
+                "plotVarsICC",
+                plotVarsICC)
 
-            self$.addOption(private$..dep)
+            self$.addOption(private$..item)
             self$.addOption(private$..group)
-            self$.addOption(private$..alt)
-            self$.addOption(private$..varEq)
+            self$.addOption(private$..groupContrasts)
+            self$.addOption(private$..matchVar)
+            self$.addOption(private$..anchor)
+            self$.addOption(private$..groupType)
+            self$.addOption(private$..difFlagScale)
+            self$.addOption(private$..designAnalysis)
+            self$.addOption(private$..designAnalysisEffectType)
+            self$.addOption(private$..designAnalysisSigOnly)
+            self$.addOption(private$..bootSims)
+            self$.addOption(private$..power)
+            self$.addOption(private$..D)
+            self$.addOption(private$..type)
+            self$.addOption(private$..criterion)
+            self$.addOption(private$..nagEff)
+            self$.addOption(private$..coeffEff)
+            self$.addOption(private$..alpha)
+            self$.addOption(private$..purify)
+            self$.addOption(private$..nIter)
+            self$.addOption(private$..pAdjustMethod)
+            self$.addOption(private$..plotVarsICC)
         }),
     active = list(
-        dep = function() private$..dep$value,
+        item = function() private$..item$value,
         group = function() private$..group$value,
-        alt = function() private$..alt$value,
-        varEq = function() private$..varEq$value),
+        groupContrasts = function() private$..groupContrasts$value,
+        matchVar = function() private$..matchVar$value,
+        anchor = function() private$..anchor$value,
+        groupType = function() private$..groupType$value,
+        difFlagScale = function() private$..difFlagScale$value,
+        designAnalysis = function() private$..designAnalysis$value,
+        designAnalysisEffectType = function() private$..designAnalysisEffectType$value,
+        designAnalysisSigOnly = function() private$..designAnalysisSigOnly$value,
+        bootSims = function() private$..bootSims$value,
+        power = function() private$..power$value,
+        D = function() private$..D$value,
+        type = function() private$..type$value,
+        criterion = function() private$..criterion$value,
+        nagEff = function() private$..nagEff$value,
+        coeffEff = function() private$..coeffEff$value,
+        alpha = function() private$..alpha$value,
+        purify = function() private$..purify$value,
+        nIter = function() private$..nIter$value,
+        pAdjustMethod = function() private$..pAdjustMethod$value,
+        plotVarsICC = function() private$..plotVarsICC$value),
     private = list(
-        ..dep = NA,
+        ..item = NA,
         ..group = NA,
-        ..alt = NA,
-        ..varEq = NA)
+        ..groupContrasts = NA,
+        ..matchVar = NA,
+        ..anchor = NA,
+        ..groupType = NA,
+        ..difFlagScale = NA,
+        ..designAnalysis = NA,
+        ..designAnalysisEffectType = NA,
+        ..designAnalysisSigOnly = NA,
+        ..bootSims = NA,
+        ..power = NA,
+        ..D = NA,
+        ..type = NA,
+        ..criterion = NA,
+        ..nagEff = NA,
+        ..coeffEff = NA,
+        ..alpha = NA,
+        ..purify = NA,
+        ..nIter = NA,
+        ..pAdjustMethod = NA,
+        ..plotVarsICC = NA)
 )
 
 ordinaldifResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
-        text = function() private$.items[["text"]]),
+        instructions = function() private$.items[["instructions"]],
+        DESCtable = function() private$.items[["DESCtable"]],
+        DIFtable = function() private$.items[["DIFtable"]],
+        coefficientsTable = function() private$.items[["coefficientsTable"]],
+        gcTable = function() private$.items[["gcTable"]],
+        ICCplots = function() private$.items[["ICCplots"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -64,10 +246,226 @@ ordinaldifResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="Ordinal LogR")
-            self$add(jmvcore::Preformatted$new(
+            self$add(jmvcore::Html$new(
                 options=options,
-                name="text",
-                title="Ordinal LogR"))}))
+                name="instructions",
+                title="Instructions",
+                visible=TRUE))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="DESCtable",
+                title="Procedure Notes",
+                visible=FALSE,
+                rows=0,
+                refs="binaryDIF",
+                clearWith=list(
+                    "item",
+                    "group",
+                    "matchVar",
+                    "anchor",
+                    "groupType",
+                    "difFlagScale",
+                    "type",
+                    "criterion",
+                    "alpha",
+                    "nIter",
+                    "purify",
+                    "pAdjustMethod",
+                    "designAnalysis",
+                    "designAnalysisSigOnly",
+                    "bootSims",
+                    "D",
+                    "twoGroups",
+                    "groupContrasts"),
+                columns=list(
+                    list(
+                        `name`="bob", 
+                        `title`="", 
+                        `type`="text"))))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="DIFtable",
+                title="Differential Item Functioning Analysis - Ordinal Logistic Regresion",
+                visible=FALSE,
+                rows="(item)",
+                clearWith=list(
+                    "item",
+                    "group",
+                    "matchVar",
+                    "anchor",
+                    "groupType",
+                    "difFlagScale",
+                    "type",
+                    "criterion",
+                    "alpha",
+                    "nIter",
+                    "purify",
+                    "pAdjustMethod",
+                    "twoGroups",
+                    "groupContrasts"),
+                columns=list(
+                    list(
+                        `name`="item", 
+                        `title`="Item", 
+                        `type`="text"),
+                    list(
+                        `name`="ZT", 
+                        `refs`="zumboThomas", 
+                        `title`="Zumbo-Thomas", 
+                        `type`="text", 
+                        `visible`="(difFlagScale:zt)"),
+                    list(
+                        `name`="JG", 
+                        `title`="Jodoin-Gierl", 
+                        `type`="text", 
+                        `visible`="(difFlagScale:jg)"),
+                    list(
+                        `name`="p", 
+                        `title`="P-value", 
+                        `type`="number", 
+                        `format`="zto,pvalue"),
+                    list(
+                        `name`="chiSquare", 
+                        `title`="\u03A7\u00B2 Stat.", 
+                        `type`="number"),
+                    list(
+                        `name`="effSize", 
+                        `title`="\u0394 R\u00B2", 
+                        `type`="number", 
+                        `format`="zto", 
+                        `visible`="(nagEff)"))))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="coefficientsTable",
+                title="Ordinal Logistic Regression Coefficients",
+                rows=0,
+                columns=list(
+                    list(
+                        `name`="itemName", 
+                        `title`="Item", 
+                        `type`="text")),
+                visible=FALSE,
+                clearWith=list(
+                    "item",
+                    "group",
+                    "matchVar",
+                    "anchor",
+                    "groupType",
+                    "difFlagScale",
+                    "type",
+                    "criterion",
+                    "alpha",
+                    "nIter",
+                    "purify",
+                    "pAdjustMethod",
+                    "designAnalysis",
+                    "designAnalysisSigOnly",
+                    "bootSims",
+                    "D",
+                    "twoGroups",
+                    "groupContrasts")))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="gcTable",
+                title="Design Analysis - ",
+                refs="gelmanCarlin2014",
+                rows=0,
+                visible="(designAnalysis)",
+                clearWith=list(
+                    "item",
+                    "group",
+                    "matchVar",
+                    "anchor",
+                    "groupType",
+                    "difFlagScale",
+                    "type",
+                    "criterion",
+                    "alpha",
+                    "nIter",
+                    "purify",
+                    "pAdjustMethod",
+                    "designAnalysis",
+                    "designAnalysisSigOnly",
+                    "bootSims",
+                    "D",
+                    "groupContrasts",
+                    "designAnalysisEffectType"),
+                columns=list(
+                    list(
+                        `name`="itemName", 
+                        `title`="Item", 
+                        `type`="text", 
+                        `combineBelow`=TRUE),
+                    list(
+                        `name`="coefficientName", 
+                        `title`="Term", 
+                        `type`="text", 
+                        `visible`="(designAnalysisEffectType:coefficients)", 
+                        `combineBelow`=TRUE),
+                    list(
+                        `name`="obsEff", 
+                        `title`="Obs. Effect", 
+                        `type`="text", 
+                        `combineBelow`=TRUE),
+                    list(
+                        `name`="bootSE", 
+                        `title`="Bootstrap SE", 
+                        `type`="number", 
+                        `combineBelow`=TRUE),
+                    list(
+                        `name`="label", 
+                        `title`="Classification", 
+                        `type`="text"),
+                    list(
+                        `name`="hypTrueEff", 
+                        `title`="Hyp. True Effect", 
+                        `type`="number"),
+                    list(
+                        `name`="typeM", 
+                        `title`="Type-M Error", 
+                        `type`="number"),
+                    list(
+                        `name`="typeS", 
+                        `title`="Type-S Error", 
+                        `type`="number", 
+                        `visible`="(designAnalysisEffectType:coefficients)"),
+                    list(
+                        `name`="estimatedTE", 
+                        `title`="Est. True Effect", 
+                        `type`="number"),
+                    list(
+                        `name`="power", 
+                        `title`="Empirical Observed Power", 
+                        `type`="number", 
+                        `format`="(zto)", 
+                        `visible`="(power)"))))
+            self$add(jmvcore::Array$new(
+                options=options,
+                name="ICCplots",
+                title="Item Response Curves - Based on Ordinal Logistic Regression",
+                items="(plotVarsICC)",
+                template=jmvcore::Image$new(
+                    options=options,
+                    width=550,
+                    height=450,
+                    renderFun=".plotICC",
+                    visible="(plotVarsICC)",
+                    requiresData=TRUE,
+                    clearWith=list(
+                        "item",
+                        "group",
+                        "matchVar",
+                        "anchor",
+                        "groupType",
+                        "difFlagScale",
+                        "type",
+                        "criterion",
+                        "alpha",
+                        "nIter",
+                        "purify",
+                        "pAdjustMethod",
+                        "twoGroups",
+                        "groupContrasts"))))}))
 
 ordinaldifBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     "ordinaldifBase",
@@ -91,41 +489,130 @@ ordinaldifBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' Ordinal LogR
 #'
 #' 
-#' @param data .
-#' @param dep .
-#' @param group .
-#' @param alt .
-#' @param varEq .
+#' @param data The raw data with rows as test takers and item, grouping, and
+#'   matching variables as columns
+#' @param item A vector of strings naming the item columns from \code{data}
+#'   which are to be assessed for DIF
+#' @param group A string naming the grouping variable from \code{data}
+#' @param groupContrasts .
+#' @param matchVar A string naming the matching variable from \code{data}
+#' @param anchor a vector of strings naming the anchor item columns from
+#'   \code{data} for use in purification. This will be ignored if an external
+#'   matching variable is supplied
+#' @param groupType Either "discrete" (default) to specify that group
+#'   membership is made of two (or more than two) groups, or "continuous" to
+#'   indicate that group membership is based on a continuous criterion.
+#' @param difFlagScale The effect size criterion scale to be used in assigning
+#'   'level' to flagged items
+#' @param designAnalysis True/False, perform a design analysis. NB:
+#'   Computationally intensive
+#' @param designAnalysisEffectType In progress
+#' @param designAnalysisSigOnly True/False, should only items which have been
+#'   flagged for exhibitting DIF be considered in the Design Analysis?
+#' @param bootSims Number of bootstrap simulations to perform
+#' @param power True/False, display the empirical observed power
+#' @param D A character string indicating the hypothesized True Effect to be
+#'   used in Design Analysis. Left blank will default to the category thresholds
+#'   of the DIF scale selected
+#' @param type A character string specifying which DIF effects must be tested.
+#'   Possible values are "both" (default), "udif" and "nudif"
+#' @param criterion A character string specifying which DIF statistic is
+#'   computed. Possible values are "LRT" (default) or "Wald"
+#' @param nagEff .
+#' @param coeffEff .
+#' @param alpha Significance level
+#' @param purify Should the method be used iteratively to purify the set of
+#'   anchor items? (default is FALSE). Ignored if an external matching variable
+#'   is supplied
+#' @param nIter The maximal number of iterations in the item purification
+#'   process. (default is 10)
+#' @param pAdjustMethod Either none (default) or the acronym of the method for
+#'   p-value adjustment for multiple comparisons.
+#' @param plotVarsICC A vector of strings naming the item columns for plotting
+#'   Item Response Curves
 #' @return A results object containing:
 #' \tabular{llllll}{
-#'   \code{results$text} \tab \tab \tab \tab \tab a preformatted \cr
+#'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
+#'   \code{results$DESCtable} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$DIFtable} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$coefficientsTable} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$gcTable} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$ICCplots} \tab \tab \tab \tab \tab an array of images \cr
 #' }
+#'
+#' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
+#'
+#' \code{results$DESCtable$asDF}
+#'
+#' \code{as.data.frame(results$DESCtable)}
 #'
 #' @export
 ordinaldif <- function(
     data,
-    dep,
+    item,
     group,
-    alt = "notequal",
-    varEq = TRUE) {
+    groupContrasts,
+    matchVar,
+    anchor,
+    groupType,
+    difFlagScale,
+    designAnalysis = FALSE,
+    designAnalysisEffectType = "nagR2",
+    designAnalysisSigOnly = TRUE,
+    bootSims = 1000,
+    power = FALSE,
+    D = "",
+    type = "both",
+    criterion,
+    nagEff = TRUE,
+    coeffEff = FALSE,
+    alpha = 0.05,
+    purify = FALSE,
+    nIter = 10,
+    pAdjustMethod = "none",
+    plotVarsICC) {
 
     if ( ! requireNamespace('jmvcore'))
         stop('ordinaldif requires jmvcore to be installed (restart may be required)')
 
-    if ( ! missing(dep)) dep <- jmvcore::resolveQuo(jmvcore::enquo(dep))
+    if ( ! missing(item)) item <- jmvcore::resolveQuo(jmvcore::enquo(item))
     if ( ! missing(group)) group <- jmvcore::resolveQuo(jmvcore::enquo(group))
+    if ( ! missing(matchVar)) matchVar <- jmvcore::resolveQuo(jmvcore::enquo(matchVar))
+    if ( ! missing(anchor)) anchor <- jmvcore::resolveQuo(jmvcore::enquo(anchor))
+    if ( ! missing(plotVarsICC)) plotVarsICC <- jmvcore::resolveQuo(jmvcore::enquo(plotVarsICC))
     if (missing(data))
         data <- jmvcore::marshalData(
             parent.frame(),
-            `if`( ! missing(dep), dep, NULL),
-            `if`( ! missing(group), group, NULL))
+            `if`( ! missing(item), item, NULL),
+            `if`( ! missing(group), group, NULL),
+            `if`( ! missing(matchVar), matchVar, NULL),
+            `if`( ! missing(anchor), anchor, NULL),
+            `if`( ! missing(plotVarsICC), plotVarsICC, NULL))
 
 
     options <- ordinaldifOptions$new(
-        dep = dep,
+        item = item,
         group = group,
-        alt = alt,
-        varEq = varEq)
+        groupContrasts = groupContrasts,
+        matchVar = matchVar,
+        anchor = anchor,
+        groupType = groupType,
+        difFlagScale = difFlagScale,
+        designAnalysis = designAnalysis,
+        designAnalysisEffectType = designAnalysisEffectType,
+        designAnalysisSigOnly = designAnalysisSigOnly,
+        bootSims = bootSims,
+        power = power,
+        D = D,
+        type = type,
+        criterion = criterion,
+        nagEff = nagEff,
+        coeffEff = coeffEff,
+        alpha = alpha,
+        purify = purify,
+        nIter = nIter,
+        pAdjustMethod = pAdjustMethod,
+        plotVarsICC = plotVarsICC)
 
     results <- ordinaldifResults$new(
         options = options)
