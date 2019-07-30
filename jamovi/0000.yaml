@@ -60,8 +60,11 @@ analyses:
     hidden: true
     menuSubgroup: Differential Item Functioning
 datasets:
-  - name: DIF
+  - name: Binary LogR
     path: dataverbal.csv
-    description: Example data
+    description: Example data for the Binary LogR analysis
+  - name: Test ROC
+    path: testROC.csv
+    description: Example data for the Test ROC analysis
 
 ...
