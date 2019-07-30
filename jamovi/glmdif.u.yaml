@@ -46,14 +46,34 @@ children:
     collapsed: true
     children:
       - type: LayoutBox
+        stretchFactor: 1
         margin: large
         children:
-          - type: LayoutBox
+          - type: Label
+            label: Analysis
+            fitToGrid: true
+            cell:
+              column: 0
+              row: 0
             children:
               - type: ComboBox
                 name: type
               - type: ComboBox
                 name: criterion
+              - type: ComboBox
+                name: difFlagScale
+              - type: TextBox
+                name: alpha
+                format: number
+              - type: ComboBox
+                name: pAdjustMethod
+          - type: Label
+            label: Grouping variable
+            fitToGrid: true
+            cell:
+              column: 0
+              row: 1
+            children:
               - name: groupType_cont
                 type: RadioButton
                 optionName: groupType
@@ -62,33 +82,34 @@ children:
                 name: groupType_binary
                 optionName: groupType
                 optionPart: groupBin
-                label: Discrete Groups (n = 2)
+                label: Discrete groups (n = 2)
               - type: RadioButton
                 name: groupType_nonBinary
                 optionName: groupType
                 optionPart: groupNonBin
-                label: Discrete Groups (n > 2)
+                label: Discrete groups (n > 2)
                 children:
-                - type: TextBox
-                  name: groupContrasts
-                  format: string
-                  enable: '(groupType:groupNonBin)'
-              - type: ComboBox
-                name: difFlagScale
-              - type: TextBox
-                name: alpha
-                format: number
-              - type: ComboBox
-                name: pAdjustMethod
-          - type: LayoutBox
-            margin: large
+                  - type: TextBox
+                    name: groupContrasts
+                    format: string
+                    enable: '(groupType:groupNonBin)'
+          - type: Label
+            label: Effect type
+            fitToGrid: true
+            cell:
+              column: 0
+              row: 2
             children:
               - type: CheckBox
                 name: nagEff
               - type: CheckBox
                 name: coeffEff
-          - type: LayoutBox
-            margin: large
+          - type: Label
+            label: Purification
+            fitToGrid: true
+            cell:
+              column: 0
+              row: 3
             children:
               - type: CheckBox
                 name: purify
@@ -104,36 +125,44 @@ children:
     collapsed: true
     children:
       - type: LayoutBox
-        style: inline
+        stretchFactor: 1
+        margin: large
         children:
           - type: Label
-            label: N.B. | Computationally Instensive
+            label: Analysis
+            fitToGrid: true
+            cell:
+              column: 0
+              row: 0
+            children:
+              - type: Label
+                label: N.B. | Computationally Instensive
+                children:
+                  - type: CheckBox
+                    name: designAnalysis
+                  - type: ComboBox
+                    name: designAnalysisEffectType
+                  - type: TextBox
+                    name: D
+                    format: string
+                  - type: TextBox
+                    name: bootSims
+                    format: number
+
+          - type: Label
+            label: Advanced
+            fitToGrid: true
+            cell:
+              column: 0
+              row: 1
             children:
               - type: CheckBox
-                name: designAnalysis
-              - type: TextBox
-                name: bootSims
-                format: number
-                enable: '(designAnalysisEffectType:nagR2)'
-              - type: CheckBox
                 name: designAnalysisSigOnly
-                enable: (designAnalysis)
-              - type: CheckBox
-                name: power
-                enable: (designAnalysis)
-      - type: LayoutBox
-        margin: large
-        children:
-          - type: ComboBox
-            name: designAnalysisEffectType
-            enable: (designAnalysis)
-      - type: LayoutBox
-        margin: large
-        children:
-          - type: TextBox
-            name: D
-            format: string
-            enable: (designAnalysis)
+              - type: LayoutBox
+                margin: large
+                children:
+                  - type: CheckBox
+                    name: power
   - type: CollapseBox
     label: Item Response Curves
     margin: normal

@@ -20,3 +20,7 @@ export(ttestCorOptions)
 export(ordinalReliability)
 export(ordinalReliabilityClass)
 export(ordinalReliabilityOptions)
+
+export(ordinaldif)
+export(ordinaldifClass)
+export(ordinaldifOptions)

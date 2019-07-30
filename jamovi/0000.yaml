@@ -52,6 +52,13 @@ analyses:
     menuTitle: Ordinal Reliability
     hidden: true
     menuSubgroup: Measure Diagnostics
+  - title: Ordinal LogR
+    name: ordinaldif
+    ns: psychoPDA
+    menuGroup: jamoviPsychoPDA
+    menuTitle: Ordinal LogR
+    hidden: true
+    menuSubgroup: Differential Item Functioning
 datasets:
   - name: DIF
     path: dataverbal.csv

@@ -86,16 +86,16 @@ options:
       type: List
       options:
       - name: groupBin
-        title: Discrete Groups (n = 2)
+        title: Discrete groups (n = 2)
       - name: groupNonBin
-        title: Discrete Groups (n > 2)
+        title: Discrete groups (n > 2)
       - name: cont
-        title: Continuous Groups
-      description: 
+        title: Continuous groups
+      description:
         ui: >
-          Either "discrete" (default) to specify that group membership is made of two (or more than two) groups, or "continuous" to indicate that group membership is based on a continuous criterion. 
+          Either "discrete" (default) to specify that group membership is made of two (or more than two) groups, or "continuous" to indicate that group membership is based on a continuous criterion.
         R: >
-          Either "discrete" (default) to specify that group membership is made of two (or more than two) groups, or "continuous" to indicate that group membership is based on a continuous criterion. 
+          Either "discrete" (default) to specify that group membership is made of two (or more than two) groups, or "continuous" to indicate that group membership is based on a continuous criterion.
 
     - name: difFlagScale
       title: Evaluation scale
@@ -125,11 +125,11 @@ options:
     - name: designAnalysisEffectType
       type: List
       title: Effect type
-      options: 
+      options:
         - name: nagR2
           title: "\u0394 Naeglekirke R\u00B2"
         - name: coefficients
-          title: Regression Coefficients 
+          title: Regression Coefficients
       default: nagR2
       description:
         ui: >
@@ -139,7 +139,7 @@ options:
 
     - name: designAnalysisSigOnly
       type: Bool
-      title: Constant alpha
+      title: Flagged items only
       default: true
       description:
         ui: >
@@ -156,11 +156,11 @@ options:
         ui: >
           Number of bootstrap simulations to perform.
         R: >
-          Number of bootstrap simulations to perform 
+          Number of bootstrap simulations to perform
 
     - name: power
       type: Bool
-      title: Observed power
+      title: Empirical observed power
       default: false
       description:
         ui:
@@ -189,7 +189,7 @@ options:
       - name: both
         title: Uniform and Non-Uniform DIF
       default: both
-      description: 
+      description:
         ui: >
           A character string specifying which DIF effects must be tested. Possible values are "both" (default), "udif" and "nudif".
         R: >
@@ -203,7 +203,7 @@ options:
         title: Wald Statistic
       - name: "LRT"
         title: "Likelihood Ratio Test"
-      description: 
+      description:
         ui: >
           A character string specifying which DIF statistic is computed. Possible values are "LRT" (default) or "Wald".
         R: >
@@ -223,7 +223,7 @@ options:
       title: Alpha
       type: Number
       default: 0.05
-      description: 
+      description:
         ui: >
           Significance level.
         R: >
@@ -233,7 +233,7 @@ options:
       title: Item purification
       type: Bool
       default: FALSE
-      description: 
+      description:
         ui: >
           Should the method be used iteratively to purify the set of anchor items? (default is FALSE). Ignored if an external matching variable is supplied.
         R: >
@@ -243,16 +243,16 @@ options:
       title: Number of iterations
       type: Number
       default: 10
-      description: 
+      description:
         ui: >
           The maximal number of iterations in the item purification process. (default is 10).
         R: >
-          The maximal number of iterations in the item purification process. (default is 10)  
+          The maximal number of iterations in the item purification process. (default is 10)
 
     - name: pAdjustMethod
       title: P-value adjustment method
       type: List
-      options: 
+      options:
         - name: bonferroni
           title: Bonferroni
         - name: holm
@@ -268,7 +268,7 @@ options:
         - name: none
           title: None
       default: none
-      description: 
+      description:
         ui: >
           Either none (default) or the acronym of the method for p-value adjustment for multiple comparisons
         R: >
@@ -281,5 +281,5 @@ options:
             Items for plotting Item Response Curves.
           R: >
             A vector of strings naming the item columns for plotting Item Response Curves
-   
+
 ...

@@ -328,7 +328,7 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `type`="number"),
                     list(
                         `name`="effSize", 
-                        `title`="Naeglekirke R\u00B2", 
+                        `title`="\u0394 Naeglekirke R\u00B2", 
                         `type`="number", 
                         `format`="zto", 
                         `visible`="(nagEff)"))))
@@ -412,17 +412,25 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `combineBelow`=TRUE),
                     list(
                         `name`="label", 
-                        `title`="Hyp. True Effect", 
+                        `title`="Classification", 
                         `type`="text"),
                     list(
+                        `name`="hypTrueEff", 
+                        `title`="Hyp. True Effect", 
+                        `type`="number"),
+                    list(
                         `name`="typeM", 
-                        `title`="Type-M", 
+                        `title`="Type-M Error", 
                         `type`="number"),
                     list(
                         `name`="typeS", 
-                        `title`="Type-S", 
+                        `title`="Type-S Error", 
                         `type`="number", 
                         `visible`="(designAnalysisEffectType:coefficients)"),
+                    list(
+                        `name`="estimatedTE", 
+                        `title`="Est. True Effect", 
+                        `type`="number"),
                     list(
                         `name`="power", 
                         `title`="Empirical Observed Power", 

@@ -244,16 +244,23 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                   bootSE = GC[item, 7],
                   hypTrueEff = GC[item, 3],
                   typeM = GC[item, 5],
+                  estimatedTE = GC[item, 4] / GC[item, 5],
                   power = GC[item, 6]
                 )
               )
-            }
-            if (GC[item, 4] < GC[item, 3]) {
-              highlight(table, item, 5)
-              table$setNote(
-                "interpretGC",
-                "Several items (flagged red) have observed effect sizes below the hypothesized true effect. For a guide to interpretation see: https://bit.ly/2I274JY"
-              )
+              if (self$options$D == "") {
+                table$setNote(
+                  "nullHyp",
+                  "The hypothesis of the DIF effect being equal to 0 is the 'A' level hypothesis, and uses 0 + 2 * observedSE as a proxy for 0."
+                )
+              }
+              if (GC[item, 4] < GC[item, 3]) {
+                highlight(table, item, 5)
+                table$setNote(
+                  "interpretGC",
+                  "Several items (flagged red) have observed effect sizes below the hypothesized true effect. For a guide to interpretation see: https://bit.ly/2I274JY"
+                )
+              }
             }
             } else {
             table$setTitle("Design Analysis - Logistic Regression Coefficients")
