@@ -86,11 +86,11 @@ options:
       type: List
       options:
       - name: groupBin
-        title: Discrete Groups (n = 2)
+        title: Discrete groups (n = 2)
       - name: groupNonBin
-        title: Discrete Groups (n > 2)
+        title: Discrete groups (n > 2)
       - name: cont
-        title: Continuous Groups
+        title: Continuous variable
       description: 
         ui: >
           Either "discrete" (default) to specify that group membership is made of two (or more than two) groups, or "continuous" to indicate that group membership is based on a continuous criterion. 
