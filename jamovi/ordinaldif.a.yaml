@@ -1,19 +1,10 @@
 ---
-name:  glmDIF
-title: Binary LogR
+name:  ordinaldif
+title: Ordinal LogR
 menuGroup: PPDA
 menuSubgroup: Differential Item Functioning
 version: '1.0.0'
 jas: '1.2'
-
-description:
-    main: |
-        Differential Item Functioning (DIF) analysis is used to assess items on
-        a test or measure to determine whether or not certain groups are performing
-        diferentially on that item.
-    R:
-        usage:
-            data('verbal')
 
 options:
     - name: data
@@ -28,8 +19,9 @@ options:
       title: Items
       type: Variables
       suggested:
-        - continuous
+        - ordinal
       permitted:
+        - factor
         - numeric
       description:
           ui: >
@@ -61,6 +53,7 @@ options:
       suggested:
         - continuous
       permitted:
+        - factor
         - numeric
       description:
           ui: >
@@ -90,8 +83,8 @@ options:
       - name: groupNonBin
         title: Discrete groups (n > 2)
       - name: cont
-        title: Continuous variable
-      description: 
+        title: Continuous groups
+      description:
         ui: >
           Either "discrete" (default) to specify that group membership is made of two (or more than two) groups, or "continuous" to indicate that group membership is based on a continuous criterion.
         R: >

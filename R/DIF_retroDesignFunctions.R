@@ -1,6 +1,6 @@
 # retroDesign ----
         retroDesign.nagR2 <- function(hypTrueEff, myBoot, alpha, sigOnly) {
-          rdRes <- matrix(0, nrow = 1, ncol = 4)
+          rdRes <- matrix(0, nrow = 1, ncol = 5)
           rdRes[1, 1] <- myBoot$t0
           
           # se of empirical distribution
@@ -29,6 +29,7 @@
           if (hypTrueEff == 0){
             hypTrueEff <- observedSE*2
           }
+          rdRes[1, 5] <- hypTrueEff
           rdRes[1, 2] <-
             typeMError <- mean(estimate[significant]) / hypTrueEff
           return(rdRes)

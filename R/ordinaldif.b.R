@@ -1,12 +1,11 @@
 
-# Data Wrangling ----
+# This file is a generated template, your changes will not be overwritten
 
-glmDIFClass <- if (requireNamespace('jmvcore'))
-  R6::R6Class(
-    "glmDIFClass",
-    inherit = glmDIFBase,
+ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
+    "ordinaldifClass",
+    inherit = ordinaldifBase,
     private = list(
-      .init = function() {
+        .init = function() {
         if (!is.null(self$options$group) &
             !is.null(self$data) & !is.null(self$options$item)) {
           self$results$DESCtable$setVisible(visible = TRUE)
@@ -32,7 +31,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             </head>
             <body>
             <div class='instructions'>
-            <p>Welcome to PsychoPDA's Binary LogR Differential Functioning analysis. To get started:</p>
+            <p>Welcome to PsychoPDA's Ordinal Differential Functioning analysis. To get started:</p>
             <ol>
             <li>Place items to be assessed for DIF in the 'Item(s) for analysis' slot.<br /><br /></li>
             <li>[<em>Optional</em>] Place the remaining measure items in the 'Anchor Items' slot. This is not needed if a Matching Variable is supplied.<br /><br /></li>
@@ -51,7 +50,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         } else {
           self$results$instructions$setVisible(visible = FALSE)
         }
-        
+
         # The full DF
         data <- self$data
 
@@ -59,18 +58,18 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         Data <-
           data.frame(jmvcore::toNumeric(data[, self$options$item]))
         colnames(Data) <- self$options$item
-        for (i in 1:length(self$options$item)) {
-          if (!all(unique(Data[, i]) %in% c(0, 1, NA))) {
-            stop(
-              paste(
-                "One or more rows contains an invalid value in column: ",
-                colnames(Data)[i]
-              ),
-              ". (Item responses must be one of c(0,1,NA))",
-              call. = FALSE
-            )
-          }
-        }
+        # for (i in 1:length(self$options$item)) {
+        #   if (!all(unique(Data[, i]) %in% c(0, 1, NA))) {
+        #     stop(
+        #       paste(
+        #         "One or more rows contains an invalid value in column: ",
+        #         colnames(Data)[i]
+        #       ),
+        #       ". (Item responses must be one of c(0,1,NA))",
+        #       call. = FALSE
+        #     )
+        #   }
+        # }
         
         if (is.null(self$options$anchor)) {
           anchor <- NULL
@@ -235,7 +234,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                   power = GC[item, 6]
                 )
               )
-
               if (self$options$D == "") {
                 table$setNote(
                   "nullHyp",
@@ -251,7 +249,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               }
             }
             } else {
-            table$setTitle("Design Analysis - Logistic Regression Coefficients")
+            table$setTitle("Design Analysis - Ordinal Logistic Regression Coefficients")
               # self$results$debug$setContent(self$options$designAnalysisEffectType)
               designList = GC[[1]]
               GC = GC[[2]]
@@ -272,7 +270,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         
         # Model ----
         model <-
-          binaryDIF.logistic(
+          ordinal.logistic(
             DATA = Data,
             group = group,
             groupOne = groupOne,
@@ -364,7 +362,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               ,
               switch(
                 class(model),
-                Logistic = "Logistic regression method ",
+                polr = "ordinal logistic regression method ",
                 genLogistic = "Generalized logistic regression method "
               ),
               pur,
@@ -743,6 +741,5 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         
         print(p)
         TRUE
-      }
-              )
-    )
+      })
+)

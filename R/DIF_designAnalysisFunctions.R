@@ -15,7 +15,7 @@ designAnalysis.nagR2 <-
       } else {
         hypTrueEff <- c(0, 0.035, 0.07)
       }
-      labels <- c("Null", "Moderate", "Large")
+      labels <- c("A", "B", "C")
     } else {
       hypTrueEff <- as.numeric(hypTrueEff)
       labels <- c("Custom Hyp.")
@@ -69,9 +69,9 @@ designAnalysis.nagR2 <-
         GC[item * length(hypTrueEff) - tick, 2] <-
           designList[item]
         GC[item * length(hypTrueEff) - tick, 3] <-
-          as.character((hypTrueEff[hypInd]))
+          as.numeric(retroDesignRes[5])
         GC[item * length(hypTrueEff) - tick, 4:7] <-
-          as.numeric(retroDesignRes)
+          as.numeric(retroDesignRes[1:4])
         tick <- tick - 1
       }
     }

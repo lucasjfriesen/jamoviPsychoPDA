@@ -1,6 +1,6 @@
 ---
-name:  glmDIF
-title: Differential Item Functioning - Binary Logistic Regression
+name:  ordinaldif
+title: Ordinal LogR
 jrs:   '1.1'
 
 items:
@@ -44,7 +44,7 @@ items:
           type: text
 
     - name:  DIFtable
-      title: Differential Item Functioning Analysis - Binary Logistic Regresion
+      title: Differential Item Functioning Analysis - Ordinal Logistic Regresion
       type: Table
       visible: false
       rows:  (item)
@@ -100,7 +100,7 @@ items:
           visible: (nagEff)
 
     - name: coefficientsTable
-      title: "Binary Logistic Regression Coefficients"
+      title: "Ordinal Logistic Regression Coefficients"
       type: Table
       rows: 0
       columns:
@@ -194,7 +194,7 @@ items:
           visible: (power)
 
     - name: ICCplots
-      title: Item Response Curves - Based on Logistic Regression
+      title: Item Response Curves - Based on Ordinal Logistic Regression
       type: Array
       items: (plotVarsICC)
       template:

@@ -52,9 +52,19 @@ analyses:
     menuTitle: Ordinal Reliability
     hidden: true
     menuSubgroup: Measure Diagnostics
+  - title: Ordinal LogR
+    name: ordinaldif
+    ns: psychoPDA
+    menuGroup: PPDA
+    menuTitle: Ordinal LogR
+    hidden: true
+    menuSubgroup: Differential Item Functioning
 datasets:
-  - name: DIF
+  - name: Binary LogR
     path: dataverbal.csv
-    description: Example data
+    description: Example data for the Binary LogR analysis
+  - name: Test ROC
+    path: testROC.csv
+    description: Example data for the Test ROC analysis
 
 ...

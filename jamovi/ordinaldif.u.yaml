@@ -1,10 +1,10 @@
-title: Binary Differential Item Functioning
-name: glmDIF
-jus: '2.0'
+title: Ordinal LogR
+name: ordinaldif
+jus: '3.0'
 stage: 0
 compilerMode: tame
-events:
-  update: './glmDIF.events::update'
+#events:
+#  update: './glmDIF.events::update'
 children:
   - type: VariableSupplier
     name: itemSupplier
@@ -18,8 +18,8 @@ children:
           - type: VariablesListBox
             name: item
             isTarget: true
-            events:
-              change: './glmDIF.events::onChange_item'
+#            events:
+#              change: './glmDIF.events::onChange_item'
       - type: TargetLayoutBox
         label: Anchor Items
         children:
@@ -170,11 +170,11 @@ children:
     children:
       - type: VariableSupplier
         name: plotVarsICCSupplier
-        populate: manual
+#        populate: manual
         persistentItems: false
         stretchFactor: 1
-        events:
-          update: './glmDIF.events::onUpdate_plotVarsSupplier'
+#        events:
+#          update: './glmDIF.events::onUpdate_plotVarsSupplier'
         children:
           - type: TargetLayoutBox
             children:
