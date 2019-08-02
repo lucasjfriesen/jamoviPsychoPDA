@@ -32,7 +32,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             </head>
             <body>
             <div class='instructions'>
-            <p>Welcome to PsychoPDA's Binary LogR Differential Functioning analysis. To get started:</p>
+            <p>Welcome to PsychoPDA's Binary LogR Differential Item Functioning analysis. To get started:</p>
             <ol>
             <li>Place items to be assessed for DIF in the 'Item(s) for analysis' slot.<br /><br /></li>
             <li>[<em>Optional</em>] Place the remaining measure items in the 'Anchor Items' slot. This is not needed if a Matching Variable is supplied.<br /><br /></li>
@@ -40,6 +40,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             <li>Place the grouping variable in the 'Grouping Variable' slot.</li>
             </ol>
             <p>If you encounter any errors, or have questions, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/DIF_index.html' target = '_blank'>documentation</a></p>
+            <p>This is the first release of the module and is subject to change until a peer-reviewed article documenting its use has been published. Anticipated final version release date is late 2019.</a></p>
             </div>
             </body>
             </html>")
