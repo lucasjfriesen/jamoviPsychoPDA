@@ -51,37 +51,24 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
           self$results$instructions$setVisible(visible = FALSE)
         }
 
+        # Set up data ----
         # The full DF
         data <- self$data
 
         # Data frame containing all items selected for analysis
-        Data <-
-          data.frame(jmvcore::toNumeric(data[, self$options$item]))
+        Data <- data[, self$options$item]
         colnames(Data) <- self$options$item
-        # for (i in 1:length(self$options$item)) {
-        #   if (!all(unique(Data[, i]) %in% c(0, 1, NA))) {
-        #     stop(
-        #       paste(
-        #         "One or more rows contains an invalid value in column: ",
-        #         colnames(Data)[i]
-        #       ),
-        #       ". (Item responses must be one of c(0,1,NA))",
-        #       call. = FALSE
-        #     )
-        #   }
-        # }
-        
+
         if (is.null(self$options$anchor)) {
           anchor <- NULL
         } else {
-          anchor <-
-            data.frame(jmvcore::toNumeric(data[, self$options$anchor]))
+          anchor <- data[, self$options$anchor]
           colnames(anchor) <- self$options$anchor
         }
         
+        # Set up matching variable ----
         # Vector containing matching data
-        match <-
-          data.frame(jmvcore::toNumeric(data[, self$options$matchVar]))
+        match <- data[, self$options$matchVar]
         if (length(match) == 0) {
           match <- "score"
         } else {
@@ -89,6 +76,7 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
           match <- unlist(match)
         }
         
+        # Set up grouping variable ----
         # Vector containing grouping data
         group <- as.character(data[, self$options$group])
         groupType_ <- self$options$groupType
@@ -182,8 +170,10 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         
         groupCheck <- table(group)
         if (length(names(groupCheck)[groupCheck== 1]) != 0){
-          stop(paste0("Only one row contains the group value(s) (", names(groupCheck)[groupCheck == 1],") . This row cannot be used in fitting a linear model. Either remove the row, or use the '2 Group' option."))
+          stop(paste0("Only one row contains the group value(s) (", names(groupCheck)[groupCheck == 1],"). A singular value cannot be used in fitting a linear model. Either remove the row, or use the '2 Group' option."))
         }
+        
+        # Remaining Variables ----
         
         type <- self$options$type
         
