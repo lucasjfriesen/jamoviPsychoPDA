@@ -381,9 +381,6 @@ TestROC <- function(
         delongTest = delongTest,
         positiveClass = positiveClass)
 
-    results <- TestROCResults$new(
-        options = options)
-
     analysis <- TestROCClass$new(
         options = options,
         data = data)

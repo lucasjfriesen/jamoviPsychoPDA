@@ -250,7 +250,7 @@ options:
           The maximal number of iterations in the item purification process. (default is 10)
 
     - name: pAdjustMethod
-      title: P-value adjustment method
+      title: P-value adjustment
       type: List
       options:
         - name: bonferroni
