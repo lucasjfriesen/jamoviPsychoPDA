@@ -20,10 +20,9 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             "<html>
             <head>
             <style>
-            
             div.instructions {
             width: 500px;
-            height: 225px;
+            height: 275px;
             display: flex;
             flex-wrap: wrap;
             align-content: center;
