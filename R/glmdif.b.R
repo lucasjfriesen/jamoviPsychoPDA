@@ -19,15 +19,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
           self$results$instructions$setContent(
             "<html>
             <head>
-            <style>
-            div.instructions {
-            width: 500px;
-            height: 275px;
-            display: flex;
-            flex-wrap: wrap;
-            align-content: center;
-            }
-            </style>
             </head>
             <body>
             <div class='instructions'>

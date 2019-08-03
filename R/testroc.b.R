@@ -28,20 +28,10 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           self$results$instructions$setContent(
             "<html>
             <head>
-            <style>
-
-            div.instructions {
-            width: 500px;
-            height: 225px;
-            display: flex;
-            flex-wrap: wrap;
-            align-content: center;
-            }
-            </style>
             </head>
             <body>
             <div class='instructions'>
-            <p><b>This analysis is still in development. Please report any errors or requests <a href='https://github.com/lucasjfriesen/jamoviPsychoPDA/issues' target = '_blank'>here</a></b></p>
+            <p><b>This analysis is still in developmen: The format of results may change in future releases. Please report any errors or requests <a href='https://github.com/lucasjfriesen/jamoviPsychoPDA/issues' target = '_blank'>here</a></b></p>
             <p>Welcome to PsychoPDA's Test ROC analysis To get started:</p>
             <ol>
             <li>Place the responses in the 'Dependent Variable' slot<br /><br /></li>
