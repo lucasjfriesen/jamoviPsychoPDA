@@ -225,7 +225,7 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$add(jmvcore::Array$new(
                 options=options,
                 name="resultsTable",
-                refs="thieleCutpoint",
+                refs="cutpointr",
                 title="Results Table",
                 visible=FALSE,
                 clearWith=list(
