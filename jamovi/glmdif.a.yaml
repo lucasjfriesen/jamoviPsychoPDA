@@ -90,8 +90,8 @@ options:
       - name: groupNonBin
         title: Discrete groups (n > 2)
       - name: cont
-        title: Continuous groups
-      description:
+        title: Continuous variable
+      description: 
         ui: >
           Either "discrete" (default) to specify that group membership is made of two (or more than two) groups, or "continuous" to indicate that group membership is based on a continuous criterion.
         R: >
@@ -250,7 +250,7 @@ options:
           The maximal number of iterations in the item purification process. (default is 10)
 
     - name: pAdjustMethod
-      title: P-value adjustment method
+      title: P-value adjustment
       type: List
       options:
         - name: bonferroni

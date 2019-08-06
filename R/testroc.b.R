@@ -28,20 +28,10 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           self$results$instructions$setContent(
             "<html>
             <head>
-            <style>
-
-            div.instructions {
-            width: 500px;
-            height: 225px;
-            display: flex;
-            flex-wrap: wrap;
-            align-content: center;
-            }
-            </style>
             </head>
             <body>
             <div class='instructions'>
-            <p><b>This analysis is still in development. Please report any errors or requests <a href='https://github.com/lucasjfriesen/jamoviPsychoPDA/issues' target = '_blank'>here</a></b></p>
+            <p><b>This analysis is still in developmen: The format of results may change in future releases. Please report any errors or requests <a href='https://github.com/lucasjfriesen/jamoviPsychoPDA/issues' target = '_blank'>here</a></b></p>
             <p>Welcome to PsychoPDA's Test ROC analysis To get started:</p>
             <ol>
             <li>Place the responses in the 'Dependent Variable' slot<br /><br /></li>
@@ -130,10 +120,10 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           )
           self$results$procedureNotes$setContent(procedureNotes)
         }
-        
+
         # Var handling ----
         data = self$data
-        
+
         if (self$options$method == "oc_manual") {
           method = "cutpointr::oc_manual"
           method = eval(parse(text = method))
@@ -146,7 +136,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           method = paste0("cutpointr::", self$options$method)
           score = NULL
         }
-        
+
         if (method %in% c(
           "cutpointr::maximize_metric",
           "cutpointr::minimize_metric",
@@ -159,25 +149,25 @@ TestROCClass <- if (requireNamespace('jmvcore'))
         } else {
           tol_metric = NULL
         }
-        
+
         method = eval(parse(text = method))
-        
+
         metric = paste0("cutpointr::", self$options$metric)
-        
+
         metric = eval(parse(text = metric))
-        
+
         direction = self$options$direction
         boot_runs = self$options$boot_runs
         # use_midpoints = self$options$use_midpoint
         break_ties = self$options$break_ties
         break_ties = eval(parse(text = break_ties))
-        
+
         boot_runs = self$options$boot_runs
-        
+
         # Data ----
-        
+
         vars <- self$options$dependentVars
-        
+
         if (!is.null(self$options$subGroup)) {
           subGroup = data[, self$options$subGroup]
           classVar = data[, self$options$classVar]
@@ -187,16 +177,16 @@ TestROCClass <- if (requireNamespace('jmvcore'))
         } else {
           subGroup = NULL
         }
-        
+
         aucList = list()
-        
+
         for (var in vars) {
           if (!var %in% self$results$resultsTable$itemKeys) {
             self$results$sensSpecTable$addItem(key = var)
             self$results$resultsTable$addItem(key = var)
             self$results$plotROC$addItem(key = var)
           }
-          
+
           if (is.null(subGroup)) {
             dependentVar = as.numeric(data[, var])
             classVar = as.numeric(data[, self$options$classVar])
@@ -206,8 +196,8 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             classVar = as.numeric(data[subGroup == strsplit(var, split = "_")[[1]][2],
                                        self$options$classVar])
           }
-          
-          
+
+
           # Caclulations ----
           results = cutpointr::cutpointr(
             x = dependentVar,
@@ -224,19 +214,19 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             break_ties = break_ties,
             na.rm = TRUE
           )
-          
+
           # self$results$debug$setContent(results)
-          
+
           if (!self$options$allObserved) {
             resultsToDisplay <- sort(unlist(results$optimal_cutpoint))
           } else {
             resultsToDisplay <- sort(unlist(unique(dependentVar)))
           }
           # Confusion matrix ----
-          
+
           confusionMatrix <-
             confusionMatrixForTable <- results$roc_curve[[1]]
-          
+
           if (!self$options$allObserved) {
             confusionMatrixForTable = confusionMatrixForTable[confusionMatrixForTable$x.sorted %in% resultsToDisplay,]
           }
@@ -259,9 +249,9 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             sensTable$setContent(sensSpecRes)
             sensTable$setVisible(TRUE)
           }
-          
+
           # Results columns ----
-          
+
           sensList <-
             (
               cutpointr::sensitivity(
@@ -271,7 +261,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
                 fn = confusionMatrix$fn
               ) * 100
             )
-          
+
           specList <-
             (
               cutpointr::specificity(
@@ -281,7 +271,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
                 fn = confusionMatrix$fn
               ) * 100
             )
-          
+
           ppvList <- (
             cutpointr::ppv(
               tp = confusionMatrix$tp,
@@ -290,7 +280,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
               fn = confusionMatrix$fn
             ) * 100
           )
-          
+
           npvList <- (
             cutpointr::npv(
               tp = confusionMatrix$tp,
@@ -299,7 +289,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
               fn = confusionMatrix$fn
             ) * 100
           )
-          
+
           youdenList <-
             cutpointr::youden(
               tp = confusionMatrix$tp,
@@ -307,7 +297,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
               tn = confusionMatrix$tn,
               fn = confusionMatrix$fn
             )
-          
+
           metricList <-
             metric(
               tp = confusionMatrix$tp,
@@ -315,7 +305,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
               tn = confusionMatrix$tn,
               fn = confusionMatrix$fn
             )
-          
+
           resultsToReturn <- data.frame(
             #scaleName = rep(var, times = length(sensList)),
             cutpoint = as.character(confusionMatrix$x.sorted),
@@ -328,7 +318,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             metricValue = unname(metricList),
             stringsAsFactors = FALSE # FUCK
           )
-          
+
           aucList[[var]] = results$AUC
 
           # State Savers ----
@@ -345,9 +335,9 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             }
             self$results$DIFtable$setState(resultState)
           }
-          
+
           # Plotting Data ----
-          if (self$options$plotROC) {
+          if (self$options$plotROC & class(results == "cutpointr")) {
             image <- self$results$plotROC$get(key = var)
             image$setTitle(paste0("ROC Curve: ", var))
             image$setState(
@@ -365,7 +355,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             )
           }
         }
-        
+
         # DeLong Test ----
 
         if (self$options$delongTest == TRUE) {
@@ -376,11 +366,11 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             pos_class = 1,
             conf.level = 0.95
           )
-          
+
           self$results$delongTest$setContent(paste0(capture.output(print.DeLong(delongResults))))
         }
-        
-        
+
+
       },
       .plotROC = function(image, ggtheme, theme, ...) {
         if ((is.null(self$options$classVar) ||
@@ -389,7 +379,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           return()
         }
         plotData <- data.frame(image$state)
-        
+
         plot <-
           ggplot2::ggplot(plotData, ggplot2::aes(x = 1 - specificity, y = sensitivity)) +
           ggplot2::geom_point() +

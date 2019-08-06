@@ -133,7 +133,7 @@ options:
       default: 0.05
 
     - name: direction
-      title: Direction (relative to optimal cutpoint)
+      title: Direction
       type: List
       options:
         - name: ">="

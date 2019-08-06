@@ -129,25 +129,22 @@ children:
         margin: large
         children:
           - type: Label
-            label: Analysis
+            label: Analysis | Computationally Instensive
             fitToGrid: true
             cell:
               column: 0
               row: 0
             children:
-              - type: Label
-                label: N.B. | Computationally Instensive
-                children:
-                  - type: CheckBox
-                    name: designAnalysis
-                  - type: ComboBox
-                    name: designAnalysisEffectType
-                  - type: TextBox
-                    name: D
-                    format: string
-                  - type: TextBox
-                    name: bootSims
-                    format: number
+                - type: CheckBox
+                  name: designAnalysis
+                - type: ComboBox
+                  name: designAnalysisEffectType
+                - type: TextBox
+                  name: D
+                  format: string
+                - type: TextBox
+                  name: bootSims
+                  format: number
 
           - type: Label
             label: Advanced
