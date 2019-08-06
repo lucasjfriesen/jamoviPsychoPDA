@@ -19,6 +19,18 @@ items:
       title: Results Table
       type: Array
       visible: false
+      clearWith:
+        - dependentVars
+        - classVar
+        - subGroup
+        - method
+        - allObserved
+        - specifyCutScore
+        - metric
+        - boot_runs
+        - break_ties
+        - tol_metric
+        - direction
       template:
         type: Table
         rows: 0
@@ -55,6 +67,18 @@ items:
       title: DeLong Test of Difference between AUCs
       type: Preformatted
       visible: (delongTest)
+      clearWith:
+        - dependentVars
+        - classVar
+        - subGroup
+        - method
+        - allObserved
+        - specifyCutScore
+        - metric
+        - boot_runs
+        - break_ties
+        - tol_metric
+        - direction
 
     - name: plotROC
       type: Array
@@ -71,6 +95,18 @@ items:
       title: Sensitivity & Specificity
       type: Array
       visible: False
+      clearWith:
+        - dependentVars
+        - classVar
+        - subGroup
+        - method
+        - allObserved
+        - specifyCutScore
+        - metric
+        - boot_runs
+        - break_ties
+        - tol_metric
+        - direction
       template:
         type: Html
 

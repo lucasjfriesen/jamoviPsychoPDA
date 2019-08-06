@@ -12,15 +12,27 @@ options:
     - name: dependentVars
       title: Dependent Variable
       type: Variables
+      suggested:
+        - continuous
+      permitted:
+        - numeric
 
     - name: classVar
       title: Class Variable
       type: Variable
+      suggested:
+        - nominal
+      permitted:
+        - factor
 
     - name: subGroup
       title: Group Variable
       type: Variable
-
+      suggested:
+        - nominal
+      permitted:
+        - factor
+        
     - name: method
       title: Method
       type: List

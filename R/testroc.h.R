@@ -32,13 +32,25 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
 
             private$..dependentVars <- jmvcore::OptionVariables$new(
                 "dependentVars",
-                dependentVars)
+                dependentVars,
+                suggested=list(
+                    "continuous"),
+                permitted=list(
+                    "numeric"))
             private$..classVar <- jmvcore::OptionVariable$new(
                 "classVar",
-                classVar)
+                classVar,
+                suggested=list(
+                    "nominal"),
+                permitted=list(
+                    "factor"))
             private$..subGroup <- jmvcore::OptionVariable$new(
                 "subGroup",
-                subGroup)
+                subGroup,
+                suggested=list(
+                    "nominal"),
+                permitted=list(
+                    "factor"))
             private$..method <- jmvcore::OptionList$new(
                 "method",
                 method,
@@ -216,6 +228,18 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 refs="thieleCutpoint",
                 title="Results Table",
                 visible=FALSE,
+                clearWith=list(
+                    "dependentVars",
+                    "classVar",
+                    "subGroup",
+                    "method",
+                    "allObserved",
+                    "specifyCutScore",
+                    "metric",
+                    "boot_runs",
+                    "break_ties",
+                    "tol_metric",
+                    "direction"),
                 template=jmvcore::Table$new(
                     options=options,
                     rows=0,
@@ -256,7 +280,19 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="delongTest",
                 title="DeLong Test of Difference between AUCs",
-                visible="(delongTest)"))
+                visible="(delongTest)",
+                clearWith=list(
+                    "dependentVars",
+                    "classVar",
+                    "subGroup",
+                    "method",
+                    "allObserved",
+                    "specifyCutScore",
+                    "metric",
+                    "boot_runs",
+                    "break_ties",
+                    "tol_metric",
+                    "direction")))
             self$add(jmvcore::Array$new(
                 options=options,
                 name="plotROC",
@@ -273,6 +309,18 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 name="sensSpecTable",
                 title="Sensitivity & Specificity",
                 visible=FALSE,
+                clearWith=list(
+                    "dependentVars",
+                    "classVar",
+                    "subGroup",
+                    "method",
+                    "allObserved",
+                    "specifyCutScore",
+                    "metric",
+                    "boot_runs",
+                    "break_ties",
+                    "tol_metric",
+                    "direction"),
                 template=jmvcore::Html$new(
                     options=options)))}))
 
@@ -361,6 +409,8 @@ TestROC <- function(
             `if`( ! missing(classVar), classVar, NULL),
             `if`( ! missing(subGroup), subGroup, NULL))
 
+    for (v in classVar) if (v %in% names(data)) data[[v]] <- as.factor(data[[v]])
+    for (v in subGroup) if (v %in% names(data)) data[[v]] <- as.factor(data[[v]])
 
     options <- TestROCOptions$new(
         dependentVars = dependentVars,

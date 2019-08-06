@@ -29,7 +29,7 @@ children:
             maxItemCount: 1
             isTarget: true
   - type: LayoutBox
-    margin: large
+    margin: normal
     children:
       - type: CheckBox
         name: allObserved
@@ -38,7 +38,7 @@ children:
         format: string
   - type: CollapseBox
     label: Visualization
-    margin: small
+    margin: normal
     collapsed: true
     children:
       - type: LayoutBox
@@ -54,7 +54,7 @@ children:
             name: sensSpecTable
   - type: CollapseBox
     label: Advanced
-    margin: small
+    margin: normal
     collapsed: true
     children:
       - type: CheckBox

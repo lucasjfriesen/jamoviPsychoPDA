@@ -330,14 +330,20 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           )
           
           aucList[[var]] = results$AUC
-          
-          
-          
+
+          # State Savers ----
           # Results table ----
-          table <- self$results$resultsTable$get(key = var)
-          for (row in resultsToDisplay) {
-            table$setTitle(paste0("Scale: ", var))
-            table$addRow(rowKey = row, value = resultsToReturn[resultsToReturn$cutpoint == row,])
+          resultState <- self$results$resultsTable$state
+          if (!is.null(DIFstate)) {
+            # ... populate the table from the state
+          } else {
+            # ... create the table and the state
+            table <- self$results$resultsTable$get(key = var)
+            for (row in resultsToDisplay) {
+              table$setTitle(paste0("Scale: ", var))
+              table$addRow(rowKey = row, value = resultsToReturn[resultsToReturn$cutpoint == row,])
+            }
+            self$results$DIFtable$setState(resultState)
           }
           
           # Plotting Data ----

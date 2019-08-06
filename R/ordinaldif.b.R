@@ -538,19 +538,6 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                 )
               }
             }
-            
-            # Highlight DIF results table
-            # if (self$options$difFlagScale == "zt") {
-            #   if (model$adjusted.p[i] <= alpha) {
-            #     highlight(table, i, "ZT")
-            #     highlight(table, i, "item")
-            #   }
-            # } else {
-            #   if (model$adjusted.p[i] <= alpha) {
-            #     highlight(table, i, "JG")
-            #     highlight(table, i, "item")
-            #   }
-            # }
           }
           
           df <-
