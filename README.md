@@ -11,7 +11,7 @@ The current tools available are:
 - *Test ROC* (Measure Diagnostics)
     The TestROC module provides an interface to the cutpointR R-package. This module enables researchers in psychosocial validation work to assess the optimal cutpoints of measures. _Additional info to come_
 
-In testing:
+In testing/development:
 - Ordinal logistic regression for DIF
 
 - Design analysis for:
@@ -25,7 +25,9 @@ In testing:
 
 # Installation
 
-Currently only available from source.
+You will first need to download [jamovi](https://www.jamovi.org/download.html). 
+
+Select the jamovi modules library and install PPDA from there
 
 ## From source
 
