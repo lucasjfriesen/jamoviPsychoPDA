@@ -614,6 +614,9 @@ ordinaldif <- function(
         pAdjustMethod = pAdjustMethod,
         plotVarsICC = plotVarsICC)
 
+    results <- ordinaldifResults$new(
+        options = options)
+
     analysis <- ordinaldifClass$new(
         options = options,
         data = data)

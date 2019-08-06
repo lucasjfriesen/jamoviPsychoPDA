@@ -31,7 +31,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             </head>
             <body>
             <div class='instructions'>
-            <p><b>This analysis is still in developmen: The format of results may change in future releases. Please report any errors or requests <a href='https://github.com/lucasjfriesen/jamoviPsychoPDA/issues' target = '_blank'>here</a></b></p>
+            <p><b>This analysis is still in development: The format of results may change in future releases. Please report any errors or requests <a href='https://github.com/lucasjfriesen/jamoviPsychoPDA/issues' target = '_blank'>here</a></b></p>
             <p>Welcome to PsychoPDA's Test ROC analysis To get started:</p>
             <ol>
             <li>Place the responses in the 'Dependent Variable' slot<br /><br /></li>
@@ -324,7 +324,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           # State Savers ----
           # Results table ----
           resultState <- self$results$resultsTable$state
-          if (!is.null(DIFstate)) {
+          if (!is.null(resultState)) {
             # ... populate the table from the state
           } else {
             # ... create the table and the state
@@ -376,8 +376,13 @@ TestROCClass <- if (requireNamespace('jmvcore'))
         if ((is.null(self$options$classVar) ||
              is.null(self$options$dependentVars)) &
             self$options$plotROC == TRUE) {
-          return()
+          return(FALSE)
         }
+        
+        if (is.null(image$state)){
+          return(FALSE)
+        }
+        
         plotData <- data.frame(image$state)
 
         plot <-
@@ -398,7 +403,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
               ggplot2::geom_smooth(se = FALSE)
           }
         }
-        print(plot)
+
         TRUE
       }
     )

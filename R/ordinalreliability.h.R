@@ -273,6 +273,9 @@ ordinalReliability <- function(
         guttmanTable = guttmanTable,
         polyTable = polyTable)
 
+    results <- ordinalReliabilityResults$new(
+        options = options)
+
     analysis <- ordinalReliabilityClass$new(
         options = options,
         data = data)

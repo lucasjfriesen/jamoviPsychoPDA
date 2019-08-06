@@ -237,7 +237,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
                 highlight(table, item, 5)
                 table$setNote(
                   "interpretGC",
-                  "Several items (flagged red) have observed effect sizes below the hypothesized true effect. For a guide to interpretation see: https://bit.ly/2I274JY"
+                  "Several items (flagged red) have observed effect sizes smaller the hypothesized true effect. In these cases the Type-M error is a ratio and should be interpretted with caution."
                 )
               }
             }
@@ -701,6 +701,10 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             ),
             call. = FALSE
           )
+        }
+        
+        if (is.null(imageICC$state)){
+          return(FALSE)
         }
         
         p <- ggplot(data = as.data.frame(plotData),

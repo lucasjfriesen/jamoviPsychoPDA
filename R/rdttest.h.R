@@ -297,6 +297,9 @@ rdTTest <- function(
         sensSE = sensSE,
         HTEViz = HTEViz)
 
+    results <- rdTTestResults$new(
+        options = options)
+
     analysis <- rdTTestClass$new(
         options = options,
         data = data)
