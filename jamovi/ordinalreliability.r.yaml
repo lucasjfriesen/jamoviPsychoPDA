@@ -4,9 +4,8 @@ title: Ordinal Reliability
 jrs:   '1.1'
 
 items:
-    #- name:  text
-    #  title: Ordinal Reliability
-    #  type:  Preformatted
+    - name:  debug
+      type:  Preformatted
 
     - name: instructions
       type: Html
@@ -91,8 +90,16 @@ items:
           title: ordinalTheta
           type: number
 
-    - name: polychoricRho
-      title: polychoricRho
-      type: Preformatted
+    - name: polychoricTable
+      title: Polychoric Matrix
+      type: Table
       visible: (polyTable)
+      rows: (items)
+      swapRowsColumns: FALSE
+      columns:
+        - name: bob
+          title: ""
+          content: ($key)
+          type: number
+
 ...

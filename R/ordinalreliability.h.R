@@ -76,12 +76,13 @@ ordinalReliabilityOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
 ordinalReliabilityResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
+        debug = function() private$.items[["debug"]],
         instructions = function() private$.items[["instructions"]],
         summaryTableAlpha = function() private$.items[["summaryTableAlpha"]],
         summaryTableGuttman = function() private$.items[["summaryTableGuttman"]],
         summaryTableOmega = function() private$.items[["summaryTableOmega"]],
         summaryTableTheta = function() private$.items[["summaryTableTheta"]],
-        polychoricRho = function() private$.items[["polychoricRho"]]),
+        polychoricTable = function() private$.items[["polychoricTable"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -89,6 +90,9 @@ ordinalReliabilityResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="Ordinal Reliability")
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="debug"))
             self$add(jmvcore::Html$new(
                 options=options,
                 name="instructions",
@@ -189,11 +193,19 @@ ordinalReliabilityResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `name`="ordinalTheta", 
                         `title`="ordinalTheta", 
                         `type`="number"))))
-            self$add(jmvcore::Preformatted$new(
+            self$add(jmvcore::Table$new(
                 options=options,
-                name="polychoricRho",
-                title="polychoricRho",
-                visible="(polyTable)"))}))
+                name="polychoricTable",
+                title="Polychoric Matrix",
+                visible="(polyTable)",
+                rows="(items)",
+                swapRowsColumns=FALSE,
+                columns=list(
+                    list(
+                        `name`="bob", 
+                        `title`="", 
+                        `content`="($key)", 
+                        `type`="number"))))}))
 
 ordinalReliabilityBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     "ordinalReliabilityBase",
@@ -227,12 +239,13 @@ ordinalReliabilityBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param polyTable .
 #' @return A results object containing:
 #' \tabular{llllll}{
+#'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$summaryTableAlpha} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$summaryTableGuttman} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$summaryTableOmega} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$summaryTableTheta} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$polychoricRho} \tab \tab \tab \tab \tab a preformatted \cr
+#'   \code{results$polychoricTable} \tab \tab \tab \tab \tab a table \cr
 #' }
 #'
 #' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
