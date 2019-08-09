@@ -90,9 +90,10 @@ ordinalReliabilityResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="Ordinal Reliability")
-            self$add(jmvcore::Preformatted$new(
+            self$add(jmvcore::Html$new(
                 options=options,
-                name="debug"))
+                name="debug",
+                title="bugger"))
             self$add(jmvcore::Html$new(
                 options=options,
                 name="instructions",
@@ -239,7 +240,7 @@ ordinalReliabilityBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param polyTable .
 #' @return A results object containing:
 #' \tabular{llllll}{
-#'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
+#'   \code{results$debug} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$summaryTableAlpha} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$summaryTableGuttman} \tab \tab \tab \tab \tab a table \cr

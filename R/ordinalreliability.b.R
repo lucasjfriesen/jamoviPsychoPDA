@@ -76,10 +76,7 @@ ordinalReliabilityClass <-
                         }
                         ordinalGuttman <-
                             psych::splitHalf(polychoricRho)
-                        
-                        polychoricRho[upper.tri(polychoricRho)] <-
-                            NA
-                        
+                    
                         return(
                             list(
                                 "ordinalAlpha" = ordinalAlpha,
@@ -92,7 +89,6 @@ ordinalReliabilityClass <-
                     }
                     
                     rhos <- ordinalRhos(items)
-                    self$results$debug$setContent(rhos)
                     
                     self$results$summaryTableAlpha$setRow(
                         rowNo = 1,
@@ -134,15 +130,18 @@ ordinalReliabilityClass <-
                     
                     
                     if (length(self$options$items) <= 20) {
-                        for (column in unique(self$options$items)) {
-                            self$results$polychoricTable$addColumn(name = column,
+                        for (column in 1:length(self$options$items)) {
+                            self$results$polychoricTable$addColumn(name = self$options$items[column],
                                                                    type = "number")
                         }
                         polyFrame <- as.data.frame(rhos$polychoricRho)
-                        for (column in 1:length(unique(self$options$items))) {
-                            self$results$polychoricTable$setRow(rowNo = column,
-                                                                values = as.list(polyFrame[column,]))
-                        }
+                        for (col in 1:NCOL(polyFrame)) {
+                          for (row in 1:NROW(polyFrame)){
+                            self$results$polychoricTable$setCell(rowNo = row,
+                                                                 col = 1 + col,
+                                                                 value = polyFrame[row, col]
+                                                                )
+                        }}
                     } else {
                         warning("Too many items to print the correlation matrix (n > 20).")
                     }

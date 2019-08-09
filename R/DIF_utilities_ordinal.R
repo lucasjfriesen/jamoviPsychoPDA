@@ -145,9 +145,7 @@ ordinalLogistik <-
                 MASS::polr(ITEM ~ SCORES * GROUP, Hess = TRUE)
             
             uniformBetaChange <- list(matchingVar = round(abs((
-                uniformModel$coefficients[[1]] -
-                    baselineModel$coefficients[[1]]
-            ) / baselineModel$coefficients[[1]]
+                uniformModel$coefficients[[1]] - baselineModel$coefficients[[1]]) / baselineModel$coefficients[[1]]
             ), 4))
             
             bothBetaChange <-

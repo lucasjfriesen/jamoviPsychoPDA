@@ -261,7 +261,7 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         # Model ----
         model <-
           ordinal.logistic(
-            DATA = Data,
+            items = Data,
             group = group,
             groupOne = groupOne,
             anchor = anchor,
@@ -348,13 +348,7 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             paste0(
               "Detection of",
               mess1,
-              "Differential Item Functioning using the "
-              ,
-              switch(
-                class(model),
-                polr = "ordinal logistic regression method ",
-                genLogistic = "Generalized logistic regression method "
-              ),
+              "Differential Item Functioning using the ordinal logistic regression method ",
               pur,
               "item purification and with ",
               # length(model$groupOne),

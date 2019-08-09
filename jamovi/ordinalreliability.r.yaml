@@ -4,9 +4,6 @@ title: Ordinal Reliability
 jrs:   '1.1'
 
 items:
-    - name:  debug
-      type:  Preformatted
-
     - name: instructions
       type: Html
       visible: True
