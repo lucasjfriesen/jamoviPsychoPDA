@@ -57,7 +57,7 @@ analyses:
     ns: psychoPDA
     menuGroup: PPDA
     menuTitle: Ordinal LogR
-    hidden: true
+    hidden: false
     menuSubgroup: Differential Item Functioning
 datasets:
   - name: Binary LogR

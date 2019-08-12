@@ -91,7 +91,6 @@ ordinalLogistik <-
               pAdjustMethod,
               alpha,
               betaChangeThreshold = 0.10) {
-        
         itemRes <- list(
             models = list(),
             betaChange = list(),
@@ -145,7 +144,8 @@ ordinalLogistik <-
                 MASS::polr(ITEM ~ SCORES * GROUP, Hess = TRUE)
             
             uniformBetaChange <- list(matchingVar = round(abs((
-                uniformModel$coefficients[[1]] - baselineModel$coefficients[[1]]) / baselineModel$coefficients[[1]]
+                uniformModel$coefficients[[1]] - baselineModel$coefficients[[1]]
+            ) / baselineModel$coefficients[[1]]
             ), 4))
             
             bothBetaChange <-
@@ -212,16 +212,16 @@ ordinalLogistik <-
                 bothBetaChange = bothBetaChange >= betaChangeThreshold
             )
             
-            # p-Adjust
-            if (!is.null(pAdjustMethod)) {
-                RES$adjusted.p <-
-                    p.adjust(modelResults$likelihoodRatioPValue, method = pAdjustMethod)
-                if (min(RES$adjusted.p, na.rm = TRUE) > alpha) {
-                    RES$DIFitems <- "No DIF item detected"
-                } else {
-                    RES$DIFitems <- which(RES$adjusted.p < alpha)
-                }
-            }
+            # # p-Adjust
+            # if (!is.null(pAdjustMethod)) {
+            #     itemRes$adjusted.p <-
+            #         p.adjust(itemRes$likelihoodRatioPValue, method = pAdjustMethod)
+            #     if (min(itemRes$adjusted.p, na.rm = TRUE) > alpha) {
+            #         itemRes$DIFitems <- "No DIF item detected"
+            #     } else {
+            #         itemRes$DIFitems <- which(RES$adjusted.p < alpha)
+            #     }
+            # }
             
             itemRes$ZT[[item]] = as.character(symnum(
                 unlist(deltaR2),
