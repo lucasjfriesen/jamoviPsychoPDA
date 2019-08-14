@@ -4,9 +4,14 @@ title: Ordinal LogR
 jrs:   '1.1'
 
 items:
-    #- name: debug
-    #  title: debug
-    #  type: Preformatted
+  
+    - name: debug
+      title: debug
+      type: Preformatted
+
+    - name: twat
+      title: deb twat
+      type: Html
 
     - name: instructions
       title: Instructions
@@ -47,7 +52,7 @@ items:
       title: Differential Item Functioning Analysis - Ordinal Logistic Regresion
       type: Table
       visible: false
-      rows:  (item)
+      rows: 0
       clearWith:
           - item
           - group
@@ -69,6 +74,25 @@ items:
           title: Item
           type: text
 
+        - name: model
+          title: Model
+          type: text
+
+        - name: deltaBeta
+          title: "\u0394 Beta"
+          type: number
+
+        - name: effSize
+          title: "\u0394 R\u00B2"
+          type: number
+          format: zto
+          visible: (nagEff)
+
+        - name: deltaBetaFlag
+          title: "\u0394 Beta Flag"
+          type: text
+          visible: (deltaBetaFlag)
+
         - name: ZT
           refs: zumboThomas
           title: Zumbo-Thomas
@@ -80,10 +104,6 @@ items:
           type: text
           visible: (difFlagScale:jg)
 
-        #- name: difType
-        #  title: Result
-        #  type: text
-
         - name: p
           title: P-value
           type: number
@@ -92,12 +112,6 @@ items:
         - name: chiSquare
           title: "\u03A7\u00B2 Stat."
           type: number
-
-        - name: effSize
-          title: "\u0394 R\u00B2"
-          type: number
-          format: zto
-          visible: (nagEff)
 
     - name: coefficientsTable
       title: "Ordinal Logistic Regression Coefficients"

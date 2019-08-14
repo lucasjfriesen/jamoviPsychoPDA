@@ -91,7 +91,6 @@ ordinalLogistik <-
               pAdjustMethod,
               alpha,
               betaChangeThreshold = 0.10) {
-        
         itemRes <- list(
             models = list(),
             betaChange = list(),
@@ -145,8 +144,7 @@ ordinalLogistik <-
                 MASS::polr(ITEM ~ SCORES * GROUP, Hess = TRUE)
             
             uniformBetaChange <- list(matchingVar = round(abs((
-                uniformModel$coefficients[[1]] -
-                    baselineModel$coefficients[[1]]
+                uniformModel$coefficients[[1]] - baselineModel$coefficients[[1]]
             ) / baselineModel$coefficients[[1]]
             ), 4))
             
@@ -214,16 +212,16 @@ ordinalLogistik <-
                 bothBetaChange = bothBetaChange >= betaChangeThreshold
             )
             
-            # p-Adjust
-            if (!is.null(pAdjustMethod)) {
-                RES$adjusted.p <-
-                    p.adjust(modelResults$likelihoodRatioPValue, method = pAdjustMethod)
-                if (min(RES$adjusted.p, na.rm = TRUE) > alpha) {
-                    RES$DIFitems <- "No DIF item detected"
-                } else {
-                    RES$DIFitems <- which(RES$adjusted.p < alpha)
-                }
-            }
+            # # p-Adjust
+            # if (!is.null(pAdjustMethod)) {
+            #     itemRes$adjusted.p <-
+            #         p.adjust(itemRes$likelihoodRatioPValue, method = pAdjustMethod)
+            #     if (min(itemRes$adjusted.p, na.rm = TRUE) > alpha) {
+            #         itemRes$DIFitems <- "No DIF item detected"
+            #     } else {
+            #         itemRes$DIFitems <- which(RES$adjusted.p < alpha)
+            #     }
+            # }
             
             itemRes$ZT[[item]] = as.character(symnum(
                 unlist(deltaR2),
@@ -231,6 +229,7 @@ ordinalLogistik <-
                 symbols = c("A", "B", "C"),
                 legend = FALSE
             ))
+            names(itemRes$ZT[[item]]) <- c("baseline", "uniform", "both")
             
             itemRes$JG[[item]] = as.character(symnum(
                 unlist(deltaR2),
@@ -238,6 +237,7 @@ ordinalLogistik <-
                 symbols = c("A", "B", "C"),
                 legend = FALSE
             ))
+            names(itemRes$JG[[item]]) <- c("baseline", "uniform", "both")
             
             itemRes$models[[item]] = list(
                 nullModel = nullModel,
@@ -264,3 +264,81 @@ ordinalLogistik <-
         itemRes <- lapply(itemRes, setNames, c(names(data)))
         return(itemRes)
     }
+
+difResultsFormatter <- function(model){
+    table <- data.frame(
+            item = NA,
+            model = NA,
+            logOdds_matchingVar = NA,
+            logOdds_groupingVar = NA,
+            deltaBeta_matchingVar = NA,
+            deltaBeta_groupingVar = NA,
+            deltaOR_matchingVar = NA,
+            deltaOR_groupingVar = NA,
+            deltanagR2 = NA,
+            chiSquare = NA,
+            p = NA,
+            deltaBetaFlag_matchingVar =  NA,
+            deltaBetaFlag_groupingVar =  NA,
+            ZT = NA,
+            JG = NA)
+    
+    models <- c("uniform", "both")
+    
+    for (model_ in models) {
+      for (item in model$names) {
+          row <- list(
+            item = item,
+            model = model_,
+            logOdds_matchingVar = ,
+            logOdds_groupingVar,
+            deltaBeta_matchingVar = model$betaChange[[item]][[paste0(model_, "BetaChange")]][["matchingVar"]],
+            deltaBeta_groupingVar = ifelse(length(model$betaChange[[item]][[paste0(model_, "BetaChange")]]) == 2,
+                                           model$betaChange[[item]][[paste0(model_, "BetaChange")]][["groupingVar"]],
+                                           NA),
+            
+            deltaNagR2 = model$deltaR2[[item]][[model_]],
+            chiSquare = model$chiSquared[[item]][[model_]],
+            p = model$pValue[[item]][[model_]],
+            deltaBetaFlag_matchingVar = model$flags[[item]][[paste0(model_, "BetaChange")]][["matchingVar"]],
+            deltaBetaFlag_groupingVar = ifelse(length(model$flags[[item]][[paste0(model_, "BetaChange")]]) == 2,
+                                               model$flags[[item]][[paste0(model_, "BetaChange")]][["groupingVar"]],
+                                               NA),
+            ZT = model$ZT[[item]][[model_]],
+            JG = model$JG[[item]][[model_]]
+          )
+          if (is.na(table[1,1])){
+            table[1,] <- row
+          } else {
+            table <- rbind(table, row)
+          }
+      }
+    }
+    
+    table <- table %>% 
+        arrange(item)
+    return(table)
+}
+
+
+plotData <- rbind(
+    data.frame(
+        match = seq(1:40),
+        gender = rep(1, times = 40),
+        key = tidyr::gather(as.data.frame(
+            predict(x, newdata = data.frame(GROUP = 1, SCORES = 1:40), type = "p")
+        ), key = "key", value = "probability")
+    ),
+    data.frame(
+        match = seq(1:40),
+        gender = rep(0, times = 40),
+        key = tidyr::gather(as.data.frame(
+            predict(x, newdata = data.frame(GROUP = 0, SCORES = 1:40), type = "p")
+        ), key = "key", value = "probability")
+    )
+)
+
+ggplot(plotData) +
+    geom_line(aes(x = match, y = key.probability, linetype = as.factor(gender), colour = key.key), size = 1) +
+    xlab("Theta") +
+    ylab("Probability of Endorsement")

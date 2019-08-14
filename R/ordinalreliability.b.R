@@ -1,18 +1,22 @@
 
+
+
+
 # This file is a generated template, your changes will not be overwritten
 
-ordinalReliabilityClass <- if (requireNamespace('jmvcore')) R6::R6Class(
-    "ordinalReliabilityClass",
-    inherit = ordinalReliabilityBase,
-    private = list(
-        .run = function() {
-          
-            if (is.null(self$options$items)){
-                self$results$instructions$setContent(
-                    "<html>
+ordinalReliabilityClass <-
+    if (requireNamespace('jmvcore'))
+        R6::R6Class(
+            "ordinalReliabilityClass",
+            inherit = ordinalReliabilityBase,
+            private = list(
+                .run = function() {
+                    if (is.null(self$options$items)) {
+                        self$results$instructions$setContent(
+                            "<html>
                     <head>
                     <style>
-                    
+
                     div.instructions {
                     width: 500px;
                     height: 225px;
@@ -34,75 +38,114 @@ ordinalReliabilityClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                     </div>
                     </body>
                     </html>"
-                  )
-          return()
-        } else {
-          self$results$instructions$setVisible(visible = FALSE)
-        }
-            
-          data = self$data
-          
-          items = data[, self$options$items]
-          groups = data[, self$options$groups]
-          
-          ordinalRhos <- function(data){
-            polychoricRho <- psych::polychoric(data)$rho
-            ordinalAlpha <- psych::alpha(polychoricRho)
-            ordinalOmega <- psych::omega(polychoricRho, plot = FALSE)
-            ordinalGuttman <- psych::splitHalf(polychoricRho)
-            
-            # Theta coefficient
-            # theta = [p/(p-1)]*[1-(1/theta[1])]
-            # Zumbo et al 2007
-            
-            numFactors <- dim(ordinalOmega$schmid$sl)[2] - 3
-            eigenValues <- diag(t(ordinalOmega$schmid$sl[, 1:numFactors]) %*% ordinalOmega$schmid$sl[, 1:numFactors])
-            ordinalTheta <- data.frame(ordinalTheta = (ncol(data)/(ncol(data)-1)) * (1-(1/max(eigenValues))))
-            
-            polychoricRho[upper.tri(polychoricRho)] <- NA
-            
-            return(list("ordinalAlpha" = ordinalAlpha,
-                        "ordinalOmega" = ordinalOmega,
-                        "ordinalGuttman" = ordinalGuttman,
-                        "ordinalTheta" = ordinalTheta,
-                        "polychoricRho" = polychoricRho
-                        ))
-          }
-          
-          rhos <- ordinalRhos(items)
-          
-          # self$results$text$setContent
-          
-          self$results$summaryTableAlpha$setRow(rowNo = 1, value = list(
-            raw_alpha = rhos$ordinalAlpha$total$raw_alpha,
-            std.alpha = rhos$ordinalAlpha$total$std.alpha,
-            G6 = rhos$ordinalAlpha$total$`G6(smc)`,
-            average_r = rhos$ordinalAlpha$total$average_r,
-            SN = rhos$ordinalAlpha$total$`S/N`,
-            median_r = rhos$ordinalAlpha$total$median_r
-          ))
-          
-          self$results$summaryTableGuttman$setRow(rowNo = 1, value = list(
-              maxSHR = rhos$ordinalGuttman$maxrb,
-              guttmanL6 = rhos$ordinalGuttman$lambda6,
-              avgSHR = rhos$ordinalGuttman$meanr,
-              alpha = rhos$ordinalGuttman$alpha,
-              minSHR = rhos$ordinalGuttman$minrb
-          ))
-
-          self$results$summaryTableOmega$setRow(rowNo = 1, value = list(
-            omega_h = rhos$ordinalOmega$omega_h,
-            omega.lim = rhos$ordinalOmega$omega.lim,
-            alpha = rhos$ordinalOmega$alpha,
-            omega.tot = rhos$ordinalOmega$omega.tot,
-            G6 = rhos$ordinalOmega$G6
-          ))
-          
-          self$results$summaryTableTheta$setRow(rowNo = 1, value = list(
-            ordinalTheta = rhos$ordinalTheta[[1]]
-          ))
-          
-          self$results$polychoricRho$setContent(rhos$polychoricRho)
-
-        })
+                        )
+                        return()
+                    } else {
+                        self$results$instructions$setVisible(visible = FALSE)
+                    }
+                    
+                    data = self$data
+                    
+                    items = data[, self$options$items]
+                    groups = data[, self$options$groups]
+                    
+                    ordinalRhos <- function(data) {
+                        polychoricRho <- psych::polychoric(data)$rho
+                        ordinalAlpha <- psych::alpha(polychoricRho)
+                        if (NCOL(data) >= 3) {
+                            ordinalOmega <- psych::omega(polychoricRho, plot = FALSE)
+                            # Theta coefficient
+                            # theta = [p/(p-1)]*[1-(1/theta[1])]
+                            # Zumbo et al 2007
+                            
+                            numFactors <-
+                                dim(ordinalOmega$schmid$sl)[2] - 3
+                            eigenValues <-
+                                diag(t(ordinalOmega$schmid$sl[, 1:numFactors]) %*% ordinalOmega$schmid$sl[, 1:numFactors])
+                            ordinalTheta <-
+                                data.frame(ordinalTheta = (ncol(data) / (ncol(data) - 1)) * (1 - (1 / max(
+                                    eigenValues
+                                ))))
+                        } else {
+                            ordinalOmega <-
+                                "Insufficient items for reliable computation of ordinal omega. See documentation of the `psych::omega()` function for a thorough explanation."
+                            
+                            ordinalTheta <-
+                                "Insufficient items for reliable computation of ordinal omega, which is used in the calculation of ordinal theta."
+                            
+                        }
+                        ordinalGuttman <-
+                            psych::splitHalf(polychoricRho)
+                    
+                        return(
+                            list(
+                                "ordinalAlpha" = ordinalAlpha,
+                                "ordinalOmega" = ordinalOmega,
+                                "ordinalGuttman" = ordinalGuttman,
+                                "ordinalTheta" = ordinalTheta,
+                                "polychoricRho" = polychoricRho
+                            )
+                        )
+                    }
+                    
+                    rhos <- ordinalRhos(items)
+                    
+                    self$results$summaryTableAlpha$setRow(
+                        rowNo = 1,
+                        value = list(
+                            raw_alpha = rhos$ordinalAlpha$total$raw_alpha,
+                            std.alpha = rhos$ordinalAlpha$total$std.alpha,
+                            G6 = rhos$ordinalAlpha$total$`G6(smc)`,
+                            average_r = rhos$ordinalAlpha$total$average_r,
+                            SN = rhos$ordinalAlpha$total$`S/N`,
+                            median_r = rhos$ordinalAlpha$total$median_r
+                        )
+                    )
+                    
+                    self$results$summaryTableGuttman$setRow(
+                        rowNo = 1,
+                        value = list(
+                            maxSHR = rhos$ordinalGuttman$maxrb,
+                            guttmanL6 = rhos$ordinalGuttman$lambda6,
+                            avgSHR = rhos$ordinalGuttman$meanr,
+                            alpha = rhos$ordinalGuttman$alpha,
+                            minSHR = rhos$ordinalGuttman$minrb
+                        )
+                    )
+                    
+                    self$results$summaryTableOmega$setRow(
+                        rowNo = 1,
+                        value = list(
+                            omega_h = rhos$ordinalOmega$omega_h,
+                            omega.lim = rhos$ordinalOmega$omega.lim,
+                            alpha = rhos$ordinalOmega$alpha,
+                            omega.tot = rhos$ordinalOmega$omega.tot,
+                            G6 = rhos$ordinalOmega$G6
+                        )
+                    )
+                    
+                    self$results$summaryTableTheta$setRow(rowNo = 1,
+                                                          value = list(ordinalTheta = rhos$ordinalTheta[[1]]))
+                    
+                    
+                    
+                    if (length(self$options$items) <= 20) {
+                        for (column in 1:length(self$options$items)) {
+                            self$results$polychoricTable$addColumn(name = self$options$items[column],
+                                                                   type = "number")
+                        }
+                        polyFrame <- as.data.frame(rhos$polychoricRho)
+                        for (col in 1:NCOL(polyFrame)) {
+                          for (row in 1:NROW(polyFrame)){
+                            self$results$polychoricTable$setCell(rowNo = row,
+                                                                 col = 1 + col,
+                                                                 value = polyFrame[row, col]
+                                                                )
+                        }}
+                    } else {
+                        warning("Too many items to print the correlation matrix (n > 20).")
+                    }
+                    
+                }
+        )
 )

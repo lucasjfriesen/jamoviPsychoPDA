@@ -3,8 +3,6 @@ name: ordinaldif
 jus: '3.0'
 stage: 0
 compilerMode: tame
-#events:
-#  update: './glmDIF.events::update'
 children:
   - type: VariableSupplier
     name: itemSupplier
@@ -18,8 +16,6 @@ children:
           - type: VariablesListBox
             name: item
             isTarget: true
-#            events:
-#              change: './glmDIF.events::onChange_item'
       - type: TargetLayoutBox
         label: Anchor Items
         children:
@@ -119,6 +115,11 @@ children:
                     name: nIter
                     format: number
                     enable: (purify)
+          - type: LayoutBox
+            margin: large
+            children:
+              - type: CheckBox
+                name: deltaBetaFlag
   - type: CollapseBox
     label: Design Analysis
     margin: normal
@@ -148,7 +149,6 @@ children:
                   - type: TextBox
                     name: bootSims
                     format: number
-
           - type: Label
             label: Advanced
             fitToGrid: true
@@ -170,11 +170,8 @@ children:
     children:
       - type: VariableSupplier
         name: plotVarsICCSupplier
-#        populate: manual
         persistentItems: false
         stretchFactor: 1
-#        events:
-#          update: './glmDIF.events::onUpdate_plotVarsSupplier'
         children:
           - type: TargetLayoutBox
             children:
