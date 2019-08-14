@@ -4,10 +4,10 @@ title: Ordinal LogR
 jrs:   '1.1'
 
 items:
+  
     - name: debug
       title: debug
       type: Preformatted
-      visible: True
 
     - name: twat
       title: deb twat

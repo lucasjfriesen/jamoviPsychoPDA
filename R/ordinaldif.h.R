@@ -259,8 +259,7 @@ ordinaldifResults <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$add(jmvcore::Preformatted$new(
                 options=options,
                 name="debug",
-                title="debug",
-                visible=TRUE))
+                title="debug"))
             self$add(jmvcore::Html$new(
                 options=options,
                 name="twat",
