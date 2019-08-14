@@ -619,9 +619,6 @@ glmDIF <- function(
         pAdjustMethod = pAdjustMethod,
         plotVarsICC = plotVarsICC)
 
-    results <- glmDIFResults$new(
-        options = options)
-
     analysis <- glmDIFClass$new(
         options = options,
         data = data)

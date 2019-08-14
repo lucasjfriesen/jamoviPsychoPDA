@@ -341,9 +341,6 @@ ttestCor <- function(
         lengthOut = lengthOut,
         corType = corType)
 
-    results <- ttestCorResults$new(
-        options = options)
-
     analysis <- ttestCorClass$new(
         options = options,
         data = data)
