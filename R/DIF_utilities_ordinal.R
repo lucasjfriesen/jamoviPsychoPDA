@@ -266,37 +266,39 @@ ordinalLogistik <-
     }
 
 difResultsFormatter <- function(model){
-    table <- data.frame(
-            item = NA,
-            model = NA,
-            logOdds_matchingVar = NA,
-            logOdds_groupingVar = NA,
-            deltaBeta_matchingVar = NA,
-            deltaBeta_groupingVar = NA,
-            deltaOR_matchingVar = NA,
-            deltaOR_groupingVar = NA,
-            deltanagR2 = NA,
-            chiSquare = NA,
-            p = NA,
-            deltaBetaFlag_matchingVar =  NA,
-            deltaBetaFlag_groupingVar =  NA,
-            ZT = NA,
-            JG = NA)
-    
     models <- c("uniform", "both")
+    table <- data.frame(
+            item = rep(NA, times = length(models) * length(model$names)),
+            model = rep(NA, times = length(models) * length(model$names)),
+            # logOdds_matchingVar = rep(NA, times = length(models) * length(model$names)),
+            # logOdds_groupingVar = rep(NA, times = length(models) * length(model$names)),
+            deltaBeta_matchingVar = rep(NA, times = length(models) * length(model$names)),
+            deltaBeta_groupingVar = rep(NA, times = length(models) * length(model$names)),
+            # deltaOR_matchingVar = rep(NA, times = length(models) * length(model$names)),
+            # deltaOR_groupingVar = rep(NA, times = length(models) * length(model$names)),
+            deltaNagR2 = rep(NA, times = length(models) * length(model$names)),
+            chiSquare = rep(NA, times = length(models) * length(model$names)),
+            p = rep(NA, times = length(models) * length(model$names)),
+            deltaBetaFlag_matchingVar =  rep(NA, times = length(models) * length(model$names)),
+            deltaBetaFlag_groupingVar =  rep(NA, times = length(models) * length(model$names)),
+            ZT = rep(NA, times = length(models) * length(model$names)),
+            JG = rep(NA, times = length(models) * length(model$names)),
+            stringsAsFactors = FALSE)
     
     for (model_ in models) {
       for (item in model$names) {
           row <- list(
             item = item,
             model = model_,
-            logOdds_matchingVar = ,
-            logOdds_groupingVar,
+            # logOdds_matchingVar = model$coefficients[[item]][[model_]][["matchingVar"]],
+            # logOdds_groupingVar = model$coefficients[[item]][[model_]][["groupingVar"]],
+            # deltaOR_matchingVar = model$coefficients[[item]][[model_]][["matchingVar"]],
+            # deltaOR_matchingVar = model$coefficients[[item]][[model_]][["groupingVar"]], 
             deltaBeta_matchingVar = model$betaChange[[item]][[paste0(model_, "BetaChange")]][["matchingVar"]],
             deltaBeta_groupingVar = ifelse(length(model$betaChange[[item]][[paste0(model_, "BetaChange")]]) == 2,
                                            model$betaChange[[item]][[paste0(model_, "BetaChange")]][["groupingVar"]],
                                            NA),
-            
+
             deltaNagR2 = model$deltaR2[[item]][[model_]],
             chiSquare = model$chiSquared[[item]][[model_]],
             p = model$pValue[[item]][[model_]],
@@ -307,38 +309,42 @@ difResultsFormatter <- function(model){
             ZT = model$ZT[[item]][[model_]],
             JG = model$JG[[item]][[model_]]
           )
-          if (is.na(table[1,1])){
-            table[1,] <- row
-          } else {
-            table <- rbind(table, row)
-          }
+        table[min(which(is.na(table[,1]))),] <- row
       }
     }
-    
-    table <- table %>% 
-        arrange(item)
+    table <- dplyr::arrange(table, item)
     return(table)
 }
 
-
-plotData <- rbind(
-    data.frame(
-        match = seq(1:40),
-        gender = rep(1, times = 40),
-        key = tidyr::gather(as.data.frame(
-            predict(x, newdata = data.frame(GROUP = 1, SCORES = 1:40), type = "p")
-        ), key = "key", value = "probability")
-    ),
-    data.frame(
-        match = seq(1:40),
-        gender = rep(0, times = 40),
-        key = tidyr::gather(as.data.frame(
-            predict(x, newdata = data.frame(GROUP = 0, SCORES = 1:40), type = "p")
-        ), key = "key", value = "probability")
-    )
-)
-
-ggplot(plotData) +
-    geom_line(aes(x = match, y = key.probability, linetype = as.factor(gender), colour = key.key), size = 1) +
-    xlab("Theta") +
-    ylab("Probability of Endorsement")
+makePlotData <- function(model, item, model_){
+  model <- model$models[[item]][[model_]]
+  vectorLength <- length((model$model$MATCH))
+  thetaRange <- seq(min(model$model$MATCH),
+                    max(model$model$MATCH),
+                    length.out = vectorLength)
+  group_reference <- rep("Reference Group", times = vectorLength)
+  group_contrast <- rep("Contrast Group", times = vectorLength)
+    
+  plotData <- rbind(
+      data.frame(
+          MATCH = thetaRange,
+          GROUP = group_reference,
+          ITEM = tidyr::gather(as.data.frame(
+              predict(model, newdata = data.frame(GROUP = "Low", MATCH = thetaRange), type = "p")
+          ), key = "LEVEL", value = "PROBABILITY")
+      ),
+      data.frame(
+          MATCH = thetaRange,
+          GROUP = group_contrast,
+          ITEM = tidyr::gather(as.data.frame(
+              predict(model, newdata = data.frame(GROUP = "High", MATCH = thetaRange), type = "p")
+          ), key = "LEVEL", value = "PROBABILITY")
+      )
+  )
+  return(plotData)
+}
+# 
+# ggplot2::ggplot(plotData) +
+#     ggplot2::geom_line(ggplot2::aes(x = MATCH, y = ITEM.PROBABILITY, linetype = GROUP, colour = ITEM.LEVEL), size = 1) +
+#     ggplot2::xlab("Theta") +
+#     ggplot2::ylab("Probability of Endorsement")

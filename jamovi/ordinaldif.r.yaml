@@ -78,18 +78,27 @@ items:
           title: Model
           type: text
 
-        - name: deltaBeta
-          title: "\u0394 Beta"
+        - name: deltaBeta_matchingVar
+          title: "\u0394 \u03B2 (Match)"
           type: number
 
-        - name: effSize
+        - name: deltaBeta_groupingVar
+          title: "\u0394 \u03B2 (Group)"
+          type: number
+
+        - name: deltaNagR2
           title: "\u0394 R\u00B2"
           type: number
           format: zto
           visible: (nagEff)
 
-        - name: deltaBetaFlag
-          title: "\u0394 Beta Flag"
+        - name: deltaBetaFlag_matchingVar
+          title: "\u0394 \u03B2 Flag (Match)"
+          type: text
+          visible: (deltaBetaFlag)
+
+        - name: deltaBetaFlag_groupingVar
+          title: "\u0394 \u03B2 Flag (Group)"
           type: text
           visible: (deltaBetaFlag)
 

@@ -331,18 +331,27 @@ ordinaldifResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `title`="Model", 
                         `type`="text"),
                     list(
-                        `name`="deltaBeta", 
-                        `title`="\u0394 Beta", 
+                        `name`="deltaBeta_matchingVar", 
+                        `title`="\u0394 \u03B2 (Match)", 
                         `type`="number"),
                     list(
-                        `name`="effSize", 
+                        `name`="deltaBeta_groupingVar", 
+                        `title`="\u0394 \u03B2 (Group)", 
+                        `type`="number"),
+                    list(
+                        `name`="deltaNagR2", 
                         `title`="\u0394 R\u00B2", 
                         `type`="number", 
                         `format`="zto", 
                         `visible`="(nagEff)"),
                     list(
-                        `name`="deltaBetaFlag", 
-                        `title`="\u0394 Beta Flag", 
+                        `name`="deltaBetaFlag_matchingVar", 
+                        `title`="\u0394 \u03B2 Flag (Match)", 
+                        `type`="text", 
+                        `visible`="(deltaBetaFlag)"),
+                    list(
+                        `name`="deltaBetaFlag_groupingVar", 
+                        `title`="\u0394 \u03B2 Flag (Group)", 
                         `type`="text", 
                         `visible`="(deltaBetaFlag)"),
                     list(

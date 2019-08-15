@@ -72,7 +72,7 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         if (length(match) == 0) {
           match <- "score"
         } else {
-          colnames(match) <- self$options$matchVar
+          # colnames(match) <- self$options$matchVar
           match <- unlist(match)
         }
         
@@ -275,7 +275,7 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             nIter = nIter,
             pAdjustMethod = pAdjustMethod
           )
-        self$results$debug$setContent(model)
+        # self$results$debug$setContent(model)
         
         # # Build GC tables ----
         # runDesignAnalysis <- function() {
@@ -515,42 +515,42 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         
         # DIF Results Table ----
         
-        calculateDIFTable <- function() {
-          models <- c("uniform", "both")
-          
-          if (self$results$DIFtable$isNotFilled()) {
-            for (item in model$names) {
-              for (model_ in models){
-              table <- self$results$DIFtable
-              table$addRow(
-                rowKey = paste0(item, model),
-                values = list(
-                  item = item,
-                  model = model_,
-                  deltaBeta = model$betaChange[[item]][[paste0(model_, "BetaChange")]],
-                  effSize = model$deltaR2[[item]][[model_]],
-                  chiSquare = model$chiSquared[[item]][[model_]],
-                  p = model$pValue[[item]][[model_]],
-                  deltaBetaFlag = model$flags[[item]][[paste0(model_, "BetaChange")]]#,
-                  # ZT = model$ZT[[item]][[model_]],
-                  # JG = model$JG[[item]][[model_]]
-                )
-              )
-          
-              }
-            }
+        calculateDIFTable <- function(model) {
+          difTableRes <- difResultsFormatter(model)
+          # self$results$debug$setContent(difTableRes)
+          for (row in 1:NROW(difTableRes)) {
+            table <- self$results$DIFtable
+            table$addRow(
+              rowKey = row,
+              values = list(
+                item = difTableRes$item[row],
+                model = difTableRes$model[row],
+                logOdds_matchingVar = difTableRes$logOdds_matchingVar[row],
+                logOdds_groupingVar = difTableRes$logOdds_groupingVar[row],
+                deltaBeta_matchingVar = difTableRes$deltaBeta_matchingVar[row],
+                deltaBeta_groupingVar = difTableRes$deltaBeta_groupingVar[row],
+                deltaOR_matchingVar = difTableRes$deltaOR_matchingVar[row],
+                deltaOR_groupingVar = difTableRes$deltaOR_groupingVar[row],
+                deltaNagR2 = difTableRes$deltaNagR2[row],
+                chiSquare = difTableRes$chiSquare[row],
+                p = difTableRes$p[row],
+                deltaBetaFlag_matchingVar = as.character(difTableRes$deltaBetaFlag_matchingVar[row]),
+                deltaBetaFlag_groupingVar = as.character(difTableRes$deltaBetaFlag_groupingVar[row]),
+                ZT = difTableRes$ZT[row],
+                JG = difTableRes$JG[row]
+            ))
           }
           
-          df <-
-            ifelse(type == "both", 2 * length(groupOne), length(groupOne))
-          table$setNote(
-            key = "df",
-            note = paste0(
-              "Tests of significance conducted using: ",
-              df,
-              " degrees of freedom (\u03A7\u00B2 significance threshold = ", round(model$sigThreshold, 3),")"
-            )
-          )
+          # df <-
+          #   ifelse(type == "both", 2 * length(groupOne), length(groupOne))
+          # table$setNote(
+          #   key = "df",
+          #   note = paste0(
+          #     "Tests of significance conducted using: ",
+          #     df,
+          #     " degrees of freedom (\u03A7\u00B2 significance threshold = ", round(model$sigThreshold, 3),")"
+          #   )
+          # )
         }
         
         # Coefficients table ----
@@ -576,7 +576,7 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
           # ... populate the table from the state
         } else {
           # ... create the table and the state
-          DIFstate <- calculateDIFTable()
+          DIFstate <- calculateDIFTable(model)
           self$results$DIFtable$setState(DIFstate)
         }
         
@@ -593,24 +593,24 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         }
         
         # DESC state ----
-        DESCstate <- self$results$DESCtable$state
-        if (!is.null(DESCstate)) {
-          # ... populate the table from the state
-          table <- self$results$DESCtable
-          for (i in 1:nrow(DESCstate)) {
-            table$addRow(rowKey = i,
-                         values = list(bob = DESCstate$bob[i]))
-          }
-        } else {
-          # ... calculate the state
-          table <- self$results$DESCtable
-          DESCstate <- calculateDESCtable()
-          for (i in 1:nrow(DESCstate)) {
-            table$addRow(rowKey = i,
-                         values = list(bob = DESCstate$bob[i]))
-          }
-          self$results$DESCtable$setState(DESCstate)
-        }
+        # DESCstate <- self$results$DESCtable$state
+        # if (!is.null(DESCstate)) {
+        #   # ... populate the table from the state
+        #   table <- self$results$DESCtable
+        #   for (i in 1:nrow(DESCstate)) {
+        #     table$addRow(rowKey = i,
+        #                  values = list(bob = DESCstate$bob[i]))
+        #   }
+        # } else {
+        #   # ... calculate the state
+        #   table <- self$results$DESCtable
+        #   DESCstate <- calculateDESCtable()
+        #   for (i in 1:nrow(DESCstate)) {
+        #     table$addRow(rowKey = i,
+        #                  values = list(bob = DESCstate$bob[i]))
+        #   }
+        #   self$results$DESCtable$setState(DESCstate)
+        # }
         
         # # GC state ----
         # gcState <- self$results$gcTable$state
@@ -647,21 +647,7 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             items <- self$options$plotVarsICC
             
             for (i in unique(items)) {
-              private$.checkpoint()
-              
-              if (!is.null(anchor)) {
-                data2 <- cbind(data, anchor)
-                match <-
-                  rowSums(sapply(data2, as.numeric), na.rm = TRUE)
-              } else {
-                match <- rowSums(sapply(data, as.numeric))
-              }
-              
-              plotData <-
-                data.frame(jmvcore::toNumeric(Data[, colnames(Data) == i]), match, group)
-              
-              colnames(plotData) <-
-                c(i, "match", "group")
+              plotData <- makePlotData(model, item = i, model_ = "uniform")
               
               imageICC <- self$results$ICCplots$get(key = i)
               imageICC$setState(list(plotData, model))
@@ -677,7 +663,6 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         }
         
         plotData <- data.frame(imageICC$state[[1]])
-        model <- imageICC$state[[2]]
         
         if (!all(self$options$plotVarsICC %in% self$options$item)) {
           stop(
@@ -689,18 +674,18 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
           )
         }
         
-        p <- ggplot(data = as.data.frame(plotData),
-                    aes(
-                      x = as.numeric(plotData$match),
-                      y = as.integer(plotData[, 1]),
-                      colour = plotData$group
-                    )) +
-          geom_smooth(
-            method = "glm",
-            level = 1 - self$options$alpha,
-            se = TRUE,
-            method.args = (family = "binomial")
+        p <- ggplot2::ggplot(plotData) +
+          ggplot2::geom_line(
+            ggplot2::aes(
+              x = MATCH,
+              y = ITEM.PROBABILITY,
+              linetype = GROUP,
+              colour = ITEM.LEVEL
+            ),
+            size = 1
           ) +
+          ggplot2::xlab("Theta") +
+          ggplot2::ylab("Probability of Endorsement") +
           labs(colour = "Group membership") +
           ggtitle(paste("Item: ", colnames(plotData)),
                   subtitle = paste(
@@ -715,8 +700,10 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             "Supplied matching variable range"
           )) +
           ylab("Prediicted probability of endorsement") +
-          ggtheme + theme(plot.title = ggplot2::element_text(margin=ggplot2::margin(b = 5.5 * 1.2)),
-                          plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5))
+          ggtheme + theme(
+            plot.title = ggplot2::element_text(margin = ggplot2::margin(b = 5.5 * 1.2)),
+            plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5)
+          )
         
         print(p)
         TRUE

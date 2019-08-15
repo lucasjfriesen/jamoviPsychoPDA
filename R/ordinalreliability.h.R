@@ -81,8 +81,7 @@ ordinalReliabilityResults <- if (requireNamespace('jmvcore')) R6::R6Class(
         summaryTableGuttman = function() private$.items[["summaryTableGuttman"]],
         summaryTableOmega = function() private$.items[["summaryTableOmega"]],
         summaryTableTheta = function() private$.items[["summaryTableTheta"]],
-        polychoricTable = function() private$.items[["polychoricTable"]],
-        debug = function() private$.items[["debug"]]),
+        polychoricTable = function() private$.items[["polychoricTable"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -202,11 +201,7 @@ ordinalReliabilityResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `name`="bob", 
                         `title`="", 
                         `content`="($key)", 
-                        `type`="number"))))
-            self$add(jmvcore::Preformatted$new(
-                options=options,
-                name="debug",
-                title="debug"))}))
+                        `type`="number"))))}))
 
 ordinalReliabilityBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     "ordinalReliabilityBase",
@@ -246,7 +241,6 @@ ordinalReliabilityBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'   \code{results$summaryTableOmega} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$summaryTableTheta} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$polychoricTable} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #' }
 #'
 #' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
