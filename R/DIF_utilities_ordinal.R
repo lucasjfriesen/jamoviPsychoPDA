@@ -321,24 +321,24 @@ difResultsFormatter <- function(model){
 }
 
 
-plotData <- rbind(
-    data.frame(
-        match = seq(1:40),
-        gender = rep(1, times = 40),
-        key = tidyr::gather(as.data.frame(
-            predict(x, newdata = data.frame(GROUP = 1, SCORES = 1:40), type = "p")
-        ), key = "key", value = "probability")
-    ),
-    data.frame(
-        match = seq(1:40),
-        gender = rep(0, times = 40),
-        key = tidyr::gather(as.data.frame(
-            predict(x, newdata = data.frame(GROUP = 0, SCORES = 1:40), type = "p")
-        ), key = "key", value = "probability")
-    )
-)
-
-ggplot(plotData) +
-    geom_line(aes(x = match, y = key.probability, linetype = as.factor(gender), colour = key.key), size = 1) +
-    xlab("Theta") +
-    ylab("Probability of Endorsement")
+# plotData <- rbind(
+#     data.frame(
+#         match = seq(1:40),
+#         gender = rep(1, times = 40),
+#         key = tidyr::gather(as.data.frame(
+#             predict(x, newdata = data.frame(GROUP = 1, SCORES = 1:40), type = "p")
+#         ), key = "key", value = "probability")
+#     ),
+#     data.frame(
+#         match = seq(1:40),
+#         gender = rep(0, times = 40),
+#         key = tidyr::gather(as.data.frame(
+#             predict(x, newdata = data.frame(GROUP = 0, SCORES = 1:40), type = "p")
+#         ), key = "key", value = "probability")
+#     )
+# )
+# 
+# ggplot(plotData) +
+#     geom_line(aes(x = match, y = key.probability, linetype = as.factor(gender), colour = key.key), size = 1) +
+#     xlab("Theta") +
+#     ylab("Probability of Endorsement")

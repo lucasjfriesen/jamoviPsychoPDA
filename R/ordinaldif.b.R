@@ -668,57 +668,57 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             }
           }
         }
-        },
-      
-      .plotICC = function(imageICC, ggtheme, theme,...) {
-        if (is.null(self$options$group) |
-            is.null(self$data) | is.null(self$options$item)) {
-          return()
-        }
-        
-        plotData <- data.frame(imageICC$state[[1]])
-        model <- imageICC$state[[2]]
-        
-        if (!all(self$options$plotVarsICC %in% self$options$item)) {
-          stop(
-            paste0(
-              "Not all items selected to be plotted have been evaluated, please remove: ",
-              self$options$plotVarsICC[!self$options$plotVarsICC %in% self$options$item]
-            ),
-            call. = FALSE
-          )
-        }
-        
-        p <- ggplot(data = as.data.frame(plotData),
-                    aes(
-                      x = as.numeric(plotData$match),
-                      y = as.integer(plotData[, 1]),
-                      colour = plotData$group
-                    )) +
-          geom_smooth(
-            method = "glm",
-            level = 1 - self$options$alpha,
-            se = TRUE,
-            method.args = (family = "binomial")
-          ) +
-          labs(colour = "Group membership") +
-          ggtitle(paste("Item: ", colnames(plotData)),
-                  subtitle = paste(
-                    "Effect Size: ",
-                    round(model$deltaR2[model$names == colnames(plotData)[1]], 3),
-                    " | p = ",
-                    round(model$adjusted.p[model$names == colnames(plotData)[1]], 3)
-                  )) +
-          xlab(ifelse(
-            is.null(self$options$matchVar),
-            "Total sore",
-            "Supplied matching variable range"
-          )) +
-          ylab("Prediicted probability of endorsement") +
-          ggtheme + theme(plot.title = ggplot2::element_text(margin=ggplot2::margin(b = 5.5 * 1.2)),
-                          plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5))
-        
-        print(p)
-        TRUE
+        # },
+      # 
+      # .plotICC = function(imageICC, ggtheme, theme,...) {
+      #   if (is.null(self$options$group) |
+      #       is.null(self$data) | is.null(self$options$item)) {
+      #     return()
+      #   }
+      #   
+      #   plotData <- data.frame(imageICC$state[[1]])
+      #   model <- imageICC$state[[2]]
+      #   
+      #   if (!all(self$options$plotVarsICC %in% self$options$item)) {
+      #     stop(
+      #       paste0(
+      #         "Not all items selected to be plotted have been evaluated, please remove: ",
+      #         self$options$plotVarsICC[!self$options$plotVarsICC %in% self$options$item]
+      #       ),
+      #       call. = FALSE
+      #     )
+      #   }
+      #   
+      #   p <- ggplot(data = as.data.frame(plotData),
+      #               aes(
+      #                 x = as.numeric(plotData$match),
+      #                 y = as.integer(plotData[, 1]),
+      #                 colour = plotData$group
+      #               )) +
+      #     geom_smooth(
+      #       method = "glm",
+      #       level = 1 - self$options$alpha,
+      #       se = TRUE,
+      #       method.args = (family = "binomial")
+      #     ) +
+      #     labs(colour = "Group membership") +
+      #     ggtitle(paste("Item: ", colnames(plotData)),
+      #             subtitle = paste(
+      #               "Effect Size: ",
+      #               round(model$deltaR2[model$names == colnames(plotData)[1]], 3),
+      #               " | p = ",
+      #               round(model$adjusted.p[model$names == colnames(plotData)[1]], 3)
+      #             )) +
+      #     xlab(ifelse(
+      #       is.null(self$options$matchVar),
+      #       "Total sore",
+      #       "Supplied matching variable range"
+      #     )) +
+      #     ylab("Prediicted probability of endorsement") +
+      #     ggtheme + theme(plot.title = ggplot2::element_text(margin=ggplot2::margin(b = 5.5 * 1.2)),
+      #                     plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5))
+      #   
+      #   print(p)
+      #   TRUE
       })
 )

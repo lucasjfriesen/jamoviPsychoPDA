@@ -8,6 +8,9 @@ items:
       type: Html
       visible: True
 
+    - name: debug
+      type: Preformatted
+
     - name: summaryTableAlpha
       title: Ordinal Alpha
       type: Table
@@ -28,6 +31,37 @@ items:
           type: number
         - name: SN
           title: SN
+          type: number
+        - name: median_r
+          title: median_r
+          type: number
+
+    - name: detailTableAlphaItemDrop
+      title: Reliability if an item is dropped
+      type: Table
+      visible: (alphaTable)
+      rows: (items)
+      columns:
+        - name: itemName
+          title: Item
+          content: ($key)
+        - name: raw_alpha
+          title: raw_alpha
+          type: number
+        - name: std.alpha
+          title: std.alpha
+          type: number
+        - name: G6
+          title: G6(smc)
+          type: number
+        - name: average_r
+          title: average_r
+          type: number
+        - name: SN
+          title: SN
+          type: number
+        - name: var.r
+          title: var.r
           type: number
         - name: median_r
           title: median_r
@@ -77,6 +111,11 @@ items:
           title: G6
           type: number
 
+    - name: fullTableOmega
+      title: Full Table Omega
+      type: Preformatted
+      visible: (omegaTable)
+
     - name: summaryTableTheta
       title: Ordinal Theta
       type: Table
@@ -98,5 +137,14 @@ items:
           title: ""
           content: ($key)
           type: number
+
+    - name: omegaDiagram
+      title: Ordinal Omega - Factor Model Diagram
+      type: Image
+      visible: (omegaTable)
+      width:  550
+      height: 450
+      renderFun: .plotOmegaDiagram
+
 
 ...

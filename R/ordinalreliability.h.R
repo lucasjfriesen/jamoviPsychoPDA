@@ -77,12 +77,15 @@ ordinalReliabilityResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
         instructions = function() private$.items[["instructions"]],
+        debug = function() private$.items[["debug"]],
         summaryTableAlpha = function() private$.items[["summaryTableAlpha"]],
+        detailTableAlphaItemDrop = function() private$.items[["detailTableAlphaItemDrop"]],
         summaryTableGuttman = function() private$.items[["summaryTableGuttman"]],
         summaryTableOmega = function() private$.items[["summaryTableOmega"]],
+        fullTableOmega = function() private$.items[["fullTableOmega"]],
         summaryTableTheta = function() private$.items[["summaryTableTheta"]],
         polychoricTable = function() private$.items[["polychoricTable"]],
-        debug = function() private$.items[["debug"]]),
+        omegaDiagram = function() private$.items[["omegaDiagram"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -94,6 +97,9 @@ ordinalReliabilityResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="instructions",
                 visible=TRUE))
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="debug"))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="summaryTableAlpha",
@@ -120,6 +126,45 @@ ordinalReliabilityResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     list(
                         `name`="SN", 
                         `title`="SN", 
+                        `type`="number"),
+                    list(
+                        `name`="median_r", 
+                        `title`="median_r", 
+                        `type`="number"))))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="detailTableAlphaItemDrop",
+                title="Reliability if an item is dropped",
+                visible="(alphaTable)",
+                rows="(items)",
+                columns=list(
+                    list(
+                        `name`="itemName", 
+                        `title`="Item", 
+                        `content`="($key)"),
+                    list(
+                        `name`="raw_alpha", 
+                        `title`="raw_alpha", 
+                        `type`="number"),
+                    list(
+                        `name`="std.alpha", 
+                        `title`="std.alpha", 
+                        `type`="number"),
+                    list(
+                        `name`="G6", 
+                        `title`="G6(smc)", 
+                        `type`="number"),
+                    list(
+                        `name`="average_r", 
+                        `title`="average_r", 
+                        `type`="number"),
+                    list(
+                        `name`="SN", 
+                        `title`="SN", 
+                        `type`="number"),
+                    list(
+                        `name`="var.r", 
+                        `title`="var.r", 
                         `type`="number"),
                     list(
                         `name`="median_r", 
@@ -179,6 +224,11 @@ ordinalReliabilityResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `name`="G6", 
                         `title`="G6", 
                         `type`="number"))))
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="fullTableOmega",
+                title="Full Table Omega",
+                visible="(omegaTable)"))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="summaryTableTheta",
@@ -203,10 +253,14 @@ ordinalReliabilityResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `title`="", 
                         `content`="($key)", 
                         `type`="number"))))
-            self$add(jmvcore::Preformatted$new(
+            self$add(jmvcore::Image$new(
                 options=options,
-                name="debug",
-                title="debug"))}))
+                name="omegaDiagram",
+                title="Ordinal Omega - Factor Model Diagram",
+                visible="(omegaTable)",
+                width=550,
+                height=450,
+                renderFun=".plotOmegaDiagram"))}))
 
 ordinalReliabilityBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     "ordinalReliabilityBase",
@@ -241,12 +295,15 @@ ordinalReliabilityBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
+#'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$summaryTableAlpha} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$detailTableAlphaItemDrop} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$summaryTableGuttman} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$summaryTableOmega} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$fullTableOmega} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$summaryTableTheta} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$polychoricTable} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
+#'   \code{results$omegaDiagram} \tab \tab \tab \tab \tab an image \cr
 #' }
 #'
 #' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
