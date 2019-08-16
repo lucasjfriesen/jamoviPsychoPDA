@@ -316,6 +316,7 @@ difResultsFormatter <- function(model){
     return(table)
 }
 
+
 makePlotData <- function(model, item, model_){
   model <- model$models[[item]][[model_]]
   vectorLength <- length((model$model$MATCH))
