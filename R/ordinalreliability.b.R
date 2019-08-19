@@ -108,7 +108,7 @@ ordinalReliabilityClass <-
           alphaItemDrop <- rhos$ordinalAlpha$alpha.drop
           for (row in rownames(alphaItemDrop)) {
             self$results$detailTableAlphaItemDrop$setRow(
-              rowKey = row,
+              rowNo = which(rownames(alphaItemDrop) == row),
               values = list(
                 raw_alpha = alphaItemDrop[row, "raw_alpha"],
                 std.alpha = alphaItemDrop[row, "std.alpha"],
@@ -149,7 +149,7 @@ ordinalReliabilityClass <-
           
           self$results$fullTableOmega$setContent(rhos$ordinalOmega)
           
-          self$results$omegaDiagram$setState(image = rhos$ordinalOmega)
+          self$results$omegaDiagram$setState(rhos$ordinalOmega)
           
           # Theta ----
           
@@ -176,8 +176,9 @@ ordinalReliabilityClass <-
             warning("Too many items to print the correlation matrix (n > 20).")
           }
         },
-        .plotOmegaDiagram = function(image){
-          psych::omega.diagram(image$state)
+        .plotOmegaDiagram = function(image, ...){
+          plot <- psych::omega.diagram(image$state)
+          print(plot)
           TRUE
         }
       )

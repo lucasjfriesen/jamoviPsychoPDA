@@ -256,7 +256,7 @@ ordinaldifResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="Ordinal LogR")
-            self$add(jmvcore::Preformatted$new(
+            self$add(jmvcore::Html$new(
                 options=options,
                 name="debug",
                 title="debug"))
@@ -331,6 +331,22 @@ ordinaldifResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `title`="Model", 
                         `type`="text"),
                     list(
+                        `name`="logOdds_matchingVar", 
+                        `title`="log odds (Match)", 
+                        `type`="number"),
+                    list(
+                        `name`="logOdds_groupingVar", 
+                        `title`="log odds (Group)", 
+                        `type`="number"),
+                    list(
+                        `name`="deltaOR_groupingVar", 
+                        `title`="\u0394 OR (Match)", 
+                        `type`="number"),
+                    list(
+                        `name`="deltaOR_groupingVar", 
+                        `title`="\u0394 OR (Group)", 
+                        `type`="number"),
+                    list(
                         `name`="deltaBeta_matchingVar", 
                         `title`="\u0394 \u03B2 (Match)", 
                         `type`="number"),
@@ -344,6 +360,15 @@ ordinaldifResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `type`="number", 
                         `format`="zto", 
                         `visible`="(nagEff)"),
+                    list(
+                        `name`="chiSquare", 
+                        `title`="\u03A7\u00B2 Stat.", 
+                        `type`="number"),
+                    list(
+                        `name`="p", 
+                        `title`="P-value", 
+                        `type`="number", 
+                        `format`="zto,pvalue"),
                     list(
                         `name`="deltaBetaFlag_matchingVar", 
                         `title`="\u0394 \u03B2 Flag (Match)", 
@@ -364,16 +389,7 @@ ordinaldifResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `name`="JG", 
                         `title`="Jodoin-Gierl", 
                         `type`="text", 
-                        `visible`="(difFlagScale:jg)"),
-                    list(
-                        `name`="p", 
-                        `title`="P-value", 
-                        `type`="number", 
-                        `format`="zto,pvalue"),
-                    list(
-                        `name`="chiSquare", 
-                        `title`="\u03A7\u00B2 Stat.", 
-                        `type`="number"))))
+                        `visible`="(difFlagScale:jg)"))))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="coefficientsTable",
@@ -573,7 +589,7 @@ ordinaldifBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'   Item Response Curves
 #' @return A results object containing:
 #' \tabular{llllll}{
-#'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
+#'   \code{results$debug} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$twat} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$DESCtable} \tab \tab \tab \tab \tab a table \cr
@@ -658,6 +674,9 @@ ordinaldif <- function(
         nIter = nIter,
         pAdjustMethod = pAdjustMethod,
         plotVarsICC = plotVarsICC)
+
+    results <- ordinaldifResults$new(
+        options = options)
 
     analysis <- ordinaldifClass$new(
         options = options,

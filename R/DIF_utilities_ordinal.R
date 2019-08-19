@@ -80,6 +80,17 @@ R2DIF <- function(nullDeviance, fullDeviance, n) {
     R2(nullDeviance, fullDeviance, n) / R2max(nullDeviance, n)
 }
 
+# model <- ordinalLogistik(data = data.frame(data[1:3]),
+#               group = data$Geslacht,
+#               groupType = "groupBin",
+#               match = data$Anger,
+#               anchor = NULL,
+#               type = "both",
+#               criterion = "LRT",
+#               pAdjustMethod = NULL,
+#               alpha = 0.05,
+#               betaChangeThreshold = 0.10)
+
 ordinalLogistik <-
     function (data,
               group,
@@ -270,12 +281,12 @@ difResultsFormatter <- function(model){
     table <- data.frame(
             item = rep(NA, times = length(models) * length(model$names)),
             model = rep(NA, times = length(models) * length(model$names)),
-            # logOdds_matchingVar = rep(NA, times = length(models) * length(model$names)),
-            # logOdds_groupingVar = rep(NA, times = length(models) * length(model$names)),
+            logOdds_matchingVar = rep(NA, times = length(models) * length(model$names)),
+            logOdds_groupingVar = rep(NA, times = length(models) * length(model$names)),
+            deltaOR_matchingVar = rep(NA, times = length(models) * length(model$names)),
+            deltaOR_groupingVar = rep(NA, times = length(models) * length(model$names)),
             deltaBeta_matchingVar = rep(NA, times = length(models) * length(model$names)),
             deltaBeta_groupingVar = rep(NA, times = length(models) * length(model$names)),
-            # deltaOR_matchingVar = rep(NA, times = length(models) * length(model$names)),
-            # deltaOR_groupingVar = rep(NA, times = length(models) * length(model$names)),
             deltaNagR2 = rep(NA, times = length(models) * length(model$names)),
             chiSquare = rep(NA, times = length(models) * length(model$names)),
             p = rep(NA, times = length(models) * length(model$names)),
@@ -290,15 +301,18 @@ difResultsFormatter <- function(model){
           row <- list(
             item = item,
             model = model_,
-            # logOdds_matchingVar = model$coefficients[[item]][[model_]][["matchingVar"]],
-            # logOdds_groupingVar = model$coefficients[[item]][[model_]][["groupingVar"]],
-            # deltaOR_matchingVar = model$coefficients[[item]][[model_]][["matchingVar"]],
-            # deltaOR_matchingVar = model$coefficients[[item]][[model_]][["groupingVar"]], 
+            logOdds_matchingVar = model$models[[item]][[paste0(model_, "Model")]]$coefficients[["SCORES"]],
+            logOdds_groupingVar = ifelse(length(model$models[[item]][[paste0(model_, "Model")]]$coefficients) == 2,
+                                           model$models[[item]][[paste0(model_, "Model")]]$coefficients[["GROUP"]],
+                                           NA),
+            deltaOR_matchingVar = exp(model$models[[item]][[paste0(model_, "Model")]]$coefficients[["SCORES"]]),
+            deltaOR_groupingVar = ifelse(length(model$models[[item]][[paste0(model_, "Model")]]$coefficients) == 2,
+                                           exp(model$models[[item]][[paste0(model_, "Model")]]$coefficients[["GROUP"]]),
+                                           NA),
             deltaBeta_matchingVar = model$betaChange[[item]][[paste0(model_, "BetaChange")]][["matchingVar"]],
             deltaBeta_groupingVar = ifelse(length(model$betaChange[[item]][[paste0(model_, "BetaChange")]]) == 2,
                                            model$betaChange[[item]][[paste0(model_, "BetaChange")]][["groupingVar"]],
                                            NA),
-
             deltaNagR2 = model$deltaR2[[item]][[model_]],
             chiSquare = model$chiSquared[[item]][[model_]],
             p = model$pValue[[item]][[model_]],
