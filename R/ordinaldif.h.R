@@ -339,7 +339,7 @@ ordinaldifResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `title`="log odds (Group)", 
                         `type`="number"),
                     list(
-                        `name`="deltaOR_groupingVar", 
+                        `name`="deltaOR_matchingVar", 
                         `title`="\u0394 OR (Match)", 
                         `type`="number"),
                     list(
@@ -358,8 +358,7 @@ ordinaldifResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `name`="deltaNagR2", 
                         `title`="\u0394 R\u00B2", 
                         `type`="number", 
-                        `format`="zto", 
-                        `visible`="(nagEff)"),
+                        `format`="zto"),
                     list(
                         `name`="chiSquare", 
                         `title`="\u03A7\u00B2 Stat.", 
@@ -372,24 +371,20 @@ ordinaldifResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     list(
                         `name`="deltaBetaFlag_matchingVar", 
                         `title`="\u0394 \u03B2 Flag (Match)", 
-                        `type`="text", 
-                        `visible`="(deltaBetaFlag)"),
+                        `type`="text"),
                     list(
                         `name`="deltaBetaFlag_groupingVar", 
                         `title`="\u0394 \u03B2 Flag (Group)", 
-                        `type`="text", 
-                        `visible`="(deltaBetaFlag)"),
+                        `type`="text"),
                     list(
                         `name`="ZT", 
                         `refs`="zumboThomas", 
                         `title`="Zumbo-Thomas", 
-                        `type`="text", 
-                        `visible`="(difFlagScale:zt)"),
+                        `type`="text"),
                     list(
                         `name`="JG", 
                         `title`="Jodoin-Gierl", 
-                        `type`="text", 
-                        `visible`="(difFlagScale:jg)"))))
+                        `type`="text"))))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="coefficientsTable",

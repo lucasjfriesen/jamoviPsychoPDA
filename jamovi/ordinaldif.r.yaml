@@ -84,7 +84,7 @@ items:
           title: "log odds (Group)"
           type: number
 
-        - name: deltaOR_groupingVar
+        - name: deltaOR_matchingVar
           title: "\u0394 OR (Match)"
           type: number
         - name: deltaOR_groupingVar
@@ -102,8 +102,7 @@ items:
           title: "\u0394 R\u00B2"
           type: number
           format: zto
-          visible: (nagEff)
-
+          #visible: (nagEff)
         - name: chiSquare
           title: "\u03A7\u00B2 Stat."
           type: number
@@ -116,22 +115,21 @@ items:
         - name: deltaBetaFlag_matchingVar
           title: "\u0394 \u03B2 Flag (Match)"
           type: text
-          visible: (deltaBetaFlag)
+          #visible: (deltaBetaFlag)
         - name: deltaBetaFlag_groupingVar
           title: "\u0394 \u03B2 Flag (Group)"
           type: text
-          visible: (deltaBetaFlag)
+          #visible: (deltaBetaFlag)
 
         - name: ZT
           refs: zumboThomas
           title: Zumbo-Thomas
           type: text
-          visible: (difFlagScale:zt)
-
+          #visible: (difFlagScale:zt)
         - name: JG
           title: Jodoin-Gierl
           type: text
-          visible: (difFlagScale:jg)
+          #visible: (difFlagScale:jg)
 
     - name: coefficientsTable
       title: "Ordinal Logistic Regression Coefficients"

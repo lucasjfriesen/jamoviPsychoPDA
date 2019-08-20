@@ -517,12 +517,28 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         
         calculateDIFTable <- function(model) {
           difTableRes <- difResultsFormatter(model)
-          self$results$debug$setContent(difTableRes)
+          # self$results$debug$setContent(difTableRes)
           for (row in 1:NROW(difTableRes)) {
             table <- self$results$DIFtable
             table$addRow(
               rowKey = row,
-              values = difTableRes[row,])
+              values = difTableRes[row,]
+               #  list(
+               # logOdds_matchingVar = difTableRes[row, "logOdds_matchingVar"],
+               # logOdds_groupingVar = difTableRes[row, "logOdds_groupingVar"],
+               # deltaOR_matchingVar = difTableRes[row, "deltaOR_matchingVar"],
+               # deltaOR_groupingVar = difTableRes[row, "deltaOR_groupingVar"],
+               # deltaBeta_matchingVar = difTableRes[row, "deltaBeta_matchingVar"],
+               # deltaBeta_groupingVar = difTableRes[row, "deltaBeta_groupingVar"],
+               # deltaNagR2 = difTableRes[row, "deltaNagR2"],
+               # chiSquare = difTableRes[row, "chiSquare"],
+               # p = difTableRes[row, "p"],
+               # deltaBetaFlag_matchingVar = difTableRes[row, "deltaBetaFlag_matchingVar"],
+               # deltaBetaFlag_groupingVar = difTableRes[row, "deltaBetaFlag_groupingVar"],        
+               # ZT = difTableRes[row, "ZT"],
+               # JG = difTableRes[row, "JG"]
+               # )
+            )
           }
           
           # df <-

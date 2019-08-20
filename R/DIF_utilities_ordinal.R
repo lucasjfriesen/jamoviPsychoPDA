@@ -1,4 +1,14 @@
 # Ordinal DIF ----
+model <- ordinal.logistic(items = data.frame(data[1:3]),
+              group = data$Geslacht,
+              groupType = "groupBin",
+              match = data$Anger,
+              anchor = NULL,
+              type = "both",
+              criterion = "LRT",
+              pAdjustMethod = NULL,
+              alpha = 0.05)
+
 ordinal.logistic <- function (items,
                               group,
                               anchor,
@@ -80,16 +90,7 @@ R2DIF <- function(nullDeviance, fullDeviance, n) {
     R2(nullDeviance, fullDeviance, n) / R2max(nullDeviance, n)
 }
 
-# model <- ordinalLogistik(data = data.frame(data[1:3]),
-#               group = data$Geslacht,
-#               groupType = "groupBin",
-#               match = data$Anger,
-#               anchor = NULL,
-#               type = "both",
-#               criterion = "LRT",
-#               pAdjustMethod = NULL,
-#               alpha = 0.05,
-#               betaChangeThreshold = 0.10)
+
 
 ordinalLogistik <-
     function (data,
@@ -301,25 +302,25 @@ difResultsFormatter <- function(model){
           row <- list(
             item = item,
             model = model_,
-            logOdds_matchingVar = model$models[[item]][[paste0(model_, "Model")]]$coefficients[["SCORES"]],
-            logOdds_groupingVar = ifelse(length(model$models[[item]][[paste0(model_, "Model")]]$coefficients) == 2,
-                                           model$models[[item]][[paste0(model_, "Model")]]$coefficients[["GROUP"]],
-                                           NA),
-            deltaOR_matchingVar = exp(model$models[[item]][[paste0(model_, "Model")]]$coefficients[["SCORES"]]),
-            deltaOR_groupingVar = ifelse(length(model$models[[item]][[paste0(model_, "Model")]]$coefficients) == 2,
-                                           exp(model$models[[item]][[paste0(model_, "Model")]]$coefficients[["GROUP"]]),
-                                           NA),
+            logOdds_matchingVar = model$models[[item]][[paste0(model_, "Model")]]$coefficients[[1]],
+            logOdds_groupingVar = ifelse(model_ == "both",
+                                           model$models[[item]][[paste0(model_, "Model")]]$coefficients[[2]],
+                                           "\u2013"),
+            deltaOR_matchingVar = exp(model$models[[item]][[paste0(model_, "Model")]]$coefficients[[1]]),
+            deltaOR_groupingVar = ifelse(model_ == "both",
+                                           exp(model$models[[item]][[paste0(model_, "Model")]]$coefficients[[2]]),
+                                           "\u2013"),
             deltaBeta_matchingVar = model$betaChange[[item]][[paste0(model_, "BetaChange")]][["matchingVar"]],
-            deltaBeta_groupingVar = ifelse(length(model$betaChange[[item]][[paste0(model_, "BetaChange")]]) == 2,
+            deltaBeta_groupingVar = ifelse(model_ == "both",
                                            model$betaChange[[item]][[paste0(model_, "BetaChange")]][["groupingVar"]],
-                                           NA),
+                                           "\u2013"),
             deltaNagR2 = model$deltaR2[[item]][[model_]],
             chiSquare = model$chiSquared[[item]][[model_]],
             p = model$pValue[[item]][[model_]],
-            deltaBetaFlag_matchingVar = model$flags[[item]][[paste0(model_, "BetaChange")]][["matchingVar"]],
-            deltaBetaFlag_groupingVar = ifelse(length(model$flags[[item]][[paste0(model_, "BetaChange")]]) == 2,
-                                               model$flags[[item]][[paste0(model_, "BetaChange")]][["groupingVar"]],
-                                               NA),
+            deltaBetaFlag_matchingVar = as.character(model$flags[[item]][[paste0(model_, "BetaChange")]][["matchingVar"]]),
+            deltaBetaFlag_groupingVar = ifelse(model_ == "both",
+                                               as.character(model$flags[[item]][[paste0(model_, "BetaChange")]][["groupingVar"]]),
+                                               "\u2013"),
             ZT = model$ZT[[item]][[model_]],
             JG = model$JG[[item]][[model_]]
           )
