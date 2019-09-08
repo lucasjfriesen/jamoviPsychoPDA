@@ -33,6 +33,8 @@ children:
     children:
       - type: CheckBox
         name: allObserved
+      - type: CheckBox
+        name: delongTest
       - type: TextBox
         name: positiveClass
         format: string
@@ -44,21 +46,35 @@ children:
       - type: LayoutBox
         margin: large
         children:
-          - type: CheckBox
-            name: plotROC
-          - type: CheckBox
-            name: smoothing
-          - type: CheckBox
-            name: displaySE
-          - type: CheckBox
-            name: sensSpecTable
+          - type: Label
+            label: Plots
+            fitToGrid: true
+            cell:
+              column: 0
+              row: 0
+            children:
+              - type: CheckBox
+                name: plotROC
+              - type: CheckBox
+                name: combinePlots
+              - type: CheckBox
+                name: smoothing
+              - type: CheckBox
+                name: displaySE
+          - type: Label
+            label: Tables
+            fitToGrid: true
+            cell:
+              column: 1
+              row: 0
+            children:
+              - type: CheckBox
+                name: sensSpecTable
   - type: CollapseBox
     label: Advanced
     margin: normal
     collapsed: true
     children:
-      - type: CheckBox
-        name: delongTest
       - type: LayoutBox
         margin: large
         children:

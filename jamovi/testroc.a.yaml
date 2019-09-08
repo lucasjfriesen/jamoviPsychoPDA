@@ -142,7 +142,12 @@ options:
           title: "<="
 
     - name: plotROC
-      title: ROC
+      title: ROC Curves
+      type: Bool
+      default: True
+
+    - name: combinePlots
+      title: Combine plots
       type: Bool
       default: True
 

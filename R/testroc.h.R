@@ -18,6 +18,7 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             tol_metric = 0.05,
             direction = NULL,
             plotROC = TRUE,
+            combinePlots = TRUE,
             displaySE = TRUE,
             smoothing = TRUE,
             sensSpecTable = FALSE,
@@ -118,6 +119,10 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "plotROC",
                 plotROC,
                 default=TRUE)
+            private$..combinePlots <- jmvcore::OptionBool$new(
+                "combinePlots",
+                combinePlots,
+                default=TRUE)
             private$..displaySE <- jmvcore::OptionBool$new(
                 "displaySE",
                 displaySE,
@@ -151,6 +156,7 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..tol_metric)
             self$.addOption(private$..direction)
             self$.addOption(private$..plotROC)
+            self$.addOption(private$..combinePlots)
             self$.addOption(private$..displaySE)
             self$.addOption(private$..smoothing)
             self$.addOption(private$..sensSpecTable)
@@ -170,6 +176,7 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         tol_metric = function() private$..tol_metric$value,
         direction = function() private$..direction$value,
         plotROC = function() private$..plotROC$value,
+        combinePlots = function() private$..combinePlots$value,
         displaySE = function() private$..displaySE$value,
         smoothing = function() private$..smoothing$value,
         sensSpecTable = function() private$..sensSpecTable$value,
@@ -188,6 +195,7 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..tol_metric = NA,
         ..direction = NA,
         ..plotROC = NA,
+        ..combinePlots = NA,
         ..displaySE = NA,
         ..smoothing = NA,
         ..sensSpecTable = NA,
@@ -227,7 +235,7 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 name="resultsTable",
                 refs="thieleCutpoint",
                 title="Results Table",
-                visible=FALSE,
+                visible=TRUE,
                 clearWith=list(
                     "dependentVars",
                     "classVar",
@@ -302,8 +310,7 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     width=550,
                     height=450,
                     renderFun=".plotROC",
-                    visible="(plotROC)",
-                    requiresData=TRUE)))
+                    visible="(plotROC)")))
             self$add(jmvcore::Array$new(
                 options=options,
                 name="sensSpecTable",
@@ -359,6 +366,7 @@ TestROCBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param tol_metric .
 #' @param direction .
 #' @param plotROC .
+#' @param combinePlots .
 #' @param displaySE .
 #' @param smoothing .
 #' @param sensSpecTable .
@@ -390,6 +398,7 @@ TestROC <- function(
     tol_metric = 0.05,
     direction,
     plotROC = TRUE,
+    combinePlots = TRUE,
     displaySE = TRUE,
     smoothing = TRUE,
     sensSpecTable = FALSE,
@@ -425,6 +434,7 @@ TestROC <- function(
         tol_metric = tol_metric,
         direction = direction,
         plotROC = plotROC,
+        combinePlots = combinePlots,
         displaySE = displaySE,
         smoothing = smoothing,
         sensSpecTable = sensSpecTable,
