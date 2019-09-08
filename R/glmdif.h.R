@@ -231,6 +231,7 @@ glmDIFOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
 glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
+        debug = function() private$.items[["debug"]],
         instructions = function() private$.items[["instructions"]],
         DESCtable = function() private$.items[["DESCtable"]],
         DIFtable = function() private$.items[["DIFtable"]],
@@ -244,6 +245,10 @@ glmDIFResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="Differential Item Functioning - Binary Logistic Regression")
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="debug",
+                title="debug"))
             self$add(jmvcore::Html$new(
                 options=options,
                 name="instructions",
@@ -537,6 +542,7 @@ glmDIFBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'   Item Response Curves
 #' @return A results object containing:
 #' \tabular{llllll}{
+#'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$DESCtable} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$DIFtable} \tab \tab \tab \tab \tab a table \cr
@@ -618,9 +624,6 @@ glmDIF <- function(
         nIter = nIter,
         pAdjustMethod = pAdjustMethod,
         plotVarsICC = plotVarsICC)
-
-    results <- glmDIFResults$new(
-        options = options)
 
     analysis <- glmDIFClass$new(
         options = options,
