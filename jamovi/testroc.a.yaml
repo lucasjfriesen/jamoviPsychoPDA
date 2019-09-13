@@ -32,7 +32,7 @@ options:
         - nominal
       permitted:
         - factor
-        
+
     - name: method
       title: Method
       type: List
@@ -166,10 +166,10 @@ options:
       type: Bool
       default: False
 
-    - name: delongTest
-      title: DeLong test
-      type: Bool
-      default: False
+    #- name: delongTest
+    #  title: DeLong test
+    #  type: Bool
+    #  default: False
 
     - name: positiveClass
       title: Positive class

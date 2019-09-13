@@ -22,7 +22,6 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             displaySE = TRUE,
             smoothing = TRUE,
             sensSpecTable = FALSE,
-            delongTest = FALSE,
             positiveClass = "", ...) {
 
             super$initialize(
@@ -135,10 +134,6 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "sensSpecTable",
                 sensSpecTable,
                 default=FALSE)
-            private$..delongTest <- jmvcore::OptionBool$new(
-                "delongTest",
-                delongTest,
-                default=FALSE)
             private$..positiveClass <- jmvcore::OptionString$new(
                 "positiveClass",
                 positiveClass,
@@ -160,7 +155,6 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..displaySE)
             self$.addOption(private$..smoothing)
             self$.addOption(private$..sensSpecTable)
-            self$.addOption(private$..delongTest)
             self$.addOption(private$..positiveClass)
         }),
     active = list(
@@ -180,7 +174,6 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         displaySE = function() private$..displaySE$value,
         smoothing = function() private$..smoothing$value,
         sensSpecTable = function() private$..sensSpecTable$value,
-        delongTest = function() private$..delongTest$value,
         positiveClass = function() private$..positiveClass$value),
     private = list(
         ..dependentVars = NA,
@@ -199,7 +192,6 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..displaySE = NA,
         ..smoothing = NA,
         ..sensSpecTable = NA,
-        ..delongTest = NA,
         ..positiveClass = NA)
 )
 
@@ -288,7 +280,7 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="delongTest",
                 title="DeLong Test of Difference between AUCs",
-                visible="(delongTest)",
+                visible=FALSE,
                 clearWith=list(
                     "dependentVars",
                     "classVar",
@@ -370,7 +362,6 @@ TestROCBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param displaySE .
 #' @param smoothing .
 #' @param sensSpecTable .
-#' @param delongTest .
 #' @param positiveClass .
 #' @return A results object containing:
 #' \tabular{llllll}{
@@ -402,7 +393,6 @@ TestROC <- function(
     displaySE = TRUE,
     smoothing = TRUE,
     sensSpecTable = FALSE,
-    delongTest = FALSE,
     positiveClass = "") {
 
     if ( ! requireNamespace('jmvcore'))
@@ -438,7 +428,6 @@ TestROC <- function(
         displaySE = displaySE,
         smoothing = smoothing,
         sensSpecTable = sensSpecTable,
-        delongTest = delongTest,
         positiveClass = positiveClass)
 
     analysis <- TestROCClass$new(

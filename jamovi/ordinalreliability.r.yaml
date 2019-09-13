@@ -17,6 +17,9 @@ items:
       type: Table
       visible: (alphaTable)
       rows: 1
+      clearWith:
+          - items
+          - groups
       columns:
         - name: raw_alpha
           title: raw_alpha
@@ -42,6 +45,9 @@ items:
       type: Table
       visible: (guttmanTable)
       rows: 1
+      clearWith:
+          - items
+          - groups
       columns:
         - name: maxSHR
           title: Max Split-Half (lambda 4)
@@ -64,6 +70,9 @@ items:
       type: Table
       visible: (omegaTable)
       rows: 1
+      clearWith:
+          - items
+          - groups
       columns:
         - name: omega_h
           title: omega_h
@@ -86,6 +95,9 @@ items:
       type: Table
       visible: (thetaTable)
       rows: 1
+      clearWith:
+          - items
+          - groups
       columns:
         - name: ordinalTheta
           title: ordinalTheta
@@ -95,4 +107,21 @@ items:
       title: polychoricRho
       type: Preformatted
       visible: (polyTable)
+      clearWith:
+          - items
+          - groups
+
+    - name: omegaPlot
+      title: Ordinal Omega Factor Analysis
+      type: Array
+      visible: (omegaPlot)
+      items: 0
+      template:
+          type: Image
+          width:  550
+          height: 450
+          renderFun: .plot
+          clearWith:
+            - items
+            - groups
 ...

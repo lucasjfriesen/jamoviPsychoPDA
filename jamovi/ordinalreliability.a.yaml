@@ -42,4 +42,8 @@ options:
       title: Ordinal polychoric matrix
       default: false
 
+    - name: omegaPlot
+      type: Bool
+      title: Ordinal Omega Factor Analysis
+
 ...

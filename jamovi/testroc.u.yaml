@@ -33,8 +33,6 @@ children:
     children:
       - type: CheckBox
         name: allObserved
-      - type: CheckBox
-        name: delongTest
       - type: TextBox
         name: positiveClass
         format: string

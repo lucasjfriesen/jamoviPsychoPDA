@@ -66,7 +66,7 @@ items:
     - name: delongTest
       title: DeLong Test of Difference between AUCs
       type: Preformatted
-      visible: (delongTest)
+      visible: false #(delongTest)
       clearWith:
         - dependentVars
         - classVar

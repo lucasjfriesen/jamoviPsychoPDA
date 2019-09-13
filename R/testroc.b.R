@@ -385,18 +385,18 @@ TestROCClass <- if (requireNamespace('jmvcore'))
         
         # DeLong Test ----
         
-        if (self$options$delongTest == TRUE) {
-          delongResults <- deLong.test(
-            data = data.frame(lapply(data[, vars], as.numeric)),
-            classVar = classVar,
-            ref = NULL,
-            pos_class = 1,
-            conf.level = 0.95
-          )
-          
-          self$results$delongTest$setContent(paste0(capture.output(print.DeLong(delongResults))))
-        }
-        
+        # if (self$options$delongTest == TRUE) {
+        #   delongResults <- deLong.test(
+        #     data = data.frame(lapply(data[, vars], as.numeric)),
+        #     classVar = classVar,
+        #     ref = NULL,
+        #     pos_class = 1,
+        #     conf.level = 0.95
+        #   )
+        #   
+        #   self$results$delongTest$setContent(paste0(capture.output(print.DeLong(delongResults))))
+        # }
+        # 
         
       },
       .plotROC = function(image, ggtheme, theme, ...) {

@@ -2,7 +2,7 @@ title: Ordinal Reliability
 name: ordinalReliability
 jus: '3.0'
 stage: 0
-compilerMode: aggressive
+compilerMode: tame
 children:
   - type: VariableSupplier
     persistentItems: false
@@ -21,16 +21,30 @@ children:
             name: groups
             maxItemCount: 1
             isTarget: true
-  - type: LayoutBox
-    margin: large
-    children:
-      - type: CheckBox
-        name: alphaTable
-      - type: CheckBox
-        name: thetaTable
-      - type: CheckBox
-        name: omegaTable
-      - type: CheckBox
-        name: guttmanTable
-      - type: CheckBox
-        name: polyTable
+      - type: LayoutBox
+        stretchFactor: 1
+        margin: large
+        style: inline
+        children:
+          - type: Label
+            label: Ordinal Reliability Types
+            children:
+              - type: CheckBox
+                name: alphaTable
+              - type: CheckBox
+                name: omegaTable
+              - type: CheckBox
+                name: thetaTable
+              - type: CheckBox
+                name: guttmanTable
+      - type: LayoutBox
+        stretchFactor: 1
+        margin: large
+        children:
+          - type: Label
+            label: Other
+            children:
+              - type: CheckBox
+                name: polyTable
+              - type: CheckBox
+                name: omegaPlot
