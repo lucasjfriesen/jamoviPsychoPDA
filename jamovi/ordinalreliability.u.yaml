@@ -42,7 +42,7 @@ children:
         margin: large
         children:
           - type: Label
-            label: Other
+            label: Visualization
             children:
               - type: CheckBox
                 name: polyTable

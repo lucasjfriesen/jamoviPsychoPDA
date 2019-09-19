@@ -329,17 +329,18 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           
           # State Savers ----
           # Results table ----
-          # resultState <- self$results$resultsTable$state
-          # if (!is.null(resultState)) {
+          resultState <- self$results$resultsTable$state
+          if (!is.null(resultState)) {
           # ... populate the table from the state
-          # } else {
+          } else {
           # ... create the table and the state
-          table <- self$results$resultsTable$get(key = var)
-          for (row in resultsToDisplay) {
-            table$setTitle(paste0("Scale: ", var))
-            table$addRow(rowKey = row, value = resultsToReturn[resultsToReturn$cutpoint == row, ])
+            table <- self$results$resultsTable$get(key = var)
+            for (row in resultsToDisplay) {
+              table$setTitle(paste0("Scale: ", var))
+              table$addRow(rowKey = row, value = resultsToReturn[resultsToReturn$cutpoint == row, ])
+            }
+            self$results$resultsTable$setState(resultState)
           }
-          # self$results$resultsTable$setState(resultState)
           
           # Plotting Data ----
           if (self$options$plotROC == TRUE &
@@ -378,37 +379,32 @@ TestROCClass <- if (requireNamespace('jmvcore'))
         if (self$options$plotROC == TRUE & self$options$combinePlots == TRUE) {
           self$results$plotROC$addItem(key = "combined")
           image <- self$results$plotROC$get(key = "combined")
-          image$setTitle(paste0("ROC Curves"))
+          image$setTitle(cat("ROC Curve: ", vars))
           image$setState(plotDataList)
           
         }
         
         # DeLong Test ----
         
-        # if (self$options$delongTest == TRUE) {
-        #   delongResults <- deLong.test(
-        #     data = data.frame(lapply(data[, vars], as.numeric)),
-        #     classVar = classVar,
-        #     ref = NULL,
-        #     pos_class = 1,
-        #     conf.level = 0.95
-        #   )
-        #   
-        #   self$results$delongTest$setContent(paste0(capture.output(print.DeLong(delongResults))))
-        # }
-        # 
+        if (self$options$delongTest == TRUE) {
+          if (!is.null(self$options$group)){
+            stop("DeLong's test does not currently support the grouping variable. If you would like to contribute/provide guidance, please use the contact information provided in the documentation.")
+          } else {
+          delongResults <- deLong.test(
+            data = data.frame(lapply(data[, vars], as.numeric)),
+            classVar = classVar,
+            ref = NULL,
+            pos_class = 1,
+            conf.level = 0.95
+          )
+          }
+          self$results$delongTest$setContent(paste0(capture.output(print.DeLong(delongResults))))
+        }
+
         
       },
       .plotROC = function(image, ggtheme, theme, ...) {
-        # if ((is.null(self$options$classVar) ||
-        #      is.null(self$options$dependentVars)) &
-        #     self$options$plotROC == TRUE) {
-        #   return(FALSE)
-        # }
-        #
-        # if (is.null(image$state)){
-        #   return(FALSE)
-        # }
+
         plotData <- data.frame(image$state)
         if (self$options$combinePlots == TRUE){
           plot <-
@@ -417,14 +413,15 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           plot <-
             ggplot2::ggplot(plotData, ggplot2::aes(x = 1 - specificity, y = sensitivity))
         }
+        
         # self$results$debug$setContent(plotData)
-           plot <- plot +
+        
+          plot <- plot +
             ggplot2::geom_point() +
             ggplot2::geom_line() +
-            ggplot2::ggtitle(paste0("Scale: ", self$options$dependentVars),
-                             subtitle = paste0("AUC: ", round(plotData$AUC[1], 3))) +
             ggplot2::xlab("1 - Specificity") +
             ggplot2::ylab("Sensitivity") +
+            ggplot2::ggtitle(paste0("Scale: ", self$options$dependentVars)) + 
             ggtheme + ggplot2::theme(plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5))
           if (self$options$smoothing) {
             if (self$options$displaySE) {

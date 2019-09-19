@@ -154,22 +154,22 @@ options:
     - name: displaySE
       title: Standard error bars
       type: Bool
-      default: True
+      default: False
 
     - name: smoothing
       title: LOESS smoothing
       type: Bool
-      default: True
+      default: False
 
     - name: sensSpecTable
       title: Sensitivity-specificity tables
       type: Bool
       default: False
 
-    #- name: delongTest
-    #  title: DeLong test
-    #  type: Bool
-    #  default: False
+    - name: delongTest
+      title: DeLong test
+      type: Bool
+      default: False
 
     - name: positiveClass
       title: Positive class

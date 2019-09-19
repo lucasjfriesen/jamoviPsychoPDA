@@ -76,6 +76,8 @@ children:
       - type: LayoutBox
         margin: large
         children:
+          - type: CheckBox
+            name: delongTest
           - type: ComboBox
             name: method
           - type: ComboBox
