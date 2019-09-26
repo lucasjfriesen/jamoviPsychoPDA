@@ -71,7 +71,7 @@ formatter <- function(x) {
 deLong.test <-
    function(data,
             classVar,
-            pos_class = 1,
+            pos_class,
             ref = NULL,
             conf.level = 0.95) {
       # if (length(classVar) != dim(data)[1]) {
@@ -80,13 +80,13 @@ deLong.test <-
       id.pos <- classVar == pos_class
       
       if (sum(id.pos) < 1) {
-         stop("\n wrong level specified!\n")
+         stop("\n wrong level specified.\n")
       }
       if (dim(data)[2] < 2) {
-         stop("\n data must contain at least two columns!\n")
+         stop("\n data must contain at least two columns.\n")
       }
       if (dim(data)[1] < 2) {
-         stop("\n data must contain at least two rows!\n")
+         stop("\n data must contain at least two dependent variables for DeLong's test.\n")
       }
       
       nn <- sum(!id.pos)

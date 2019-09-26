@@ -31,6 +31,7 @@ items:
         - break_ties
         - tol_metric
         - direction
+        - positiveClass
       template:
         type: Table
         rows: 0
@@ -79,6 +80,7 @@ items:
         - break_ties
         - tol_metric
         - direction
+        - positiveClass
 
     - name: plotROC
       type: Array
@@ -106,6 +108,7 @@ items:
         - break_ties
         - tol_metric
         - direction
+        - positiveClass
       template:
         type: Html
 

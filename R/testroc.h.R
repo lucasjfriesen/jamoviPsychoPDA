@@ -247,7 +247,8 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "boot_runs",
                     "break_ties",
                     "tol_metric",
-                    "direction"),
+                    "direction",
+                    "positiveClass"),
                 template=jmvcore::Table$new(
                     options=options,
                     rows=0,
@@ -300,7 +301,8 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "boot_runs",
                     "break_ties",
                     "tol_metric",
-                    "direction")))
+                    "direction",
+                    "positiveClass")))
             self$add(jmvcore::Array$new(
                 options=options,
                 name="plotROC",
@@ -327,7 +329,8 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "boot_runs",
                     "break_ties",
                     "tol_metric",
-                    "direction"),
+                    "direction",
+                    "positiveClass"),
                 template=jmvcore::Html$new(
                     options=options)))}))
 

@@ -12,6 +12,7 @@
 
 
 
+
 # This file is a generated template, your changes will not be overwritten
 
 TestROCClass <- if (requireNamespace('jmvcore'))
@@ -167,7 +168,16 @@ TestROCClass <- if (requireNamespace('jmvcore'))
         break_ties = eval(parse(text = break_ties))
         
         boot_runs = self$options$boot_runs
-        plotDataList <- data.frame()
+        plotDataList <- data.frame(
+                var = list(),
+                cutpoint = list(),
+                sensitivity = list(),
+                specificity = list(),
+                ppv = list(),
+                npv = list(),
+                AUC = list(),
+                youden = list(),
+                stringsAsFactors = FALSE)
         # Data ----
         
         vars <- self$options$dependentVars
@@ -188,19 +198,19 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           if (!var %in% self$results$resultsTable$itemKeys) {
             self$results$sensSpecTable$addItem(key = var)
             self$results$resultsTable$addItem(key = var)
-            if (self$options$combinePlots == FALSE){
+            if (self$options$combinePlots == FALSE) {
               self$results$plotROC$addItem(key = var)
             }
           }
           
           if (is.null(subGroup)) {
             dependentVar = as.numeric(data[, var])
-            classVar = as.numeric(data[, self$options$classVar])
+            classVar = data[, self$options$classVar]
           } else {
             dependentVar = as.numeric(data[subGroup == strsplit(var, split = "_")[[1]][2],
                                            names(data) == strsplit(var, split = "_")[[1]][1]])
-            classVar = as.numeric(data[subGroup == strsplit(var, split = "_")[[1]][2],
-                                       self$options$classVar])
+            classVar = data[subGroup == strsplit(var, split = "_")[[1]][2],
+                                       self$options$classVar]
           }
           
           
@@ -213,7 +223,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             cutpoint = score,
             metric = metric,
             direction = direction,
-            pos_class = 1,
+            pos_class = self$options$positiveClass,
             # use_midpoints = use_midpoints,
             tol_metric = tol_metric,
             boot_runs = boot_runs,
@@ -234,7 +244,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             confusionMatrixForTable <- results$roc_curve[[1]]
           
           if (!self$options$allObserved) {
-            confusionMatrixForTable = confusionMatrixForTable[confusionMatrixForTable$x.sorted %in% resultsToDisplay, ]
+            confusionMatrixForTable = confusionMatrixForTable[confusionMatrixForTable$x.sorted %in% resultsToDisplay,]
           }
           if (self$options$sensSpecTable) {
             self$results$sensSpecTable$setVisible(TRUE)
@@ -331,13 +341,13 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           # Results table ----
           resultState <- self$results$resultsTable$state
           if (!is.null(resultState)) {
-          # ... populate the table from the state
+            # ... populate the table from the state
           } else {
-          # ... create the table and the state
+            # ... create the table and the state
             table <- self$results$resultsTable$get(key = var)
             for (row in resultsToDisplay) {
               table$setTitle(paste0("Scale: ", var))
-              table$addRow(rowKey = row, value = resultsToReturn[resultsToReturn$cutpoint == row, ])
+              table$addRow(rowKey = row, value = resultsToReturn[resultsToReturn$cutpoint == row,])
             }
             self$results$resultsTable$setState(resultState)
           }
@@ -349,7 +359,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             image$setTitle(paste0("ROC Curve: ", var))
             image$setState(
               data.frame(
-                #scaleName = rep(var, times = length(sensList)),
+                var = var,
                 cutpoint = confusionMatrix$x.sorted,
                 sensitivity = sensList,
                 specificity = specList,
@@ -361,67 +371,79 @@ TestROCClass <- if (requireNamespace('jmvcore'))
               )
             )
           } else {
-            plotDataList <- rbind(plotDataList, data.frame(
-              var = var,
-              cutpoint = confusionMatrix$x.sorted,
-              sensitivity = sensList,
-              specificity = specList,
-              ppv = ppvList,
-              npv = npvList,
-              AUC = results$AUC,
-              youden = youdenList,
-              stringsAsFactors = FALSE
+            plotDataList <- rbind(
+              plotDataList,
+              data.frame(
+                var = var,
+                cutpoint = confusionMatrix$x.sorted,
+                sensitivity = sensList,
+                specificity = specList,
+                ppv = ppvList,
+                npv = npvList,
+                AUC = results$AUC,
+                youden = youdenList,
+                stringsAsFactors = FALSE
               )
-            )
-          }
-        }
+            )}}
         
-        if (self$options$plotROC == TRUE & self$options$combinePlots == TRUE) {
-          self$results$plotROC$addItem(key = "combined")
-          image <- self$results$plotROC$get(key = "combined")
-          image$setTitle(cat("ROC Curve: ", vars))
-          image$setState(plotDataList)
+          if (self$options$plotROC == TRUE &
+              self$options$combinePlots == TRUE){
+            self$results$plotROC$addItem(key = 1)
+            image <- self$results$plotROC$get(key = 1)
+            image$setTitle(paste0("ROC Curve: Combined"))
+            
+            image$setState(plotDataList)
+            # 
+          }
           
-        }
-        
-        # DeLong Test ----
-        
-        if (self$options$delongTest == TRUE) {
-          if (!is.null(self$options$group)){
-            stop("DeLong's test does not currently support the grouping variable. If you would like to contribute/provide guidance, please use the contact information provided in the documentation.")
-          } else {
-          delongResults <- deLong.test(
-            data = data.frame(lapply(data[, vars], as.numeric)),
-            classVar = classVar,
-            ref = NULL,
-            pos_class = 1,
-            conf.level = 0.95
-          )
+          # DeLong Test ----
+          # self$results$debug$setContent(classVar)
+          if (self$options$delongTest == TRUE) {
+
+            if (!is.null(self$options$subGroup)) {
+              stop(
+                "DeLong's test does not currently support the grouping variable. If you would like to contribute/provide guidance, please use the contact information provided in the documentation."
+              )
+            } else {
+              delongResults <- deLong.test(
+                data = data.frame(lapply(data[, vars], as.numeric)),
+                classVar = as.character(classVar),
+                ref = NULL,
+                pos_class = self$options$positiveClass,
+                conf.level = 0.95
+              )
+            }
+            self$results$delongTest$setVisible(visible = TRUE)
+            self$results$delongTest$setContent(paste0(capture.output(print.DeLong(
+              delongResults
+            ))))
           }
-          self$results$delongTest$setContent(paste0(capture.output(print.DeLong(delongResults))))
-        }
+          
+          
+        },
+        .plotROC = function(image, ggtheme, theme, ...) {
 
-        
-      },
-      .plotROC = function(image, ggtheme, theme, ...) {
-
-        plotData <- data.frame(image$state)
-        if (self$options$combinePlots == TRUE){
-          plot <-
-            ggplot2::ggplot(plotData, ggplot2::aes(x = 1 - specificity, y = sensitivity, colour = var))
-        } else {
-          plot <-
-            ggplot2::ggplot(plotData, ggplot2::aes(x = 1 - specificity, y = sensitivity))
-        }
-        
-        # self$results$debug$setContent(plotData)
-        
+          plotData <- data.frame(image$state)
+          
+          if (self$options$combinePlots == TRUE) {
+            plot <-
+              ggplot2::ggplot(plotData,
+                              ggplot2::aes(
+                                x = 1 - specificity,
+                                y = sensitivity,
+                                colour = var
+                              ))
+          } else {
+            plot <-
+              ggplot2::ggplot(plotData, ggplot2::aes(x = 1 - specificity, y = sensitivity))
+          }
+          # self$results$debug$setContent(plotData)
+          
           plot <- plot +
             ggplot2::geom_point() +
             ggplot2::geom_line() +
             ggplot2::xlab("1 - Specificity") +
             ggplot2::ylab("Sensitivity") +
-            ggplot2::ggtitle(paste0("Scale: ", self$options$dependentVars)) + 
             ggtheme + ggplot2::theme(plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5))
           if (self$options$smoothing) {
             if (self$options$displaySE) {
@@ -432,8 +454,8 @@ TestROCClass <- if (requireNamespace('jmvcore'))
                 ggplot2::geom_smooth(se = FALSE)
             }
           }
-        print(plot)
-        TRUE
-      }
+          print(plot)
+          TRUE
+        }
           )
-    )
+          )
