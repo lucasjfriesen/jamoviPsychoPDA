@@ -4,8 +4,8 @@ title: TestROC
 jrs:   '1.1'
 
 items:
-    - name: debug
-      type: Preformatted
+    #- name: debug
+    #  type: Preformatted
 
     - name: instructions
       type: Html
@@ -15,7 +15,7 @@ items:
       type: Html
 
     - name: resultsTable
-      refs: thieleCutpoint
+      refs: cutpointr
       title: Results Table
       type: Array
       visible: True

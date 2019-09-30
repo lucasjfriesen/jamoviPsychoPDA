@@ -21,4 +21,10 @@
         `author`="Zumbo, B. D., Thomas, R. D.", 
         `year`=1997, 
         `title`="A measure of effect size for a model-based approach for studying DIF", 
-        `publisher`="Working Paper of the Edgeworth Laboratory for Quantitative Behavioral Science; University of Northern British Columbia: Prince George, B.C."))
+        `publisher`="Working Paper of the Edgeworth Laboratory for Quantitative Behavioral Science; University of Northern British Columbia: Prince George, B.C."), 
+    `cutpointr`=list(
+        `type`="paper", 
+        `author`="Thiele, C.", 
+        `year`=2019, 
+        `title`="cutpointr: Determine and Evaluate Optimal Cutpoints in Binary Classification Tasks", 
+        `publisher`="[R package]. Retrieved from  https://cran.r-project.org/package=cutpointr"))

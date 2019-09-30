@@ -67,9 +67,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           if (self$options$positiveClass == "") {
             procedureNotes <- paste0(
               procedureNotes,
-              "<p> Positive Class: Default ... '1' if numeric, first alphabetical option if characters",
-              "</p>"
-            )
+              "<p> Positive Class: ", self$data[,self$options$classVar][1], "</p>")
           } else {
             procedureNotes <- paste0(procedureNotes,
                                      "<p> Positive Class: ",
@@ -102,7 +100,6 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             "<p> Tie Breakers: ",
             self$options$break_ties,
             "</p>",
-            # "<p>  Positive Class: ", results$pos_class,"</p>",
             "<p>  Metric Tolerance: ",
             self$options$tol_metric,
             "</p>",
@@ -166,7 +163,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
         # use_midpoints = self$options$use_midpoint
         break_ties = self$options$break_ties
         break_ties = eval(parse(text = break_ties))
-        
+
         boot_runs = self$options$boot_runs
         plotDataList <- data.frame(
                 var = list(),
@@ -213,7 +210,12 @@ TestROCClass <- if (requireNamespace('jmvcore'))
                                        self$options$classVar]
           }
           
-          
+          if (self$options$positiveClass == ""){
+            # self$results$debug$setContent(classVar[1])
+            pos_class <- classVar[1]
+          } else {
+            pos_class <- self$options$positiveClass
+          }
           # Caclulations ----
           results = cutpointr::cutpointr(
             x = dependentVar,
@@ -223,7 +225,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             cutpoint = score,
             metric = metric,
             direction = direction,
-            pos_class = self$options$positiveClass,
+            pos_class = pos_class,
             # use_midpoints = use_midpoints,
             tol_metric = tol_metric,
             boot_runs = boot_runs,
