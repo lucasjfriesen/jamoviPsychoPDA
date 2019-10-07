@@ -663,13 +663,14 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             for (i in unique(items)) {
               private$.checkpoint()
               
-              # if (!is.null(anchor)) {
-              #   data2 <- cbind(data, anchor)
-              #   match <-
-              #     rowSums(sapply(data2, as.numeric), na.rm = TRUE)
-              # } else {
-              #   match <- rowSums(sapply(data, as.numeric))
-              # }
+              if (!is.null(anchor)) {
+                data2 <- cbind(data, anchor)
+                match <-
+                  rowSums(sapply(data2, as.numeric))
+              }
+              if (is.null(self$options$matchVar)){
+                match <- rowSums(sapply(data, as.numeric))
+              }
               
               plotData <-
                 data.frame(jmvcore::toNumeric(Data[, colnames(Data) == i]), match, group)

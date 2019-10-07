@@ -206,7 +206,6 @@ TestROCOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
 TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
-        debug = function() private$.items[["debug"]],
         instructions = function() private$.items[["instructions"]],
         procedureNotes = function() private$.items[["procedureNotes"]],
         resultsTable = function() private$.items[["resultsTable"]],
@@ -220,9 +219,6 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="TestROC")
-            self$add(jmvcore::Preformatted$new(
-                options=options,
-                name="debug"))
             self$add(jmvcore::Html$new(
                 options=options,
                 name="instructions",
@@ -233,7 +229,9 @@ TestROCResults <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$add(jmvcore::Array$new(
                 options=options,
                 name="resultsTable",
-                refs="cutpointr",
+                refs=list(
+                    "cutpointr",
+                    "testROC"),
                 title="Results Table",
                 visible=TRUE,
                 clearWith=list(
@@ -377,7 +375,6 @@ TestROCBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param positiveClass .
 #' @return A results object containing:
 #' \tabular{llllll}{
-#'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$procedureNotes} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$resultsTable} \tab \tab \tab \tab \tab an array of tables \cr

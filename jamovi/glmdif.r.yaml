@@ -4,9 +4,9 @@ title: Differential Item Functioning - Binary Logistic Regression
 jrs:   '1.1'
 
 items:
-    - name: debug
-      title: debug
-      type: Preformatted
+    #- name: debug
+    #  title: debug
+    #  type: Preformatted
 
     - name: instructions
       title: Instructions

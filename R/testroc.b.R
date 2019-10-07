@@ -116,7 +116,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           procedureNotes <- paste0(
             procedureNotes,
             "<hr />
-            <p>For more information on how calculations are performed and interpretting results, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/testROC_gettingStarted.html' target = '_blank'>documentation</a></p>
+            <p>For more information on how calculations are performed and interpretting results, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/measureDiagnostics_testROC_gettingStarted.html' target = '_blank'>documentation</a></p>
             </body>
             </html>"
           )
@@ -401,7 +401,9 @@ TestROCClass <- if (requireNamespace('jmvcore'))
           # DeLong Test ----
           # self$results$debug$setContent(classVar)
           if (self$options$delongTest == TRUE) {
-
+            if (length(self$options$dependentVars) < 2){
+              stop("Please specify at least two dependent variables to use DeLong's test.")
+            }
             if (!is.null(self$options$subGroup)) {
               stop(
                 "DeLong's test does not currently support the grouping variable. If you would like to contribute/provide guidance, please use the contact information provided in the documentation."

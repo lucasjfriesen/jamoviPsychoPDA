@@ -50,7 +50,7 @@ analyses:
     ns: psychoPDA
     menuGroup: PPDA
     menuTitle: Ordinal Reliability
-    hidden: false
+    hidden: true
     menuSubgroup: Measure Diagnostics
   - title: Ordinal LogR
     name: ordinaldif

@@ -15,7 +15,9 @@ items:
       type: Html
 
     - name: resultsTable
-      refs: cutpointr
+      refs: 
+        - cutpointr
+        - testROC
       title: Results Table
       type: Array
       visible: True
