@@ -104,7 +104,7 @@ items:
           type: number
 
     - name: polychoricRho
-      title: polychoricRho
+      title: Polychoric Correlation Matrix
       type: Preformatted
       visible: (polyTable)
       clearWith:

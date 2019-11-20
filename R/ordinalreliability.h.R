@@ -16,7 +16,7 @@ ordinalReliabilityOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             omegaPlot = NULL, ...) {
 
             super$initialize(
-                package='psychoPDA',
+                package='ordinalReliability',
                 name='ordinalReliability',
                 requiresData=TRUE,
                 ...)
@@ -238,7 +238,7 @@ ordinalReliabilityBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     public = list(
         initialize = function(options, data=NULL, datasetId="", analysisId="", revision=0) {
             super$initialize(
-                package = 'psychoPDA',
+                package = 'ordinalReliability',
                 name = 'ordinalReliability',
                 version = c(1,0,0),
                 options = options,
