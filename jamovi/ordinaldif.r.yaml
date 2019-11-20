@@ -4,9 +4,14 @@ title: Ordinal LogR
 jrs:   '1.1'
 
 items:
-    #- name: debug
-    #  title: debug
-    #  type: Preformatted
+
+    - name: debug
+      title: debug
+      type: Html
+
+    - name: twat
+      title: deb twat
+      type: Html
 
     - name: instructions
       title: Instructions
@@ -47,7 +52,7 @@ items:
       title: Differential Item Functioning Analysis - Ordinal Logistic Regresion
       type: Table
       visible: false
-      rows:  (item)
+      rows: 0
       clearWith:
           - item
           - group
@@ -68,36 +73,63 @@ items:
         - name: item
           title: Item
           type: text
-
-        - name: ZT
-          refs: zumboThomas
-          title: Zumbo-Thomas
+        - name: model
+          title: Model
           type: text
-          visible: (difFlagScale:zt)
 
-        - name: JG
-          title: Jodoin-Gierl
-          type: text
-          visible: (difFlagScale:jg)
+        - name: logOdds_matchingVar
+          title: "log odds (Match)"
+          type: number
+        - name: logOdds_groupingVar
+          title: "log odds (Group)"
+          type: number
 
-        #- name: difType
-        #  title: Result
-        #  type: text
+        - name: deltaOR_matchingVar
+          title: "\u0394 OR (Match)"
+          type: number
+        - name: deltaOR_groupingVar
+          title: "\u0394 OR (Group)"
+          type: number
+
+        - name: deltaBeta_matchingVar
+          title: "\u0394 \u03B2 (Match)"
+          type: number
+        - name: deltaBeta_groupingVar
+          title: "\u0394 \u03B2 (Group)"
+          type: number
+
+        - name: deltaNagR2
+          title: "\u0394 R\u00B2"
+          type: number
+          format: zto
+          #visible: (nagEff)
+        - name: chiSquare
+          title: "\u03A7\u00B2 Stat."
+          type: number
 
         - name: p
           title: P-value
           type: number
           format: zto,pvalue
 
-        - name: chiSquare
-          title: "\u03A7\u00B2 Stat."
-          type: number
+        - name: deltaBetaFlag_matchingVar
+          title: "\u0394 \u03B2 Flag (Match)"
+          type: text
+          #visible: (deltaBetaFlag)
+        - name: deltaBetaFlag_groupingVar
+          title: "\u0394 \u03B2 Flag (Group)"
+          type: text
+          #visible: (deltaBetaFlag)
 
-        - name: effSize
-          title: "\u0394 R\u00B2"
-          type: number
-          format: zto
-          visible: (nagEff)
+        - name: ZT
+          refs: zumboThomas
+          title: Zumbo-Thomas
+          type: text
+          #visible: (difFlagScale:zt)
+        - name: JG
+          title: Jodoin-Gierl
+          type: text
+          #visible: (difFlagScale:jg)
 
     - name: coefficientsTable
       title: "Ordinal Logistic Regression Coefficients"

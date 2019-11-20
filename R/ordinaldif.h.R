@@ -22,6 +22,7 @@ ordinaldifOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             type = "both",
             criterion = NULL,
             nagEff = TRUE,
+            deltaBetaFlag = TRUE,
             coeffEff = FALSE,
             alpha = 0.05,
             purify = FALSE,
@@ -127,6 +128,10 @@ ordinaldifOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "nagEff",
                 nagEff,
                 default=TRUE)
+            private$..deltaBetaFlag <- jmvcore::OptionBool$new(
+                "deltaBetaFlag",
+                deltaBetaFlag,
+                default=TRUE)
             private$..coeffEff <- jmvcore::OptionBool$new(
                 "coeffEff",
                 coeffEff,
@@ -175,6 +180,7 @@ ordinaldifOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..type)
             self$.addOption(private$..criterion)
             self$.addOption(private$..nagEff)
+            self$.addOption(private$..deltaBetaFlag)
             self$.addOption(private$..coeffEff)
             self$.addOption(private$..alpha)
             self$.addOption(private$..purify)
@@ -199,6 +205,7 @@ ordinaldifOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         type = function() private$..type$value,
         criterion = function() private$..criterion$value,
         nagEff = function() private$..nagEff$value,
+        deltaBetaFlag = function() private$..deltaBetaFlag$value,
         coeffEff = function() private$..coeffEff$value,
         alpha = function() private$..alpha$value,
         purify = function() private$..purify$value,
@@ -222,6 +229,7 @@ ordinaldifOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..type = NA,
         ..criterion = NA,
         ..nagEff = NA,
+        ..deltaBetaFlag = NA,
         ..coeffEff = NA,
         ..alpha = NA,
         ..purify = NA,
@@ -233,6 +241,8 @@ ordinaldifOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
 ordinaldifResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
+        debug = function() private$.items[["debug"]],
+        twat = function() private$.items[["twat"]],
         instructions = function() private$.items[["instructions"]],
         DESCtable = function() private$.items[["DESCtable"]],
         DIFtable = function() private$.items[["DIFtable"]],
@@ -246,6 +256,14 @@ ordinaldifResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="Ordinal LogR")
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="debug",
+                title="debug"))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="twat",
+                title="deb twat"))
             self$add(jmvcore::Html$new(
                 options=options,
                 name="instructions",
@@ -287,7 +305,7 @@ ordinaldifResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 name="DIFtable",
                 title="Differential Item Functioning Analysis - Ordinal Logistic Regresion",
                 visible=FALSE,
-                rows="(item)",
+                rows=0,
                 clearWith=list(
                     "item",
                     "group",
@@ -309,31 +327,64 @@ ordinaldifResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `title`="Item", 
                         `type`="text"),
                     list(
-                        `name`="ZT", 
-                        `refs`="zumboThomas", 
-                        `title`="Zumbo-Thomas", 
-                        `type`="text", 
-                        `visible`="(difFlagScale:zt)"),
+                        `name`="model", 
+                        `title`="Model", 
+                        `type`="text"),
                     list(
-                        `name`="JG", 
-                        `title`="Jodoin-Gierl", 
-                        `type`="text", 
-                        `visible`="(difFlagScale:jg)"),
+                        `name`="logOdds_matchingVar", 
+                        `title`="log odds (Match)", 
+                        `type`="number"),
+                    list(
+                        `name`="logOdds_groupingVar", 
+                        `title`="log odds (Group)", 
+                        `type`="number"),
+                    list(
+                        `name`="deltaOR_matchingVar", 
+                        `title`="\u0394 OR (Match)", 
+                        `type`="number"),
+                    list(
+                        `name`="deltaOR_groupingVar", 
+                        `title`="\u0394 OR (Group)", 
+                        `type`="number"),
+                    list(
+                        `name`="deltaBeta_matchingVar", 
+                        `title`="\u0394 \u03B2 (Match)", 
+                        `type`="number"),
+                    list(
+                        `name`="deltaBeta_groupingVar", 
+                        `title`="\u0394 \u03B2 (Group)", 
+                        `type`="number"),
+                    list(
+                        `name`="deltaNagR2", 
+                        `title`="\u0394 R\u00B2", 
+                        `type`="number", 
+                        `format`="zto"),
+                    list(
+                        `name`="chiSquare", 
+                        `title`="\u03A7\u00B2 Stat.", 
+                        `type`="number"),
                     list(
                         `name`="p", 
                         `title`="P-value", 
                         `type`="number", 
                         `format`="zto,pvalue"),
                     list(
-                        `name`="chiSquare", 
-                        `title`="\u03A7\u00B2 Stat.", 
-                        `type`="number"),
+                        `name`="deltaBetaFlag_matchingVar", 
+                        `title`="\u0394 \u03B2 Flag (Match)", 
+                        `type`="text"),
                     list(
-                        `name`="effSize", 
-                        `title`="\u0394 R\u00B2", 
-                        `type`="number", 
-                        `format`="zto", 
-                        `visible`="(nagEff)"))))
+                        `name`="deltaBetaFlag_groupingVar", 
+                        `title`="\u0394 \u03B2 Flag (Group)", 
+                        `type`="text"),
+                    list(
+                        `name`="ZT", 
+                        `refs`="zumboThomas", 
+                        `title`="Zumbo-Thomas", 
+                        `type`="text"),
+                    list(
+                        `name`="JG", 
+                        `title`="Jodoin-Gierl", 
+                        `type`="text"))))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="coefficientsTable",
@@ -519,6 +570,7 @@ ordinaldifBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param criterion A character string specifying which DIF statistic is
 #'   computed. Possible values are "LRT" (default) or "Wald"
 #' @param nagEff .
+#' @param deltaBetaFlag .
 #' @param coeffEff .
 #' @param alpha Significance level
 #' @param purify Should the method be used iteratively to purify the set of
@@ -532,6 +584,8 @@ ordinaldifBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'   Item Response Curves
 #' @return A results object containing:
 #' \tabular{llllll}{
+#'   \code{results$debug} \tab \tab \tab \tab \tab a html \cr
+#'   \code{results$twat} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$DESCtable} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$DIFtable} \tab \tab \tab \tab \tab a table \cr
@@ -565,6 +619,7 @@ ordinaldif <- function(
     type = "both",
     criterion,
     nagEff = TRUE,
+    deltaBetaFlag = TRUE,
     coeffEff = FALSE,
     alpha = 0.05,
     purify = FALSE,
@@ -607,12 +662,16 @@ ordinaldif <- function(
         type = type,
         criterion = criterion,
         nagEff = nagEff,
+        deltaBetaFlag = deltaBetaFlag,
         coeffEff = coeffEff,
         alpha = alpha,
         purify = purify,
         nIter = nIter,
         pAdjustMethod = pAdjustMethod,
         plotVarsICC = plotVarsICC)
+
+    results <- ordinaldifResults$new(
+        options = options)
 
     analysis <- ordinaldifClass$new(
         options = options,

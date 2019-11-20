@@ -207,6 +207,11 @@ options:
       type: Bool
       default: true
 
+    - name: deltaBetaFlag
+      title: "Naeglekirke R\u00B2"
+      type: Bool
+      default: true
+
     - name: coeffEff
       title: Regression coefficients
       type: Bool

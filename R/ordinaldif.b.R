@@ -72,7 +72,7 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         if (length(match) == 0) {
           match <- "score"
         } else {
-          colnames(match) <- self$options$matchVar
+          # colnames(match) <- self$options$matchVar
           match <- unlist(match)
         }
         
@@ -206,64 +206,64 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
           return(table)
         }
       
-        buildGC <- function(GC, table) {
-          
-          if (self$options$designAnalysisEffectType == "nagR2"){
-            for (item in 1:nrow(GC)) {
-              table$setTitle("Design Analysis - Naeglekirke R\u00B2")
-              table$addRow(
-                rowKey = item,
-                values = list(
-                  label = GC[item, 1],
-                  itemName = GC[item, 2],
-                  obsEff = GC[item, 4],
-                  bootSE = GC[item, 7],
-                  hypTrueEff = GC[item, 3],
-                  typeM = GC[item, 5],
-                  estimatedTE = GC[item, 4] / GC[item, 5],
-                  power = GC[item, 6]
-                )
-              )
-              if (self$options$D == "") {
-                table$setNote(
-                  "nullHyp",
-                  "The hypothesis of the DIF effect being equal to 0 is the 'A' level hypothesis, and uses 0 + 2 * observedSE as a proxy for 0."
-                )
-              }
-              if (GC[item, 4] < GC[item, 3]) {
-                highlight(table, item, 5)
-                table$setNote(
-                  "interpretGC",
-                  "Several items (flagged red) have observed effect sizes below the hypothesized true effect. For a guide to interpretation see: https://bit.ly/2I274JY"
-                )
-              }
-            }
-            } else {
-            table$setTitle("Design Analysis - Ordinal Logistic Regression Coefficients")
-              # self$results$debug$setContent(self$options$designAnalysisEffectType)
-              designList = GC[[1]]
-              GC = GC[[2]]
-              for (item in 1:length(designList)) {
-                subList <- as.data.frame(GC[[item]])
-                for (i in 1:NROW(subList)) {
-                  table$addRow(rowKey = item, values = c("itemName"=designList[item],
-                                                         "coefficientName" = rownames(subList)[i],
-                                                         subList[i, ]))
-                }
-              }
-              table$setNote(
-                "interpretGC",
-                "Coefficients have been transformed into absolute value SD units for Type-M/Type-S error calculations"
-              )
-            }
-          }
+        # buildGC <- function(GC, table) {
+        #   
+        #   if (self$options$designAnalysisEffectType == "nagR2"){
+        #     for (item in 1:nrow(GC)) {
+        #       table$setTitle("Design Analysis - Naeglekirke R\u00B2")
+        #       table$addRow(
+        #         rowKey = item,
+        #         values = list(
+        #           label = GC[item, 1],
+        #           itemName = GC[item, 2],
+        #           obsEff = GC[item, 4],
+        #           bootSE = GC[item, 7],
+        #           hypTrueEff = GC[item, 3],
+        #           typeM = GC[item, 5],
+        #           estimatedTE = GC[item, 4] / GC[item, 5],
+        #           power = GC[item, 6]
+        #         )
+        #       )
+        #       if (self$options$D == "") {
+        #         table$setNote(
+        #           "nullHyp",
+        #           "The hypothesis of the DIF effect being equal to 0 is the 'A' level hypothesis, and uses 0 + 2 * observedSE as a proxy for 0."
+        #         )
+        #       }
+        #       if (GC[item, 4] < GC[item, 3]) {
+        #         highlight(table, item, 5)
+        #         table$setNote(
+        #           "interpretGC",
+        #           "Several items (flagged red) have observed effect sizes below the hypothesized true effect. For a guide to interpretation see: https://bit.ly/2I274JY"
+        #         )
+        #       }
+        #     }
+        #     } else {
+        #     table$setTitle("Design Analysis - Ordinal Logistic Regression Coefficients")
+        #       # self$results$debug$setContent(self$options$designAnalysisEffectType)
+        #       designList = GC[[1]]
+        #       GC = GC[[2]]
+        #       for (item in 1:length(designList)) {
+        #         subList <- as.data.frame(GC[[item]])
+        #         for (i in 1:NROW(subList)) {
+        #           table$addRow(rowKey = item, values = c("itemName"=designList[item],
+        #                                                  "coefficientName" = rownames(subList)[i],
+        #                                                  subList[i, ]))
+        #         }
+        #       }
+        #       table$setNote(
+        #         "interpretGC",
+        #         "Coefficients have been transformed into absolute value SD units for Type-M/Type-S error calculations"
+        #       )
+          #   }
+          # }
         
         # Model ----
         model <-
           ordinal.logistic(
-            DATA = Data,
+            items = Data,
             group = group,
-            groupOne = groupOne,
+            # groupOne = groupOne,
             anchor = anchor,
             anchorNames = self$options$anchor,
             groupType = groupType,
@@ -275,51 +275,52 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             nIter = nIter,
             pAdjustMethod = pAdjustMethod
           )
+        # self$results$debug$setContent(model)
         
-        # Build GC tables ----
-        runDesignAnalysis <- function() {
-            if (self$options$designAnalysisSigOnly) {
-              designList <- model$names[model$DIFitems]
-            } else {
-              designList <- model$names
-            }
-            if (is.na(designList[1])) {
-              self$results$gcTable$addRow(
-                rowKey = "doesntMatter",
-                values = list(itemName = "No items flagged as exhibitting DIF.")
-              )
-              return()
-            }
-            if (self$options$designAnalysisEffectType == "nagR2") {
-              GCTable = designAnalysis.nagR2(
-                designList = designList,
-                Data = Data,
-                group = group,
-                match = model$matchScores,
-                bootSims = bootSims,
-                type = type,
-                hypTrueEff = self$options$D,
-                alpha = alpha,
-                difFlagScale = self$options$difFlagScale,
-                sigOnly = self$options$designAnalysisSigOnly
-              )
-              return(GCTable)
-            }
-            
-            if (self$options$designAnalysisEffectType == "coefficients") {
-              gcTableCoefficients = designAnalysis.coefficients(
-                designList = designList,
-                coefficient = model$coefficients,
-                coefficientsSE = model$coefficientsSE,
-                alpha = self$options$alpha,
-                hypTrueEff = self$options$D,
-                difFlagScale = self$options$difFlagScale,
-                df = model$m0$df.residual,
-                sigOnly = self$options$designAnalysisSigOnly
-              )
-              return(list(designList, gcTableCoefficients))
-            }
-          }
+        # # Build GC tables ----
+        # runDesignAnalysis <- function() {
+        #     if (self$options$designAnalysisSigOnly) {
+        #       designList <- model$names[model$DIFitems]
+        #     } else {
+        #       designList <- model$names
+        #     }
+        #     if (is.na(designList[1])) {
+        #       self$results$gcTable$addRow(
+        #         rowKey = "doesntMatter",
+        #         values = list(itemName = "No items flagged as exhibitting DIF.")
+        #       )
+        #       return()
+        #     }
+        #     if (self$options$designAnalysisEffectType == "nagR2") {
+        #       GCTable = designAnalysis.nagR2(
+        #         designList = designList,
+        #         Data = Data,
+        #         group = group,
+        #         match = model$matchScores,
+        #         bootSims = bootSims,
+        #         type = type,
+        #         hypTrueEff = self$options$D,
+        #         alpha = alpha,
+        #         difFlagScale = self$options$difFlagScale,
+        #         sigOnly = self$options$designAnalysisSigOnly
+        #       )
+        #       return(GCTable)
+        #     }
+        #     
+        #     if (self$options$designAnalysisEffectType == "coefficients") {
+        #       gcTableCoefficients = designAnalysis.coefficients(
+        #         designList = designList,
+        #         coefficient = model$coefficients,
+        #         coefficientsSE = model$coefficientsSE,
+        #         alpha = self$options$alpha,
+        #         hypTrueEff = self$options$D,
+        #         difFlagScale = self$options$difFlagScale,
+        #         df = model$m0$df.residual,
+        #         sigOnly = self$options$designAnalysisSigOnly
+        #       )
+        #       return(list(designList, gcTableCoefficients))
+        #     }
+        #   }
         
         
         # Description Results Table ----
@@ -348,13 +349,7 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             paste0(
               "Detection of",
               mess1,
-              "Differential Item Functioning using the "
-              ,
-              switch(
-                class(model),
-                polr = "ordinal logistic regression method ",
-                genLogistic = "Generalized logistic regression method "
-              ),
+              "Differential Item Functioning using the ordinal logistic regression method ",
               pur,
               "item purification and with ",
               # length(model$groupOne),
@@ -499,57 +494,63 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                                                                 jg = "'C': Large effect (0.07 \u2264 \u0394R\u00B2 \u2264 1)")
           resDescTable <- blankRow(resDescTable)
           
-          if (self$options$designAnalysis & self$options$designAnalysisEffectType == "nagR2") {
-            resDescTable[nrow(resDescTable) + 1, "bob"] = paste0(
-              "Post-Data Design Analysis performed on ",
-              ifelse(
-                self$options$designAnalysisSigOnly,
-                "only flagged ",
-                "all "
-              ),
-              "items using ",
-              self$options$bootSims,
-              " bootstraps to create an empirical distribution for ",
-              "\u0394 Naeglekirke R\u00B2."
-            )
-            resDescTable <- blankRow(resDescTable)
-          }
+          # if (self$options$designAnalysis & self$options$designAnalysisEffectType == "nagR2") {
+          #   resDescTable[nrow(resDescTable) + 1, "bob"] = paste0(
+          #     "Post-Data Design Analysis performed on ",
+          #     ifelse(
+          #       self$options$designAnalysisSigOnly,
+          #       "only flagged ",
+          #       "all "
+          #     ),
+          #     "items using ",
+          #     self$options$bootSims,
+          #     " bootstraps to create an empirical distribution for ",
+          #     "\u0394 Naeglekirke R\u00B2."
+          #   )
+          #   resDescTable <- blankRow(resDescTable)
+          # }
           return(resDescTable)
         }
         
         
         # DIF Results Table ----
         
-        calculateDIFTable <- function() {
-          for (i in 1:length(Data)) {
-            if (self$results$DIFtable$isNotFilled()) {
-              table <- self$results$DIFtable
-              for (i in 1:length(Data)) {
-                table$setRow(
-                  rowNo = i,
-                  values = list(
-                    item = model$names[i],
-                    chiSquare = model$Logistik[i],
-                    p = model$adjusted.p[i],
-                    effSize = model$deltaR2[i],
-                    ZT = ifelse(model$adjusted.p[i] <= alpha, model$ZT[i], "No flag"),
-                    JG = ifelse(model$adjusted.p[i] <= alpha, model$JG[i], "No flag")
-                  )
-                )
-              }
-            }
+        calculateDIFTable <- function(model) {
+          difTableRes <- difResultsFormatter(model)
+          # self$results$debug$setContent(difTableRes)
+          for (row in 1:NROW(difTableRes)) {
+            table <- self$results$DIFtable
+            table$addRow(
+              rowKey = row,
+              values = difTableRes[row,]
+               #  list(
+               # logOdds_matchingVar = difTableRes[row, "logOdds_matchingVar"],
+               # logOdds_groupingVar = difTableRes[row, "logOdds_groupingVar"],
+               # deltaOR_matchingVar = difTableRes[row, "deltaOR_matchingVar"],
+               # deltaOR_groupingVar = difTableRes[row, "deltaOR_groupingVar"],
+               # deltaBeta_matchingVar = difTableRes[row, "deltaBeta_matchingVar"],
+               # deltaBeta_groupingVar = difTableRes[row, "deltaBeta_groupingVar"],
+               # deltaNagR2 = difTableRes[row, "deltaNagR2"],
+               # chiSquare = difTableRes[row, "chiSquare"],
+               # p = difTableRes[row, "p"],
+               # deltaBetaFlag_matchingVar = difTableRes[row, "deltaBetaFlag_matchingVar"],
+               # deltaBetaFlag_groupingVar = difTableRes[row, "deltaBetaFlag_groupingVar"],        
+               # ZT = difTableRes[row, "ZT"],
+               # JG = difTableRes[row, "JG"]
+               # )
+            )
           }
           
-          df <-
-            ifelse(type == "both", 2 * length(groupOne), length(groupOne))
-          table$setNote(
-            key = "df",
-            note = paste0(
-              "Tests of significance conducted using: ",
-              df,
-              " degrees of freedom (\u03A7\u00B2 significance threshold = ", round(model$sigThreshold, 3),")"
-            )
-          )
+          # df <-
+          #   ifelse(type == "both", 2 * length(groupOne), length(groupOne))
+          # table$setNote(
+          #   key = "df",
+          #   note = paste0(
+          #     "Tests of significance conducted using: ",
+          #     df,
+          #     " degrees of freedom (\u03A7\u00B2 significance threshold = ", round(model$sigThreshold, 3),")"
+          #   )
+          # )
         }
         
         # Coefficients table ----
@@ -575,7 +576,7 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
           # ... populate the table from the state
         } else {
           # ... create the table and the state
-          DIFstate <- calculateDIFTable()
+          DIFstate <- calculateDIFTable(model)
           self$results$DIFtable$setState(DIFstate)
         }
         
@@ -592,51 +593,52 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         }
         
         # DESC state ----
-        DESCstate <- self$results$DESCtable$state
-        if (!is.null(DESCstate)) {
-          # ... populate the table from the state
-          table <- self$results$DESCtable
-          for (i in 1:nrow(DESCstate)) {
-            table$addRow(rowKey = i,
-                         values = list(bob = DESCstate$bob[i]))
-          }
-        } else {
-          # ... calculate the state
-          table <- self$results$DESCtable
-          DESCstate <- calculateDESCtable()
-          for (i in 1:nrow(DESCstate)) {
-            table$addRow(rowKey = i,
-                         values = list(bob = DESCstate$bob[i]))
-          }
-          self$results$DESCtable$setState(DESCstate)
-        }
-        # GC state ----
-        gcState <- self$results$gcTable$state
-        if (self$options$designAnalysis){
-          if (!is.null(gcState)) {
-            # ... populate the table from the state
-            if (length(gcState) != 0) {
-              table <- self$results$gcTable
-              buildGC(gcState, table)
-            }
-          } else {
-            # ... populate the table from the state
-            gcState <- runDesignAnalysis()
-            if (length(gcState) != 0) {
-              table <- self$results$gcTable
-              buildGC(gcState, table)
-            }
-            self$results$gcTable$setState(gcState)
-          }
-        }
+        # DESCstate <- self$results$DESCtable$state
+        # if (!is.null(DESCstate)) {
+        #   # ... populate the table from the state
+        #   table <- self$results$DESCtable
+        #   for (i in 1:nrow(DESCstate)) {
+        #     table$addRow(rowKey = i,
+        #                  values = list(bob = DESCstate$bob[i]))
+        #   }
+        # } else {
+        #   # ... calculate the state
+        #   table <- self$results$DESCtable
+        #   DESCstate <- calculateDESCtable()
+        #   for (i in 1:nrow(DESCstate)) {
+        #     table$addRow(rowKey = i,
+        #                  values = list(bob = DESCstate$bob[i]))
+        #   }
+        #   self$results$DESCtable$setState(DESCstate)
+        # }
         
-        table <- self$results$gcTable
-        if (table$rowCount == 0) {
-          table$addRow(
-            rowKey = 1,
-            values = list(item = "No items were flagged as exhibiting statistically significant DIF", NULL, NULL, NULL)
-          )
-        }
+        # # GC state ----
+        # gcState <- self$results$gcTable$state
+        # if (self$options$designAnalysis){
+        #   if (!is.null(gcState)) {
+        #     # ... populate the table from the state
+        #     if (length(gcState) != 0) {
+        #       table <- self$results$gcTable
+        #       buildGC(gcState, table)
+        #     }
+        #   } else {
+        #     # ... populate the table from the state
+        #     gcState <- runDesignAnalysis()
+        #     if (length(gcState) != 0) {
+        #       table <- self$results$gcTable
+        #       buildGC(gcState, table)
+        #     }
+        #     self$results$gcTable$setState(gcState)
+        #   }
+        # }
+        # 
+        # table <- self$results$gcTable
+        # if (table$rowCount == 0) {
+        #   table$addRow(
+        #     rowKey = 1,
+        #     values = list(item = "No items were flagged as exhibiting statistically significant DIF", NULL, NULL, NULL)
+        #   )
+        # }
         
         # ICC plot data ----
         
@@ -645,21 +647,7 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             items <- self$options$plotVarsICC
             
             for (i in unique(items)) {
-              private$.checkpoint()
-              
-              if (!is.null(anchor)) {
-                data2 <- cbind(data, anchor)
-                match <-
-                  rowSums(sapply(data2, as.numeric), na.rm = TRUE)
-              } else {
-                match <- rowSums(sapply(data, as.numeric))
-              }
-              
-              plotData <-
-                data.frame(jmvcore::toNumeric(Data[, colnames(Data) == i]), match, group)
-              
-              colnames(plotData) <-
-                c(i, "match", "group")
+              plotData <- makePlotData(model, item = i, model_ = "uniform")
               
               imageICC <- self$results$ICCplots$get(key = i)
               imageICC$setState(list(plotData, model))
@@ -675,7 +663,6 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         }
         
         plotData <- data.frame(imageICC$state[[1]])
-        model <- imageICC$state[[2]]
         
         if (!all(self$options$plotVarsICC %in% self$options$item)) {
           stop(
@@ -687,18 +674,18 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
           )
         }
         
-        p <- ggplot(data = as.data.frame(plotData),
-                    aes(
-                      x = as.numeric(plotData$match),
-                      y = as.integer(plotData[, 1]),
-                      colour = plotData$group
-                    )) +
-          geom_smooth(
-            method = "glm",
-            level = 1 - self$options$alpha,
-            se = TRUE,
-            method.args = (family = "binomial")
+        p <- ggplot2::ggplot(plotData) +
+          ggplot2::geom_line(
+            ggplot2::aes(
+              x = MATCH,
+              y = ITEM.PROBABILITY,
+              linetype = GROUP,
+              colour = ITEM.LEVEL
+            ),
+            size = 1
           ) +
+          ggplot2::xlab("Theta") +
+          ggplot2::ylab("Probability of Endorsement") +
           labs(colour = "Group membership") +
           ggtitle(paste("Item: ", colnames(plotData)),
                   subtitle = paste(
@@ -713,8 +700,10 @@ ordinaldifClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             "Supplied matching variable range"
           )) +
           ylab("Prediicted probability of endorsement") +
-          ggtheme + theme(plot.title = ggplot2::element_text(margin=ggplot2::margin(b = 5.5 * 1.2)),
-                          plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5))
+          ggtheme + theme(
+            plot.title = ggplot2::element_text(margin = ggplot2::margin(b = 5.5 * 1.2)),
+            plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5)
+          )
         
         print(p)
         TRUE
