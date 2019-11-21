@@ -292,9 +292,9 @@ Logistik <-
                 if (!is.null(anchor)) {
                     data2 <- cbind(data, anchor)
                     SCORES <-
-                        rowSums(sapply(data2, as.numeric), na.rm = TRUE)
+                        rowSums(sapply(data2, jmvcore::toNumeric), na.rm = TRUE)
                 } else {
-                    SCORES <- rowSums(sapply(data, as.numeric))
+                    SCORES <- rowSums(sapply(data, jmvcore::toNumeric))
                 }
             }
             else {

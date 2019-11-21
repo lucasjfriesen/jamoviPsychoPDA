@@ -664,12 +664,12 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
               private$.checkpoint()
               
               if (!is.null(anchor)) {
-                data2 <- cbind(data, anchor)
+                data2 <- cbind(Data, anchor)
                 match <-
-                  rowSums(sapply(data2, as.numeric))
+                  rowSums(sapply(data2, jmvcore::toNumeric))
               }
               if (is.null(self$options$matchVar)){
-                match <- rowSums(sapply(data, as.numeric))
+                match <- rowSums(sapply(Data, jmvcore::toNumeric))
               }
               
               plotData <-
@@ -710,7 +710,7 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
         
         p <- ggplot(data = as.data.frame(plotData),
                     aes(
-                      x = as.numeric(plotData$match),
+                      x = jmvcore::toNumeric(plotData$match),
                       y = as.integer(plotData[, 1]),
                       colour = plotData$group
                     )) +
