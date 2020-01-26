@@ -4,7 +4,7 @@ jus: '2.0'
 stage: 0
 compilerMode: tame
 events:
-  update: './glmDIF.events::update'
+  update: './glmdif.events::update'
 children:
   - type: VariableSupplier
     name: itemSupplier
@@ -19,7 +19,7 @@ children:
             name: item
             isTarget: true
             events:
-              change: './glmDIF.events::onChange_item'
+              change: './glmdif.events::onChange_item'
       - type: TargetLayoutBox
         label: Anchor Items
         children:
@@ -171,7 +171,7 @@ children:
         persistentItems: false
         stretchFactor: 1
         events:
-          update: './glmDIF.events::onUpdate_plotVarsSupplier'
+          update: './glmdif.events::onUpdate_plotVarsSupplier'
         children:
           - type: TargetLayoutBox
             children:
