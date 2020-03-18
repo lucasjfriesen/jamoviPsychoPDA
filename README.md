@@ -1,5 +1,7 @@
 # Psychometrics & Post-Data Analysis for Jamovi
 
+DEVELOPMENT IS CURRENTLY ON HOLD. CONTACT THE CREATOR FOR DETAILS OR INTEREST IN RENEWING THE PROJECT.
+
 This module is a tool for performing various Psychometric & Post-Data Analyses.
 
 The current tools available are:
