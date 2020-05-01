@@ -128,7 +128,6 @@ TestROCClass <- if (requireNamespace('jmvcore'))
         
         if (self$options$method == "oc_manual") {
           method = "cutpointr::oc_manual"
-          method = eval(parse(text = method))
           if (self$options$specifyCutScore == "") {
             stop("Please specify a cut score for using this method.")
           } else {

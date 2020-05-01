@@ -16,7 +16,7 @@ ordinalReliabilityOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             omegaPlot = NULL, ...) {
 
             super$initialize(
-                package='ordinalReliability',
+                package='psychoPDA',
                 name='ordinalReliability',
                 requiresData=TRUE,
                 ...)
@@ -212,7 +212,7 @@ ordinalReliabilityResults <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$add(jmvcore::Preformatted$new(
                 options=options,
                 name="polychoricRho",
-                title="polychoricRho",
+                title="Polychoric Correlation Matrix",
                 visible="(polyTable)",
                 clearWith=list(
                     "items",
@@ -238,7 +238,7 @@ ordinalReliabilityBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     public = list(
         initialize = function(options, data=NULL, datasetId="", analysisId="", revision=0) {
             super$initialize(
-                package = 'ordinalReliability',
+                package = 'psychoPDA',
                 name = 'ordinalReliability',
                 version = c(1,0,0),
                 options = options,
