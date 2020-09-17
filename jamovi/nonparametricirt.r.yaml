@@ -1,0 +1,32 @@
+---
+name:  nonParametricIRT
+title: Non-Parametric IRT
+jrs:   '1.1'
+
+items:
+    - name: debug
+      title: debug results
+      type: Preformatted
+
+    - name: instructions
+      title: Instructions
+      type: Html
+      visible: True
+
+    - name:  text
+      title: Non-Parametric IRT
+      type:  Preformatted
+
+    - name: itemPlots
+      title: Item Plots
+      type: Array
+      items: (plotItems)
+      template:
+          type: Image
+          width:  550
+          height: 450
+          renderFun: .itemPlots
+          visible: (plotItems)
+          requiresData: TRUE
+
+...

@@ -35,30 +35,32 @@ analyses:
     name: rdTTest
     ns: psychoPDA
     menuGroup: PPDA
-    menuSubgroup: Design Analysis
     menuTitle: T-Test for Mean Differences
-    hidden: true
+    menuSubgroup: Design Analysis
   - title: T-Test for Correlations
     name: ttestCor
     ns: psychoPDA
     menuGroup: PPDA
-    menuSubgroup: Design Analysis
     menuTitle: T-Test for Correlations
-    hidden: true
+    menuSubgroup: Design Analysis
   - title: Ordinal Reliability
     name: ordinalReliability
     ns: psychoPDA
     menuGroup: PPDA
     menuTitle: Ordinal Reliability
-    hidden: true
     menuSubgroup: Measure Diagnostics
   - title: Ordinal LogR
     name: ordinaldif
     ns: psychoPDA
     menuGroup: PPDA
     menuTitle: Ordinal LogR
-    hidden: true
     menuSubgroup: Differential Item Functioning
+  - title: Non-Parametric IRT
+    name: nonParametricIRT
+    ns: psychoPDA
+    menuGroup: PPDA
+    menuTitle: Non-Parametric IRT
+    menuSubgroup: Item Response Theory
 datasets:
   - name: Binary LogR
     path: dataverbal.csv
@@ -66,5 +68,7 @@ datasets:
   - name: Test ROC
     path: testROC.csv
     description: Example data for the Test ROC analysis
+usesNative: true
+minApp: 1.0.8
 
 ...

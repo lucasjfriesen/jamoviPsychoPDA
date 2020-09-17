@@ -1,0 +1,118 @@
+---
+name:  nonParametricIRT
+title: Non-Parametric IRT
+menuGroup: PPDA
+menuSubgroup: Item Response Theory
+version: '1.0.0'
+jas: '1.2'
+
+options:
+    - name: data
+      type: Data
+
+    - name: responses
+      title: Responses
+      type: Variables
+
+    - name: groups
+      title: Participant group
+      type: Variable
+
+    - name: key
+      title: Response Key
+      type: Variable
+
+    - name: weights
+      title: Item Weights
+      type: Variable
+
+    - name: itemlabels
+      title: Item Labels
+      type: Variable
+
+    - name: format
+      title: Item Format
+      type: List
+      options:
+        - title: Multiple choice
+          name:  formatMC
+        - title: Rating-scale
+          name:  formatPartial
+        - title: Nominal
+          name:  formatNominal
+      default: formatMC
+
+    - name: SubRank
+      title: Participant Rank
+      type: Variable
+
+    - name: miss
+      title: Missing responses
+      type: List
+      options:
+        - title: Permitted
+          name:  missPermitted
+        - title: Random fill uniform
+          name:  missRandomUnif
+        - title: Random fill multinomial
+          name:  missRandomMulti
+        - title: Omit
+          name:  missROmit
+      default: missPermitted
+
+    - name: NAweight
+      type: Number
+      title: Missing Response Weight
+      min: 0
+      max: 1
+      default: 0
+
+    - name: kernel
+      title: Kernel Function
+      type: List
+      options:
+        - title: Gaussian
+          name:  gaussian
+        - title: Quadratic
+          name:  quadratic
+        - title: Uniform
+          name:  uniform
+      default: gaussian
+
+    - name: bandwidth
+      title: Bandwidth
+      type: List
+      options:
+        - title: Silverman
+          name:  Silverman
+        - title: Cross-validation
+          name:  CV
+      default: Silverman
+
+    - name: RankFun
+      title: Rank Function
+      type: List
+      options:
+        - title: Sum
+          name:  sum
+        - title: Mean
+          name:  mean
+      default: sum
+
+    - name: thetadist
+      title: Theta Distribution
+      type: List
+      options:
+        - title: Normal
+          name:  norm
+        - title: Beta
+          name:  beta
+        - title: Uniform
+          name:  unif
+        - title: Gamma
+          name:  gamma
+      default: norm
+
+    - name: plotItems
+      type: Variables
+...
