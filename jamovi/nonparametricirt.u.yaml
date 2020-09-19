@@ -3,30 +3,18 @@ name: nonParametricIRT
 jus: '3.0'
 stage: 0
 compilerMode: tame
-events:
-  update: './nonparametriciRT.events::update'
 children:
   - type: VariableSupplier
+    name: itemSupplier
     persistentItems: false
     stretchFactor: 1
     children:
       - type: TargetLayoutBox
-        label: Responses
+        label: Items
         children:
           - type: VariablesListBox
-            name: responses
+            name: item
             isTarget: true
-            events:
-              change: './nonparametriciRT.events::onChange_item'
-
-      - type: TargetLayoutBox
-        label: Response Key
-        children:
-          - type: VariablesListBox
-            name: key
-            maxItemCount: 1
-            isTarget: true
-
       - type: TargetLayoutBox
         label: Participant group
         children:
@@ -34,23 +22,6 @@ children:
             name: groups
             maxItemCount: 1
             isTarget: true
-
-      - type: TargetLayoutBox
-        label: Item Weights
-        children:
-          - type: VariablesListBox
-            name: weights
-            maxItemCount: 1
-            isTarget: true
-
-      - type: TargetLayoutBox
-        label: Item Labels
-        children:
-          - type: VariablesListBox
-            name: itemlabels
-            maxItemCount: 1
-            isTarget: true
-
   - type: CollapseBox
     label: Advanced
     margin: normal
@@ -72,6 +43,18 @@ children:
                 name: SubRank
                 maxItemCount: 1
                 isTarget: true
+      - type: LayoutBox
+        margin: large
+        children:
+          - type: TextBox
+            name: thetadist
+            format: string
+      - type: LayoutBox
+        margin: large
+        children:
+          - type: TextBox
+            name: nevalpoints
+            format: number
       - type: LayoutBox
         margin: large
         children:
@@ -98,27 +81,101 @@ children:
         children:
           - type: ComboBox
             name: RankFun
-      - type: LayoutBox
-        margin: large
-        children:
-          - type: ComboBox
-            name: thetadist
-
   - type: CollapseBox
-    label: Plot
+    label: Item Plots
     margin: normal
     collapsed: true
     children:
       - type: VariableSupplier
-        name: plotItemsSupplier
         persistentItems: false
         stretchFactor: 1
-        events:
-          update: './nonparametricirt.events::onUpdate_plotVarsSupplier'
         children:
+          - type: LayoutBox
+            margin: large
+            children:
+              - type: Label
+                label: Item Plot Types
+                children:
+                  - name: itemPlotTypes_OCC
+                    type: CheckBox
+                    optionName: itemPlotTypes
+                    optionPart: OCC
+                  - name: itemPlotTypes_EIS
+                    type: CheckBox
+                    optionName: itemPlotTypes
+                    optionPart: EIS
+                name: itemPlotTypes
+                style: list-inline
+          - type: LayoutBox
+            margin: large
+            children:
+              - type: Label
+                label: Item Plot Types - DIF
+                children:
+                  - name: itemPlotTypesDIF_OCCDIF
+                    type: CheckBox
+                    optionName: itemPlotTypesDIF
+                    optionPart: OCCDIF
+                  - name: itemPlotTypesDIF_EISDIF
+                    type: CheckBox
+                    optionName: itemPlotTypesDIF
+                    optionPart: EISDIF
+                name: itemPlotTypesDIF
+                style: list-inline
           - type: TargetLayoutBox
-            label: plotItems
+            label: Items to plot
             children:
               - type: VariablesListBox
-                name: plotItems
+                name: itemPlotSupplier
                 isTarget: true
+          - type: VariableSupplier
+            persistentItems: false
+            stretchFactor: 1
+            children:
+              - type: TargetLayoutBox
+                label: Items to plot - DIF
+                children:
+                  - type: VariablesListBox
+                    name: itemPlotSupplierDIF
+                    isTarget: true
+  - type: CollapseBox
+    label: Test Plots
+    margin: normal
+    collapsed: true
+    children:
+      - type: LayoutBox
+        margin: large
+        children:
+          - type: Label
+            label: Test Plots
+            children:
+              - name: testPlotTypes_density
+                type: CheckBox
+                optionName: testPlotTypes
+                optionPart: density
+              - name: testPlotTypes_expected
+                type: CheckBox
+                optionName: testPlotTypes
+                optionPart: expected
+              - name: testPlotTypes_sd
+                type: CheckBox
+                optionName: testPlotTypes
+                optionPart: sd
+            name: testPlotTypes
+            style: list-inline
+      - type: LayoutBox
+        margin: large
+        children:
+          - type: Label
+            label: Test Plots - DIF
+            children:
+              - name: testPlotTypesDIF_densityDIF
+                type: CheckBox
+                optionName: testPlotTypesDIF
+                optionPart: densityDIF
+              - name: testPlotTypesDIF_expectedDIF
+                type: CheckBox
+                optionName: testPlotTypesDIF
+                optionPart: expectedDIF
+            name: testPlotTypesDIF
+            style: list-inline

@@ -80,11 +80,15 @@ buildPlots <- function(data,
     }
   }
   
+# Data ----  
+  
   plotData <-
     data.frame(subjscore = data$subjscore
                )
-
-  p <- buildDensity(plotData, ggtheme, theme, ...)
+# Plot ----
+  
+  p <- switch(plottype,
+    density = buildDensity(plotData, ggtheme, theme, ...))
   
   return(p)
   

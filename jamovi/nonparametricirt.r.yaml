@@ -4,9 +4,9 @@ title: Non-Parametric IRT
 jrs:   '1.1'
 
 items:
-    - name: debug
-      title: debug results
-      type: Preformatted
+    #- name: debug
+    #  title: debug results
+    #  type: Preformatted
 
     - name: instructions
       title: Instructions
@@ -20,7 +20,20 @@ items:
     - name: itemPlots
       title: Item Plots
       type: Array
-      items: (plotItems)
+      items: (itemPlotSupplier)
+      template:
+          type: Image
+          width:  550
+          height: 450
+          renderFun: .itemPlots
+          visible: (itemPlotSupplier)
+          requiresData: TRUE
+          clearWith:
+              - item
+
+    - name: testPlots
+      title: Test Plots
+      type: Array
       template:
           type: Image
           width:  550
@@ -28,5 +41,6 @@ items:
           renderFun: .itemPlots
           visible: (plotItems)
           requiresData: TRUE
-
+          clearWith:
+              - item
 ...

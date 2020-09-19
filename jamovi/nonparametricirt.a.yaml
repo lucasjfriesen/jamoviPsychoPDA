@@ -10,7 +10,7 @@ options:
     - name: data
       type: Data
 
-    - name: responses
+    - name: item
       title: Responses
       type: Variables
 
@@ -18,17 +18,13 @@ options:
       title: Participant group
       type: Variable
 
-    - name: key
-      title: Response Key
-      type: Variable
+#    - name: key
+#      title: Response Key
+#      type: Variable
 
-    - name: weights
-      title: Item Weights
-      type: Variable
-
-    - name: itemlabels
-      title: Item Labels
-      type: Variable
+#    - name: weights
+#      title: Item Weights
+#      type: Variable
 
     - name: format
       title: Item Format
@@ -51,14 +47,14 @@ options:
       type: List
       options:
         - title: Permitted
-          name:  missPermitted
+          name:  option
         - title: Random fill uniform
-          name:  missRandomUnif
+          name:  random.unif
         - title: Random fill multinomial
-          name:  missRandomMulti
+          name:  random.multinom
         - title: Omit
-          name:  missROmit
-      default: missPermitted
+          name:  omit
+      default: option
 
     - name: NAweight
       type: Number
@@ -66,6 +62,11 @@ options:
       min: 0
       max: 1
       default: 0
+
+    - name: nevalpoints
+      type: Number
+      title: Number of Evaluation
+      default: 51
 
     - name: kernel
       title: Kernel Function
@@ -99,20 +100,55 @@ options:
           name:  mean
       default: sum
 
-    - name: thetadist
-      title: Theta Distribution
-      type: List
-      options:
-        - title: Normal
-          name:  norm
-        - title: Beta
-          name:  beta
-        - title: Uniform
-          name:  unif
-        - title: Gamma
-          name:  gamma
-      default: norm
+    - type: String
+      name: thetadist
+      #suffix: '('
+      #prefix: ')'
+      default: "norm, 0, 1"
 
-    - name: plotItems
+    - name: itemPlotTypes
+      title: Item Plot Types
+      type: NMXList
+      options:
+        - title: Option Characteristic Curves
+          name: OCC
+        - title: Expected Item Information
+          name: EIS
+
+    - name: itemPlotSupplier
       type: Variables
+      title: Items to plot
+
+    - name: testPlotTypes
+      title: Test Plots
+      type: NMXList
+      options:
+        - title: Density
+          name: density
+        - title: Expected Score
+          name: expected
+        - title: Standard Deviation
+          name: sd
+
+    - name: itemPlotTypesDIF
+      title: Item Plot Types - DIF
+      type: NMXList
+      options:
+        - title: Option Characteristic Curves
+          name: OCCDIF
+        - title: Expected Item Information
+          name: EISDIF
+
+    - name: itemPlotSupplierDIF
+      type: Variables
+      title: Items to plot - DIF
+
+    - name: testPlotTypesDIF
+      title: Test Plots - DIF
+      type: NMXList
+      options:
+        - title: Density
+          name: densityDIF
+        - title: Expected Score
+          name: expectedDIF
 ...
