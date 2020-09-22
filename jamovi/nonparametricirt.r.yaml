@@ -28,7 +28,20 @@ items:
           width:  550
           height: 450
           renderFun: .occPlot
-          visible: (itemPlotSupplier)
+          visible: (itemPlotOCC)
+          clearWith:
+              - item
+
+    - name: eisPlots
+      title: EIS Plots
+      type: Array
+      items: (itemPlotSupplier)
+      template:
+          type: Image
+          width:  550
+          height: 450
+          renderFun: .eisPlot
+          visible: (itemPlotEIS)
           clearWith:
               - item
 

@@ -117,9 +117,13 @@ nonParametricIRTClass <-
                         )
                       }
                       
-                    itemPlotData <-
+                    occPlotData <-
                         self$results$occPlots$get(key = i)
-                    itemPlotData$setState(list(resultState, item = i))
+                    occPlotData$setState(list(resultState, item = i))
+                    
+                    eisPlotData <-
+                      self$results$eisPlots$get(key = i)
+                    eisPlotData$setState(list(resultState, item = i))
                     }
                     
                     if (self$options$testPlotExpected) {
@@ -130,6 +134,11 @@ nonParametricIRTClass <-
                       densityPlotResults <- self$results$testPlotDensity
                       densityPlotResults$setState(resultState)
                     }
+                    if (self$options$testPlotSD) {
+                      sdPlotResults <- self$results$testPlotSD
+                      sdPlotResults$setState(resultState)
+                    }                        
+
                     }
                 },
 
@@ -185,7 +194,7 @@ nonParametricIRTClass <-
                   plotData <- testPlotData$state
                   
                   p <-
-                    buildDensity(plotData,
+                    buildSD(plotData,
                                  ggtheme,
                                  theme,
                                  ...)
@@ -212,6 +221,27 @@ nonParametricIRTClass <-
                                   theme,
                                   ...)
 
+                  print(p)
+                  TRUE
+                },
+                
+                .eisPlot = function(itemPlotData, ggtheme, theme, ...) {
+                  
+                  if (is.null(itemPlotData$state)) {
+                    return(FALSE)
+                  }
+                  
+                  plotData <- itemPlotData$state[[1]]
+                  item = itemPlotData$state[[2]]
+                  
+                  p <-
+                    buildEIS(plotData,
+                             item = item,
+                             alpha = NULL,
+                             ggtheme,
+                             theme,
+                             ...)
+                  
                   print(p)
                   TRUE
                 }

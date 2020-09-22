@@ -18,8 +18,11 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             RankFun = "sum",
             thetadist = "norm, 0, 1",
             itemPlotTypes = NULL,
+            itemPlotOCC = FALSE,
+            itemPlotEIS = FALSE,
             itemPlotSupplier = NULL,
-            axistype = "score",
+            axistypeTest = "score",
+            axistypeItem = "score",
             itemPlotTypesDIF = NULL,
             testPlotTypesDIF = NULL,
             testPlotDensity = FALSE,
@@ -100,12 +103,27 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=list(
                     "OCC",
                     "EIS"))
+            private$..itemPlotOCC <- jmvcore::OptionBool$new(
+                "itemPlotOCC",
+                itemPlotOCC,
+                default=FALSE)
+            private$..itemPlotEIS <- jmvcore::OptionBool$new(
+                "itemPlotEIS",
+                itemPlotEIS,
+                default=FALSE)
             private$..itemPlotSupplier <- jmvcore::OptionVariables$new(
                 "itemPlotSupplier",
                 itemPlotSupplier)
-            private$..axistype <- jmvcore::OptionList$new(
-                "axistype",
-                axistype,
+            private$..axistypeTest <- jmvcore::OptionList$new(
+                "axistypeTest",
+                axistypeTest,
+                options=list(
+                    "distribution",
+                    "score"),
+                default="score")
+            private$..axistypeItem <- jmvcore::OptionList$new(
+                "axistypeItem",
+                axistypeItem,
                 options=list(
                     "distribution",
                     "score"),
@@ -147,8 +165,11 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..RankFun)
             self$.addOption(private$..thetadist)
             self$.addOption(private$..itemPlotTypes)
+            self$.addOption(private$..itemPlotOCC)
+            self$.addOption(private$..itemPlotEIS)
             self$.addOption(private$..itemPlotSupplier)
-            self$.addOption(private$..axistype)
+            self$.addOption(private$..axistypeTest)
+            self$.addOption(private$..axistypeItem)
             self$.addOption(private$..itemPlotTypesDIF)
             self$.addOption(private$..testPlotTypesDIF)
             self$.addOption(private$..testPlotDensity)
@@ -168,8 +189,11 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         RankFun = function() private$..RankFun$value,
         thetadist = function() private$..thetadist$value,
         itemPlotTypes = function() private$..itemPlotTypes$value,
+        itemPlotOCC = function() private$..itemPlotOCC$value,
+        itemPlotEIS = function() private$..itemPlotEIS$value,
         itemPlotSupplier = function() private$..itemPlotSupplier$value,
-        axistype = function() private$..axistype$value,
+        axistypeTest = function() private$..axistypeTest$value,
+        axistypeItem = function() private$..axistypeItem$value,
         itemPlotTypesDIF = function() private$..itemPlotTypesDIF$value,
         testPlotTypesDIF = function() private$..testPlotTypesDIF$value,
         testPlotDensity = function() private$..testPlotDensity$value,
@@ -188,8 +212,11 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..RankFun = NA,
         ..thetadist = NA,
         ..itemPlotTypes = NA,
+        ..itemPlotOCC = NA,
+        ..itemPlotEIS = NA,
         ..itemPlotSupplier = NA,
-        ..axistype = NA,
+        ..axistypeTest = NA,
+        ..axistypeItem = NA,
         ..itemPlotTypesDIF = NA,
         ..testPlotTypesDIF = NA,
         ..testPlotDensity = NA,
@@ -204,6 +231,7 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
         instructions = function() private$.items[["instructions"]],
         text = function() private$.items[["text"]],
         occPlots = function() private$.items[["occPlots"]],
+        eisPlots = function() private$.items[["eisPlots"]],
         testPlotDensity = function() private$.items[["testPlotDensity"]],
         testPlotExpected = function() private$.items[["testPlotExpected"]],
         testPlotSD = function() private$.items[["testPlotSD"]]),
@@ -239,7 +267,20 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     width=550,
                     height=450,
                     renderFun=".occPlot",
-                    visible="(itemPlotSupplier)",
+                    visible="(itemPlotOCC)",
+                    clearWith=list(
+                        "item"))))
+            self$add(jmvcore::Array$new(
+                options=options,
+                name="eisPlots",
+                title="EIS Plots",
+                items="(itemPlotSupplier)",
+                template=jmvcore::Image$new(
+                    options=options,
+                    width=550,
+                    height=450,
+                    renderFun=".eisPlot",
+                    visible="(itemPlotEIS)",
                     clearWith=list(
                         "item"))))
             self$add(jmvcore::Image$new(
@@ -309,8 +350,11 @@ nonParametricIRTBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param RankFun .
 #' @param thetadist .
 #' @param itemPlotTypes .
+#' @param itemPlotOCC .
+#' @param itemPlotEIS .
 #' @param itemPlotSupplier .
-#' @param axistype .
+#' @param axistypeTest .
+#' @param axistypeItem .
 #' @param itemPlotTypesDIF .
 #' @param testPlotTypesDIF .
 #' @param testPlotDensity .
@@ -322,6 +366,7 @@ nonParametricIRTBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$text} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$occPlots} \tab \tab \tab \tab \tab an array of images \cr
+#'   \code{results$eisPlots} \tab \tab \tab \tab \tab an array of images \cr
 #'   \code{results$testPlotDensity} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$testPlotExpected} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$testPlotSD} \tab \tab \tab \tab \tab an image \cr
@@ -342,8 +387,11 @@ nonParametricIRT <- function(
     RankFun = "sum",
     thetadist = "norm, 0, 1",
     itemPlotTypes,
+    itemPlotOCC = FALSE,
+    itemPlotEIS = FALSE,
     itemPlotSupplier,
-    axistype = "score",
+    axistypeTest = "score",
+    axistypeItem = "score",
     itemPlotTypesDIF,
     testPlotTypesDIF,
     testPlotDensity = FALSE,
@@ -379,8 +427,11 @@ nonParametricIRT <- function(
         RankFun = RankFun,
         thetadist = thetadist,
         itemPlotTypes = itemPlotTypes,
+        itemPlotOCC = itemPlotOCC,
+        itemPlotEIS = itemPlotEIS,
         itemPlotSupplier = itemPlotSupplier,
-        axistype = axistype,
+        axistypeTest = axistypeTest,
+        axistypeItem = axistypeItem,
         itemPlotTypesDIF = itemPlotTypesDIF,
         testPlotTypesDIF = testPlotTypesDIF,
         testPlotDensity = testPlotDensity,

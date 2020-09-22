@@ -56,6 +56,7 @@ analyses:
     ns: psychoPDA
     menuGroup: PPDA
     menuTitle: Ordinal LogR
+    hidden: true
     menuSubgroup: Differential Item Functioning
   - title: Non-Parametric IRT
     name: nonParametricIRT

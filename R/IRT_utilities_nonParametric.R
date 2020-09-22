@@ -5,6 +5,31 @@
   
 # Test-level plots ----
 
+buildSD <- function (data, ggtheme, theme, ...) 
+{
+Testvar <- apply(data$OCC[,-c(1:3)],2,function(x)sum(x*data$OCC[,3]**2 - (x*data$OCC[,3])**2))
+
+Testsd<-sqrt(Testvar)
+
+p <- ggplot() +
+  geom_line(aes(x = data$expectedscores, y = Testsd)) +
+  geom_vline(xintercept = data$subjscoresummary, linetype = "dashed", colour = "blue") +
+  geom_text(mapping = aes(x = data$subjscoresummary,
+                          y = min(Testsd),
+                          label = labels(data$subjscoresummary),
+                          hjust = -.1,
+                          vjust = -1)
+  ) +
+  labs(title = "Test Standard Deviation",
+       x = "Expected Score",
+       y = "Standard Deviations") +
+  ggtheme + theme(
+    plot.title = ggplot2::element_text(margin = ggplot2::margin(b = 5.5 * 1.2)),
+    plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5))
+
+return(p)
+}
+
 buildExpected <- function (data, ggtheme, theme, ...) 
 {
 
@@ -52,24 +77,7 @@ buildDensity <- function(data, ggtheme, theme, ...){
 # Item-level plots ----
   
 buildOCC <- function (data, item, ggtheme, theme, ...) {
-  # {
-  #   if (missing(ylim)) {
-  #     ylim = c(0, 1)
-  #   }
-  #   if (missing(xlim)) {
-  #     xlim = c(min(axis), max(axis))
-  #   }
-  #   if (missing(ylab)) {
-  #     ylab = "Probability"
-  #   }
-  #   if (missing(main)) {
-  #     main = -1
-  #   }
-  #   if (missing(alpha)) {
-  #     alpha <- FALSE
-  #   }
-  
-  IRFlines <- tidyr::pivot_longer(data.frame(data$OCC[which(data$OCC[, 1] == which(data$itemlabels == item)), ]),
+IRFlines <- tidyr::pivot_longer(data.frame(data$OCC[which(data$OCC[, 1] == which(data$itemlabels == item)), ]),
                                   !c(X1, X2, X3),
                                   names_to = "evalPoint",
                                   values_to = "Probability")
@@ -92,54 +100,64 @@ p <- ggplot() +
     plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5))
 return(p)
   
-  #   plotit <- function(x, OBJ, alpha, axis, quants, main, xlim, 
-  #                      ylim, xlab, ylab, ...) {
-  #     if (main == -1) {
-  #       main = paste("Item: ", OBJ$itemlabels[x], "\n")
-  #     }
-  #     plot(1, ylim = ylim, main = main, xlim = xlim, type = "l", 
-  #          ylab = ylab, xlab = xlab, ...)
-  #     IRFlines <- OBJ$OCC[which(OBJ$OCC[, 1] == x), ]
-  #     SE <- OBJ$stderrs[which(OBJ$OCC[, 1] == x), ]
-  #     for (i in 1:nrow(IRFlines)) {
-  #       if (OBJ$scale[x] == 1) {
-  #         if (IRFlines[i, 3] == 1) {
-  #           colortouse <- "blue"
-  #           lwidth <- 2
-  #         }
-  #         else {
-  #           colortouse <- "red"
-  #           lwidth <- 1
-  #         }
-  #       }
-  #       else {
-  #         colortouse <- "black"
-  #         lwidth <- 1
-  #       }
-  #       lines(axis, IRFlines[i, -c(1:3)], col = colortouse, 
-  #             lwd = lwidth)
-  #       word <- ifelse(IRFlines[i, 2] == -1, "NA", 
-  #                      as.character(IRFlines[i, 2]))
-  #       wordloc <- round(runif(1, min = 10, max = OBJ$nevalpoints - 
-  #                                10))
-  #       text(axis[wordloc], IRFlines[i, wordloc], word, cex = 0.7)
+
+  #     SE <- data$stderrs[which(data$OCC[, 1] == x), ]
+ 
   #       if (alpha) {
   #         ME <- qnorm(1 - alpha/2) * SE[i, -c(1:3)]
   #         confhigh <- sapply(IRFlines[i, -c(1:3)] + ME, 
   #                            function(x) min(x, 1))
   #         conflow <- sapply(IRFlines[i, -c(1:3)] - ME, 
   #                           function(x) max(x, 0))
-  #         lines(axis, confhigh, lty = 2, col = colortouse)
-  #         lines(axis, conflow, lty = 2, col = colortouse)
-  #       }
-  #     }
-  #     axis(3, at = quants, lab = labels(quants), tck = 0)
-  #     abline(v = quants, col = "blue", lty = 2)
-  #     box()
-  #   }
-  #   par(ask = TRUE)
-  #   nada <- sapply(items, plotit, OBJ = OBJ, alpha = alpha, axis = axis, 
-  #                  quants = quants, main, xlim, ylim, xlab, ylab, ...)
-  # }
+
+  }
   
+buildEIS <- function(data, item, alpha, ggtheme, theme, ...){
+  dbins<-cut(data$subjtheta,breaks=c(-999,data$evalpoints[-length(data$evalpoints)],999),labels=FALSE)
+  
+  Estimate0<-data$OCC[which(data$OCC[, 1] == which(data$itemlabels == item)),]
+  maxitem<-max(Estimate0[,3])
+  minitem<-min(Estimate0[,3])
+  Stderr0<-data$stderrs[which(data$OCC[, 1] == which(data$itemlabels == item)),]
+  resp0<-data$binaryresp[which(data$binaryresp[,1]== which(data$itemlabels == item)),]
+  
+  Estimate1<-apply(Estimate0[,-c(1:3)],2,function(x)x*Estimate0[,3])
+  Estimate<-apply(Estimate1,2,sum)
+
+  Stderr1<-apply(Stderr0[,-c(1:3)],2,function(x)x*Stderr0[,3])
+  Stderr<-apply(Stderr1,2,sum)
+  
+  respit1<-apply(resp0[,-c(1:3)],2,function(x)x*resp0[,3])
+  respit<-apply(respit1,2,sum)
+  
+  propevalpoints<-numeric()
+  if (is.null(alpha)){
+    alpha = 0.05
+  }
+  SE<-qnorm(1-alpha/2)*Stderr
+  
+  
+  confhigh<-data.frame(conf = sapply(Estimate+SE,function(x)min(x,maxitem)), level = factor("high"))
+  conflow<-data.frame(conf = sapply(Estimate-SE,function(x)max(x,minitem)), level = factor("low"))
+seData <- rbind(confhigh, conflow)
+
+  
+  for (i in 1:data$nevalpoints){
+    binaryrespp<-respit[which(dbins==i)]
+    propevalpoints[i]<-sum(binaryrespp)/length(binaryrespp)
+  }
+  
+  p <- ggplot() +
+    geom_line(aes(x = data$expectedscores, y = Estimate)) +
+    geom_line(aes(x = rep(data$expectedscores, length.out = nrow(seData)), y = seData$conf, colour = seData$level)) +
+    geom_point(aes(x = data$expectedscores, y = propevalpoints), size = .5, alpha = .5) +
+    labs(Title = paste("Item: ",data$itemlabels[item]),
+         subtitle = "Expected Item Score (Item Characteristic Curve)",
+         x = "Expected Score",
+         y = "Expected Item Score",
+         colour = "Conf. Interval") +
+    ggtheme + theme(
+      plot.title = ggplot2::element_text(margin = ggplot2::margin(b = 5.5 * 1.2)),
+      plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5))
+  return(p)
 }

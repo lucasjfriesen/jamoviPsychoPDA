@@ -115,11 +115,31 @@ options:
         - title: Expected Item Information
           name: EIS
 
+    - name: itemPlotOCC
+      title: Option Characteristic Curve
+      type: Bool
+      default: FALSE
+
+    - name: itemPlotEIS
+      title: Expected Item Score
+      type: Bool
+      default: FALSE
+
     - name: itemPlotSupplier
       type: Variables
       title: Items to plot
 
-    - name: axistype
+    - name: axistypeTest
+      title: X-Axis
+      type: List
+      options:
+        - title: Theta distribution
+          name:  distribution
+        - title: Expected total score
+          name:  score
+      default: score
+
+    - name: axistypeItem
       title: X-Axis
       type: List
       options:

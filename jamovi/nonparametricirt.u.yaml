@@ -87,7 +87,7 @@ children:
     collapsed: true
     children:
       - type: ComboBox
-        name: axistype
+        name: axistypeTest
       - type: LayoutBox
         margin: large
         children:
@@ -107,6 +107,12 @@ children:
       - type: LayoutBox
         margin: large
         children:
+          - type: ComboBox
+            name: axistypeItem
+          - type: CheckBox
+            name: itemPlotOCC
+          - type: CheckBox
+            name: itemPlotEIS
           - type: ComboBox
             name: itemPlotTypes
       - type: ComboBox
