@@ -4,9 +4,9 @@ title: Non-Parametric IRT
 jrs:   '1.1'
 
 items:
-    #- name: debug
-    #  title: debug results
-    #  type: Preformatted
+    - name: debug
+      title: debug results
+      type: Preformatted
 
     - name: instructions
       title: Instructions
@@ -16,31 +16,50 @@ items:
     - name:  text
       title: Non-Parametric IRT
       type:  Preformatted
+      clearWith:
+          - item
 
-    - name: itemPlots
-      title: Item Plots
+    - name: occPlots
+      title: OCC Plots
       type: Array
       items: (itemPlotSupplier)
       template:
           type: Image
           width:  550
           height: 450
-          renderFun: .itemPlots
+          renderFun: .occPlot
           visible: (itemPlotSupplier)
-          requiresData: TRUE
           clearWith:
               - item
 
-    - name: testPlots
-      title: Test Plots
-      type: Array
-      template:
-          type: Image
-          width:  550
-          height: 450
-          renderFun: .itemPlots
-          visible: (plotItems)
-          requiresData: TRUE
-          clearWith:
-              - item
+    - name: testPlotDensity
+      title: Density Plot
+      type: Image
+      visible: (testPlotDensity)
+      width:  550
+      height: 450
+      renderFun: .testPlotDensity
+      clearWith:
+          - item
+
+    - name: testPlotExpected
+      title: Expected Plot
+      type: Image
+      visible: (testPlotExpected)
+      width:  550
+      height: 450
+      renderFun: .testPlotExpected
+      clearWith:
+          - item
+
+    - name: testPlotSD
+      title: SD Plot
+      type: Image
+      visible: (testPlotSD)
+      width:  550
+      height: 450
+      renderFun: .testPlotSD
+      clearWith:
+          - item
+
 ...

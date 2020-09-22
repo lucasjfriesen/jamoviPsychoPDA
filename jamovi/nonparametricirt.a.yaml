@@ -14,7 +14,7 @@ options:
       title: Responses
       type: Variables
 
-    - name: groups
+    - name: group
       title: Participant group
       type: Variable
 
@@ -108,7 +108,7 @@ options:
 
     - name: itemPlotTypes
       title: Item Plot Types
-      type: NMXList
+      type: List
       options:
         - title: Option Characteristic Curves
           name: OCC
@@ -119,36 +119,48 @@ options:
       type: Variables
       title: Items to plot
 
-    - name: testPlotTypes
-      title: Test Plots
-      type: NMXList
+    - name: axistype
+      title: X-Axis
+      type: List
       options:
-        - title: Density
-          name: density
-        - title: Expected Score
-          name: expected
-        - title: Standard Deviation
-          name: sd
+        - title: Theta distribution
+          name:  distribution
+        - title: Expected total score
+          name:  score
+      default: score
+
 
     - name: itemPlotTypesDIF
       title: Item Plot Types - DIF
-      type: NMXList
+      type: List
       options:
         - title: Option Characteristic Curves
           name: OCCDIF
         - title: Expected Item Information
           name: EISDIF
 
-    - name: itemPlotSupplierDIF
-      type: Variables
-      title: Items to plot - DIF
-
     - name: testPlotTypesDIF
       title: Test Plots - DIF
-      type: NMXList
+      type: List
       options:
         - title: Density
           name: densityDIF
         - title: Expected Score
           name: expectedDIF
+
+    - name: testPlotDensity
+      title: Density
+      type: Bool
+      default: FALSE
+
+    - name: testPlotExpected
+      title: Expected
+      type: Bool
+      default: FALSE
+
+    - name: testPlotSD
+      title: Standard Deviation
+      type: Bool
+      default: FALSE
+
 ...

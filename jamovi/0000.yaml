@@ -36,12 +36,14 @@ analyses:
     ns: psychoPDA
     menuGroup: PPDA
     menuTitle: T-Test for Mean Differences
+    hidden: true
     menuSubgroup: Design Analysis
   - title: T-Test for Correlations
     name: ttestCor
     ns: psychoPDA
     menuGroup: PPDA
     menuTitle: T-Test for Correlations
+    hidden: true
     menuSubgroup: Design Analysis
   - title: Ordinal Reliability
     name: ordinalReliability

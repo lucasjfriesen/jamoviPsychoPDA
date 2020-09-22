@@ -7,7 +7,7 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
     public = list(
         initialize = function(
             item = NULL,
-            groups = NULL,
+            group = NULL,
             format = "formatMC",
             SubRank = NULL,
             miss = "option",
@@ -19,10 +19,12 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             thetadist = "norm, 0, 1",
             itemPlotTypes = NULL,
             itemPlotSupplier = NULL,
-            testPlotTypes = NULL,
+            axistype = "score",
             itemPlotTypesDIF = NULL,
-            itemPlotSupplierDIF = NULL,
-            testPlotTypesDIF = NULL, ...) {
+            testPlotTypesDIF = NULL,
+            testPlotDensity = FALSE,
+            testPlotExpected = FALSE,
+            testPlotSD = FALSE, ...) {
 
             super$initialize(
                 package='psychoPDA',
@@ -33,9 +35,9 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             private$..item <- jmvcore::OptionVariables$new(
                 "item",
                 item)
-            private$..groups <- jmvcore::OptionVariable$new(
-                "groups",
-                groups)
+            private$..group <- jmvcore::OptionVariable$new(
+                "group",
+                group)
             private$..format <- jmvcore::OptionList$new(
                 "format",
                 format,
@@ -92,7 +94,7 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "thetadist",
                 thetadist,
                 default="norm, 0, 1")
-            private$..itemPlotTypes <- jmvcore::OptionNMXList$new(
+            private$..itemPlotTypes <- jmvcore::OptionList$new(
                 "itemPlotTypes",
                 itemPlotTypes,
                 options=list(
@@ -101,31 +103,40 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             private$..itemPlotSupplier <- jmvcore::OptionVariables$new(
                 "itemPlotSupplier",
                 itemPlotSupplier)
-            private$..testPlotTypes <- jmvcore::OptionNMXList$new(
-                "testPlotTypes",
-                testPlotTypes,
+            private$..axistype <- jmvcore::OptionList$new(
+                "axistype",
+                axistype,
                 options=list(
-                    "density",
-                    "expected",
-                    "sd"))
-            private$..itemPlotTypesDIF <- jmvcore::OptionNMXList$new(
+                    "distribution",
+                    "score"),
+                default="score")
+            private$..itemPlotTypesDIF <- jmvcore::OptionList$new(
                 "itemPlotTypesDIF",
                 itemPlotTypesDIF,
                 options=list(
                     "OCCDIF",
                     "EISDIF"))
-            private$..itemPlotSupplierDIF <- jmvcore::OptionVariables$new(
-                "itemPlotSupplierDIF",
-                itemPlotSupplierDIF)
-            private$..testPlotTypesDIF <- jmvcore::OptionNMXList$new(
+            private$..testPlotTypesDIF <- jmvcore::OptionList$new(
                 "testPlotTypesDIF",
                 testPlotTypesDIF,
                 options=list(
                     "densityDIF",
                     "expectedDIF"))
+            private$..testPlotDensity <- jmvcore::OptionBool$new(
+                "testPlotDensity",
+                testPlotDensity,
+                default=FALSE)
+            private$..testPlotExpected <- jmvcore::OptionBool$new(
+                "testPlotExpected",
+                testPlotExpected,
+                default=FALSE)
+            private$..testPlotSD <- jmvcore::OptionBool$new(
+                "testPlotSD",
+                testPlotSD,
+                default=FALSE)
 
             self$.addOption(private$..item)
-            self$.addOption(private$..groups)
+            self$.addOption(private$..group)
             self$.addOption(private$..format)
             self$.addOption(private$..SubRank)
             self$.addOption(private$..miss)
@@ -137,14 +148,16 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..thetadist)
             self$.addOption(private$..itemPlotTypes)
             self$.addOption(private$..itemPlotSupplier)
-            self$.addOption(private$..testPlotTypes)
+            self$.addOption(private$..axistype)
             self$.addOption(private$..itemPlotTypesDIF)
-            self$.addOption(private$..itemPlotSupplierDIF)
             self$.addOption(private$..testPlotTypesDIF)
+            self$.addOption(private$..testPlotDensity)
+            self$.addOption(private$..testPlotExpected)
+            self$.addOption(private$..testPlotSD)
         }),
     active = list(
         item = function() private$..item$value,
-        groups = function() private$..groups$value,
+        group = function() private$..group$value,
         format = function() private$..format$value,
         SubRank = function() private$..SubRank$value,
         miss = function() private$..miss$value,
@@ -156,13 +169,15 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         thetadist = function() private$..thetadist$value,
         itemPlotTypes = function() private$..itemPlotTypes$value,
         itemPlotSupplier = function() private$..itemPlotSupplier$value,
-        testPlotTypes = function() private$..testPlotTypes$value,
+        axistype = function() private$..axistype$value,
         itemPlotTypesDIF = function() private$..itemPlotTypesDIF$value,
-        itemPlotSupplierDIF = function() private$..itemPlotSupplierDIF$value,
-        testPlotTypesDIF = function() private$..testPlotTypesDIF$value),
+        testPlotTypesDIF = function() private$..testPlotTypesDIF$value,
+        testPlotDensity = function() private$..testPlotDensity$value,
+        testPlotExpected = function() private$..testPlotExpected$value,
+        testPlotSD = function() private$..testPlotSD$value),
     private = list(
         ..item = NA,
-        ..groups = NA,
+        ..group = NA,
         ..format = NA,
         ..SubRank = NA,
         ..miss = NA,
@@ -174,18 +189,24 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..thetadist = NA,
         ..itemPlotTypes = NA,
         ..itemPlotSupplier = NA,
-        ..testPlotTypes = NA,
+        ..axistype = NA,
         ..itemPlotTypesDIF = NA,
-        ..itemPlotSupplierDIF = NA,
-        ..testPlotTypesDIF = NA)
+        ..testPlotTypesDIF = NA,
+        ..testPlotDensity = NA,
+        ..testPlotExpected = NA,
+        ..testPlotSD = NA)
 )
 
 nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
+        debug = function() private$.items[["debug"]],
         instructions = function() private$.items[["instructions"]],
         text = function() private$.items[["text"]],
-        itemPlots = function() private$.items[["itemPlots"]]),
+        occPlots = function() private$.items[["occPlots"]],
+        testPlotDensity = function() private$.items[["testPlotDensity"]],
+        testPlotExpected = function() private$.items[["testPlotExpected"]],
+        testPlotSD = function() private$.items[["testPlotSD"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -193,6 +214,10 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="Non-Parametric IRT")
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="debug",
+                title="debug results"))
             self$add(jmvcore::Html$new(
                 options=options,
                 name="instructions",
@@ -201,21 +226,52 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$add(jmvcore::Preformatted$new(
                 options=options,
                 name="text",
-                title="Non-Parametric IRT"))
+                title="Non-Parametric IRT",
+                clearWith=list(
+                    "item")))
             self$add(jmvcore::Array$new(
                 options=options,
-                name="itemPlots",
-                title="Item Plots",
+                name="occPlots",
+                title="OCC Plots",
                 items="(itemPlotSupplier)",
                 template=jmvcore::Image$new(
                     options=options,
                     width=550,
                     height=450,
-                    renderFun=".itemPlots",
-                    visible="(plotItems)",
-                    requiresData=TRUE,
+                    renderFun=".occPlot",
+                    visible="(itemPlotSupplier)",
                     clearWith=list(
-                        "item"))))}))
+                        "item"))))
+            self$add(jmvcore::Image$new(
+                options=options,
+                name="testPlotDensity",
+                title="Density Plot",
+                visible="(testPlotDensity)",
+                width=550,
+                height=450,
+                renderFun=".testPlotDensity",
+                clearWith=list(
+                    "item")))
+            self$add(jmvcore::Image$new(
+                options=options,
+                name="testPlotExpected",
+                title="Expected Plot",
+                visible="(testPlotExpected)",
+                width=550,
+                height=450,
+                renderFun=".testPlotExpected",
+                clearWith=list(
+                    "item")))
+            self$add(jmvcore::Image$new(
+                options=options,
+                name="testPlotSD",
+                title="SD Plot",
+                visible="(testPlotSD)",
+                width=550,
+                height=450,
+                renderFun=".testPlotSD",
+                clearWith=list(
+                    "item")))}))
 
 nonParametricIRTBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     "nonParametricIRTBase",
@@ -242,7 +298,7 @@ nonParametricIRTBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' 
 #' @param data .
 #' @param item .
-#' @param groups .
+#' @param group .
 #' @param format .
 #' @param SubRank .
 #' @param miss .
@@ -254,22 +310,28 @@ nonParametricIRTBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param thetadist .
 #' @param itemPlotTypes .
 #' @param itemPlotSupplier .
-#' @param testPlotTypes .
+#' @param axistype .
 #' @param itemPlotTypesDIF .
-#' @param itemPlotSupplierDIF .
 #' @param testPlotTypesDIF .
+#' @param testPlotDensity .
+#' @param testPlotExpected .
+#' @param testPlotSD .
 #' @return A results object containing:
 #' \tabular{llllll}{
+#'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$text} \tab \tab \tab \tab \tab a preformatted \cr
-#'   \code{results$itemPlots} \tab \tab \tab \tab \tab an array of images \cr
+#'   \code{results$occPlots} \tab \tab \tab \tab \tab an array of images \cr
+#'   \code{results$testPlotDensity} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$testPlotExpected} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$testPlotSD} \tab \tab \tab \tab \tab an image \cr
 #' }
 #'
 #' @export
 nonParametricIRT <- function(
     data,
     item,
-    groups,
+    group,
     format = "formatMC",
     SubRank,
     miss = "option",
@@ -281,32 +343,32 @@ nonParametricIRT <- function(
     thetadist = "norm, 0, 1",
     itemPlotTypes,
     itemPlotSupplier,
-    testPlotTypes,
+    axistype = "score",
     itemPlotTypesDIF,
-    itemPlotSupplierDIF,
-    testPlotTypesDIF) {
+    testPlotTypesDIF,
+    testPlotDensity = FALSE,
+    testPlotExpected = FALSE,
+    testPlotSD = FALSE) {
 
     if ( ! requireNamespace('jmvcore'))
         stop('nonParametricIRT requires jmvcore to be installed (restart may be required)')
 
     if ( ! missing(item)) item <- jmvcore::resolveQuo(jmvcore::enquo(item))
-    if ( ! missing(groups)) groups <- jmvcore::resolveQuo(jmvcore::enquo(groups))
+    if ( ! missing(group)) group <- jmvcore::resolveQuo(jmvcore::enquo(group))
     if ( ! missing(SubRank)) SubRank <- jmvcore::resolveQuo(jmvcore::enquo(SubRank))
     if ( ! missing(itemPlotSupplier)) itemPlotSupplier <- jmvcore::resolveQuo(jmvcore::enquo(itemPlotSupplier))
-    if ( ! missing(itemPlotSupplierDIF)) itemPlotSupplierDIF <- jmvcore::resolveQuo(jmvcore::enquo(itemPlotSupplierDIF))
     if (missing(data))
         data <- jmvcore::marshalData(
             parent.frame(),
             `if`( ! missing(item), item, NULL),
-            `if`( ! missing(groups), groups, NULL),
+            `if`( ! missing(group), group, NULL),
             `if`( ! missing(SubRank), SubRank, NULL),
-            `if`( ! missing(itemPlotSupplier), itemPlotSupplier, NULL),
-            `if`( ! missing(itemPlotSupplierDIF), itemPlotSupplierDIF, NULL))
+            `if`( ! missing(itemPlotSupplier), itemPlotSupplier, NULL))
 
 
     options <- nonParametricIRTOptions$new(
         item = item,
-        groups = groups,
+        group = group,
         format = format,
         SubRank = SubRank,
         miss = miss,
@@ -318,10 +380,12 @@ nonParametricIRT <- function(
         thetadist = thetadist,
         itemPlotTypes = itemPlotTypes,
         itemPlotSupplier = itemPlotSupplier,
-        testPlotTypes = testPlotTypes,
+        axistype = axistype,
         itemPlotTypesDIF = itemPlotTypesDIF,
-        itemPlotSupplierDIF = itemPlotSupplierDIF,
-        testPlotTypesDIF = testPlotTypesDIF)
+        testPlotTypesDIF = testPlotTypesDIF,
+        testPlotDensity = testPlotDensity,
+        testPlotExpected = testPlotExpected,
+        testPlotSD = testPlotSD)
 
     analysis <- nonParametricIRTClass$new(
         options = options,

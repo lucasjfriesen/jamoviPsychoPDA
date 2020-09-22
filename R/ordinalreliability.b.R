@@ -181,7 +181,7 @@ ordinalReliabilityClass <-
                         self$results$polychoricRho$setState(self$results$polychoricRho$state)
                     }
                     
-                    # Plt data ----
+                    # Plot data ----
                     if (self$options$omegaPlot){
                         # if (!is.null(groups)){
                         #     for (i in unique(groups)){

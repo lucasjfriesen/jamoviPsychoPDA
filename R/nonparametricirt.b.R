@@ -38,16 +38,17 @@ nonParametricIRTClass <-
                     } else {
                         self$results$instructions$setVisible(visible = FALSE)
                     
-                    
+                    # Data wrangling ----
+                      
                     data = self$data
                     
-                    if (is.null(self$options$key)){
+                    # if (is.null(self$options$key)){
                         key = data[1, self$options$item]
                         data = data[2:nrow(data), self$options$item]
-                    } else {
-                        key = data[1:length(self$options$item), self$options$key]
-                        data = data[, self$options$item]
-                    }
+                    # } else {
+                    #     key = data[1:length(self$options$item), self$options$key]
+                    #     data = data[, self$options$item]
+                    # }
 
                     format <- switch(self$options$format,
                                      formatMC = 1,
@@ -59,6 +60,17 @@ nonParametricIRTClass <-
                     } else {
                       SubRank = NULL
                     }
+                    
+                    thetadist <- as.list(unlist(strsplit(self$options$thetadist, ", ")))
+                    thetadist[2:length(thetadist)] <- as.numeric(thetadist[2:length(thetadist)])
+                    
+                    if (is.null(self$options$group)){
+                      groups <- FALSE
+                    } else {
+                      groups <- data[, self$options$group]
+                    }
+                    
+                    # Functions ----
                     
                     runResults <- function(){
                     results <-
@@ -75,65 +87,133 @@ nonParametricIRTClass <-
                     bandwidth = self$options$bandwidth,
                     RankFun = match.fun(self$options$RankFun),
                     SubRank = SubRank,
-                    thetadist = self$options$thetadist,
-                    groups = data[, self$options$group]
-                    )
+                    thetadist = thetadist,
+                    groups = groups)
                     return(results)
                     }
                     
-                    # State Savers ----
+                    # States ----
+                    
                     # resultState <- self$results$text$state
                     # if (!is.null(resultState)) {
                     #     # ... populate the table from the state
                     # } else {
                         # ... create the table and the state
                         resultState <- runResults()
-                        self$results$text$setContent(KernSmoothIRT:::print.ksIRT(resultState))
+                        x <- KernSmoothIRT:::print.ksIRT(resultState)
+                        self$results$text$setState(x)
                     # }
                     
                     # self$results$text$setContent(KernSmoothIRT:::print.ksIRT(results))
                     
-                    for (i in self$options$itemPlotSupplier){    
-                      itemPlotData <-
-                          self$results$itemPlots$get(key = self$options$itemPlotSupplier[[i]])
-                      itemPlotData$setState(list(resultState, items = list(self$options$itemPlotSupplier)))
+                    for (i in self$options$itemPlotSupplier){
+                      if (!all(self$options$itemPlotSupplier %in% self$options$item)) {
+                        stop(
+                          paste0(
+                            "Not all items selected to be plotted have been included in the model, please remove: ",
+                            self$options$itemPlotSupplier[!self$options$itemPlotSupplier %in% self$options$item]
+                          ),
+                          call. = FALSE
+                        )
                       }
+                      
+                    itemPlotData <-
+                        self$results$occPlots$get(key = i)
+                    itemPlotData$setState(list(resultState, item = i))
+                    }
+                    
+                    if (self$options$testPlotExpected) {
+                      expectedPlotResults <- self$results$testPlotExpected
+                      expectedPlotResults$setState(resultState)
+                    }
+                    if (self$options$testPlotDensity) {
+                      densityPlotResults <- self$results$testPlotDensity
+                      densityPlotResults$setState(resultState)
+                    }
                     }
                 },
 
-                .itemPlots = function(itemPlotData, ggtheme, theme, ...) {
-                    if (is.null(self$data) | is.null(self$options$item) |
-                        is.null(self$options$format))
-                         {
-                        return()
-                    }
+                # Test-level plots ----
+                
+                .testPlotExpected = function(testPlotData, ggtheme, theme, ...) {
+                  # if (is.null(self$data) | is.null(self$options$item))
+                  # {
+                  #   return()
+                  # }
+                  # 
+                  # if (is.null(testPlotData$state)) {
+                  #   return(FALSE)
+                  # }
+                  
+                  plotData <- testPlotData$state
+                  p <-
+                    buildExpected(plotData,
+                                  ggtheme,
+                                  theme,
+                                  ...)
+                  
+                  print(p)
+                  TRUE
+                },
+                
+                .testPlotDensity = function(testPlotData, ggtheme, theme, ...) {
 
-                    if (!all(self$options$plotItems %in% self$options$item)) {
-                        stop(
-                            paste0(
-                                "Not all items selected to be plotted have been evaluated, please remove: ",
-                                self$options$plotItems[!self$options$plotItems %in% self$options$item]
-                            ),
-                            call. = FALSE
-                        )
-                    }
+                  # if (is.null(testPlotData$state)) {
+                  #   return(FALSE)
+                  # }
 
-                    if (is.null(itemPlotData$state)) {
-                        return(FALSE)
-                    }
-
-                    plotData <- itemPlotData$state[[1]]
+                    plotData <- testPlotData$state
 
                     p <-
-                        buildPlots(plotData,
+                        buildDensity(plotData,
                                    ggtheme,
                                    theme,
-                                   plottype = "density",
-                                   axistype = "scores",
                                    ...)
 
                     print(p)
                     TRUE
+                },
+                
+                
+                
+                .testPlotSD = function(testPlotData, ggtheme, theme, ...) {
+                # 
+                  # if (is.null(testPlotData$state)) {
+                  #   return(FALSE)
+                  # }
+                  
+                  plotData <- testPlotData$state
+                  
+                  p <-
+                    buildDensity(plotData,
+                                 ggtheme,
+                                 theme,
+                                 ...)
+                  
+                  print(p)
+                  TRUE
+                },
+                
+                # Item-level plots ----
+
+                .occPlot = function(itemPlotData, ggtheme, theme, ...) {
+
+                  if (is.null(itemPlotData$state)) {
+                    return(FALSE)
+                  }
+
+                  plotData <- itemPlotData$state[[1]]
+                  item = itemPlotData$state[[2]]
+
+                  p <-
+                    buildOCC(plotData,
+                                  item = item,
+                                  ggtheme,
+                                  theme,
+                                  ...)
+
+                  print(p)
+                  TRUE
                 }
             )
         )
