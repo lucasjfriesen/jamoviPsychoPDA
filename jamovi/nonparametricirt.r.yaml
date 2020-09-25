@@ -55,6 +55,16 @@ items:
       clearWith:
           - item
 
+    - name: testPlotDensityDIF
+      title: Density Plot | DIF
+      type: Image
+      visible: (testPlotDensityDIF)
+      width:  550
+      height: 450
+      renderFun: .testPlotDensityDIF
+      clearWith:
+          - item
+
     - name: testPlotExpected
       title: Expected Plot
       type: Image

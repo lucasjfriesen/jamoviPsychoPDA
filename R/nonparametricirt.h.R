@@ -24,7 +24,9 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             axistypeTest = "score",
             axistypeItem = "score",
             itemPlotTypesDIF = NULL,
-            testPlotTypesDIF = NULL,
+            testPlotDensityDIF = FALSE,
+            testPlotExpectedDIF = FALSE,
+            testPlotSDDIF = FALSE,
             testPlotDensity = FALSE,
             testPlotExpected = FALSE,
             testPlotSD = FALSE, ...) {
@@ -134,12 +136,18 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=list(
                     "OCCDIF",
                     "EISDIF"))
-            private$..testPlotTypesDIF <- jmvcore::OptionList$new(
-                "testPlotTypesDIF",
-                testPlotTypesDIF,
-                options=list(
-                    "densityDIF",
-                    "expectedDIF"))
+            private$..testPlotDensityDIF <- jmvcore::OptionBool$new(
+                "testPlotDensityDIF",
+                testPlotDensityDIF,
+                default=FALSE)
+            private$..testPlotExpectedDIF <- jmvcore::OptionBool$new(
+                "testPlotExpectedDIF",
+                testPlotExpectedDIF,
+                default=FALSE)
+            private$..testPlotSDDIF <- jmvcore::OptionBool$new(
+                "testPlotSDDIF",
+                testPlotSDDIF,
+                default=FALSE)
             private$..testPlotDensity <- jmvcore::OptionBool$new(
                 "testPlotDensity",
                 testPlotDensity,
@@ -171,7 +179,9 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..axistypeTest)
             self$.addOption(private$..axistypeItem)
             self$.addOption(private$..itemPlotTypesDIF)
-            self$.addOption(private$..testPlotTypesDIF)
+            self$.addOption(private$..testPlotDensityDIF)
+            self$.addOption(private$..testPlotExpectedDIF)
+            self$.addOption(private$..testPlotSDDIF)
             self$.addOption(private$..testPlotDensity)
             self$.addOption(private$..testPlotExpected)
             self$.addOption(private$..testPlotSD)
@@ -195,7 +205,9 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         axistypeTest = function() private$..axistypeTest$value,
         axistypeItem = function() private$..axistypeItem$value,
         itemPlotTypesDIF = function() private$..itemPlotTypesDIF$value,
-        testPlotTypesDIF = function() private$..testPlotTypesDIF$value,
+        testPlotDensityDIF = function() private$..testPlotDensityDIF$value,
+        testPlotExpectedDIF = function() private$..testPlotExpectedDIF$value,
+        testPlotSDDIF = function() private$..testPlotSDDIF$value,
         testPlotDensity = function() private$..testPlotDensity$value,
         testPlotExpected = function() private$..testPlotExpected$value,
         testPlotSD = function() private$..testPlotSD$value),
@@ -218,7 +230,9 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..axistypeTest = NA,
         ..axistypeItem = NA,
         ..itemPlotTypesDIF = NA,
-        ..testPlotTypesDIF = NA,
+        ..testPlotDensityDIF = NA,
+        ..testPlotExpectedDIF = NA,
+        ..testPlotSDDIF = NA,
         ..testPlotDensity = NA,
         ..testPlotExpected = NA,
         ..testPlotSD = NA)
@@ -233,6 +247,7 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
         occPlots = function() private$.items[["occPlots"]],
         eisPlots = function() private$.items[["eisPlots"]],
         testPlotDensity = function() private$.items[["testPlotDensity"]],
+        testPlotDensityDIF = function() private$.items[["testPlotDensityDIF"]],
         testPlotExpected = function() private$.items[["testPlotExpected"]],
         testPlotSD = function() private$.items[["testPlotSD"]]),
     private = list(),
@@ -291,6 +306,16 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 width=550,
                 height=450,
                 renderFun=".testPlotDensity",
+                clearWith=list(
+                    "item")))
+            self$add(jmvcore::Image$new(
+                options=options,
+                name="testPlotDensityDIF",
+                title="Density Plot | DIF",
+                visible="(testPlotDensityDIF)",
+                width=550,
+                height=450,
+                renderFun=".testPlotDensityDIF",
                 clearWith=list(
                     "item")))
             self$add(jmvcore::Image$new(
@@ -356,7 +381,9 @@ nonParametricIRTBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param axistypeTest .
 #' @param axistypeItem .
 #' @param itemPlotTypesDIF .
-#' @param testPlotTypesDIF .
+#' @param testPlotDensityDIF .
+#' @param testPlotExpectedDIF .
+#' @param testPlotSDDIF .
 #' @param testPlotDensity .
 #' @param testPlotExpected .
 #' @param testPlotSD .
@@ -368,6 +395,7 @@ nonParametricIRTBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'   \code{results$occPlots} \tab \tab \tab \tab \tab an array of images \cr
 #'   \code{results$eisPlots} \tab \tab \tab \tab \tab an array of images \cr
 #'   \code{results$testPlotDensity} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$testPlotDensityDIF} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$testPlotExpected} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$testPlotSD} \tab \tab \tab \tab \tab an image \cr
 #' }
@@ -393,7 +421,9 @@ nonParametricIRT <- function(
     axistypeTest = "score",
     axistypeItem = "score",
     itemPlotTypesDIF,
-    testPlotTypesDIF,
+    testPlotDensityDIF = FALSE,
+    testPlotExpectedDIF = FALSE,
+    testPlotSDDIF = FALSE,
     testPlotDensity = FALSE,
     testPlotExpected = FALSE,
     testPlotSD = FALSE) {
@@ -433,7 +463,9 @@ nonParametricIRT <- function(
         axistypeTest = axistypeTest,
         axistypeItem = axistypeItem,
         itemPlotTypesDIF = itemPlotTypesDIF,
-        testPlotTypesDIF = testPlotTypesDIF,
+        testPlotDensityDIF = testPlotDensityDIF,
+        testPlotExpectedDIF = testPlotExpectedDIF,
+        testPlotSDDIF = testPlotSDDIF,
         testPlotDensity = testPlotDensity,
         testPlotExpected = testPlotExpected,
         testPlotSD = testPlotSD)

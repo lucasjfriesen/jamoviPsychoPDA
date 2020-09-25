@@ -159,14 +159,20 @@ options:
         - title: Expected Item Information
           name: EISDIF
 
-    - name: testPlotTypesDIF
-      title: Test Plots - DIF
-      type: List
-      options:
-        - title: Density
-          name: densityDIF
-        - title: Expected Score
-          name: expectedDIF
+    - name: testPlotDensityDIF
+      title: Density - DIF
+      type: Bool
+      default: FALSE
+
+    - name: testPlotExpectedDIF
+      title: Expected - DIF
+      type: Bool
+      default: FALSE
+
+    - name: testPlotSDDIF
+      title: Standard Deviation - DIF
+      type: Bool
+      default: FALSE
 
     - name: testPlotDensity
       title: Density

@@ -125,15 +125,21 @@ nonParametricIRTClass <-
                       self$results$eisPlots$get(key = i)
                     eisPlotData$setState(list(resultState, item = i))
                     }
-                    
+                        # Expected
                     if (self$options$testPlotExpected) {
                       expectedPlotResults <- self$results$testPlotExpected
                       expectedPlotResults$setState(resultState)
                     }
+                        # Density
                     if (self$options$testPlotDensity) {
                       densityPlotResults <- self$results$testPlotDensity
                       densityPlotResults$setState(resultState)
                     }
+                    if (self$options$testPlotDensityDIF){
+                      densityPlotDIFResults <- self$results$testPlotDensityDIF
+                      densityPlotDIFResults$setState(resultState)
+                    }
+                        # SD
                     if (self$options$testPlotSD) {
                       sdPlotResults <- self$results$testPlotSD
                       sdPlotResults$setState(resultState)
@@ -183,7 +189,24 @@ nonParametricIRTClass <-
                     TRUE
                 },
                 
-                
+                .testPlotDensityDIF = function(testPlotData, ggtheme, theme, ...) {
+                  
+                  # if (is.null(testPlotData$state)) {
+                  #   return(FALSE)
+                  # }
+                  
+                  plotData <- testPlotData$state
+                  
+                  p <-
+                    buildDensityDIF(plotData,
+                                 ggtheme,
+                                 theme,
+                                 ...)
+                  
+                  print(p)
+                  TRUE
+                },
+              
                 
                 .testPlotSD = function(testPlotData, ggtheme, theme, ...) {
                 # 

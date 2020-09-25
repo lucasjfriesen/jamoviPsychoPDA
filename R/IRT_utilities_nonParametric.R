@@ -73,6 +73,35 @@ buildDensity <- function(data, ggtheme, theme, ...){
   
   return(p)
 }
+
+buildDensityDIF <- function(data, ggtheme, theme, ...){
+  
+  newData <- data.frame(cbind(subjscore = data$subjscore, model = "Full"))
+  for (group in data$groups){
+    newData = rbind(newData, cbind(subjscore = data$DIF[[which(data$groups == group)]]$subjscore, model = group))
+  }
+  newData <- newData[newData$subjscore != 0,]
+  
+  p <- ggplot() +
+    geom_density(aes(x = as.numeric(newData$subjscore), colour = newData$model)) +
+    geom_vline(xintercept = data$subjscoresummary, linetype = "dashed", colour = "blue") + 
+    geom_text(aes(x = data$subjscoresummary,
+                  y = 0,
+                  label = labels(data$subjscoresummary),
+                  hjust = -.1,
+                  vjust = -1)
+    ) +
+    labs(title = "Observed Score Distribution",
+         x = "Density of Score",
+         y = "Scores",
+         colour = "Model") +
+    ggtheme + theme(
+      plot.title = ggplot2::element_text(margin = ggplot2::margin(b = 5.5 * 1.2)),
+      plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5)
+    )
+
+  return(p)
+}
   
 # Item-level plots ----
   
