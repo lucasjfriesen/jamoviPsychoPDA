@@ -8,3 +8,4 @@ npm-debug.log
 *.jmo
 inst/doc
 .Rhistory
+*.csv

@@ -42,6 +42,12 @@ nonParametricIRTClass <-
                       
                     data = self$data
                     
+                    if (is.null(self$options$group)){
+                      groups <- FALSE
+                    } else {
+                      groups <- data[2:nrow(data), self$options$group]
+                    }
+                    
                     # if (is.null(self$options$key)){
                         key = data[1, self$options$item]
                         data = data[2:nrow(data), self$options$item]
@@ -63,12 +69,6 @@ nonParametricIRTClass <-
                     
                     thetadist <- as.list(unlist(strsplit(self$options$thetadist, ", ")))
                     thetadist[2:length(thetadist)] <- as.numeric(thetadist[2:length(thetadist)])
-                    
-                    if (is.null(self$options$group)){
-                      groups <- FALSE
-                    } else {
-                      groups <- data[, self$options$group]
-                    }
                     
                     # Functions ----
                     

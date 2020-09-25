@@ -97,6 +97,12 @@ children:
             name: testPlotExpected
           - type: CheckBox
             name: testPlotSD
+          - type: CheckBox
+            name: testPlotSDDIF
+          - type: CheckBox
+            name: testPlotDensityDIF
+          - type: CheckBox
+            name: testPlotExpectedDIF
   - type: CollapseBox
     label: Item Plots
     margin: normal
@@ -125,15 +131,3 @@ children:
               - type: VariablesListBox
                 name: itemPlotSupplier
                 isTarget: true
-  - type: LayoutBox
-    margin: large
-    children:
-      - type: CheckBox
-        name: testPlotSDDIF
-  - type: LayoutBox
-    margin: large
-    children:
-      - type: CheckBox
-        name: testPlotDensityDIF
-      - type: CheckBox
-        name: testPlotExpectedDIF
