@@ -1,4 +1,4 @@
-
+#options(jamovi_home = "C:\\Program Files\\jamovi 1.6.3.0")
 
 
 # This file is a generated template, your changes will not be overwritten
@@ -100,8 +100,23 @@ nonParametricIRTClass <-
                     # } else {
                         # ... create the table and the state
                         resultState <- runResults()
-                        x <- KernSmoothIRT:::print.ksIRT(resultState)
-                        self$results$text$setState(x)
+                    if (self$options$resTable){
+                      table <- self$results$resTable
+                      table$setVisible(visible = TRUE)
+                      x <- KernSmoothIRT:::print.ksIRT(resultState)
+                      for (i in 1:nrow(x)) {
+                        table$setRow(
+                          rowNo = i,
+                          values = list(
+                            Item = x$Item[i],
+                            Correlation = x$Correlation[i]
+                          )
+                        )
+                      }
+                      
+                        
+                        # self$results$resTable$setState(x)
+                    }
                     # }
                     
                     # self$results$text$setContent(KernSmoothIRT:::print.ksIRT(results))
@@ -130,6 +145,10 @@ nonParametricIRTClass <-
                       expectedPlotResults <- self$results$testPlotExpected
                       expectedPlotResults$setState(resultState)
                     }
+                    if (self$options$testPlotExpectedDIF) {
+                      expectedPlotDIFResults <- self$results$testPlotExpectedDIF
+                      expectedPlotDIFResults$setState(resultState)
+                    }
                         # Density
                     if (self$options$testPlotDensity) {
                       densityPlotResults <- self$results$testPlotDensity
@@ -143,7 +162,11 @@ nonParametricIRTClass <-
                     if (self$options$testPlotSD) {
                       sdPlotResults <- self$results$testPlotSD
                       sdPlotResults$setState(resultState)
-                    }                        
+                    }     
+                    if (self$options$testPlotSDDIF) {
+                      sdPlotDIFResults <- self$results$testPlotSDDIF
+                      sdPlotDIFResults$setState(resultState)
+                    }   
 
                     }
                 },
@@ -163,6 +186,27 @@ nonParametricIRTClass <-
                   plotData <- testPlotData$state
                   p <-
                     buildExpected(plotData,
+                                  ggtheme,
+                                  theme,
+                                  ...)
+                  
+                  print(p)
+                  TRUE
+                },
+                
+                .testPlotExpectedDIF = function(testPlotData, ggtheme, theme, ...) {
+                  # if (is.null(self$data) | is.null(self$options$item))
+                  # {
+                  #   return()
+                  # }
+                  # 
+                  # if (is.null(testPlotData$state)) {
+                  #   return(FALSE)
+                  # }
+                  
+                  plotData <- testPlotData$state
+                  p <-
+                    buildExpectedDIF(plotData,
                                   ggtheme,
                                   theme,
                                   ...)
@@ -226,6 +270,23 @@ nonParametricIRTClass <-
                   TRUE
                 },
                 
+                .testPlotSDDIF = function(testPlotData, ggtheme, theme, ...) {
+                  # 
+                  # if (is.null(testPlotData$state)) {
+                  #   return(FALSE)
+                  # }
+                  
+                  plotData <- testPlotData$state
+                  
+                  p <-
+                    buildSDDIF(plotData,
+                            ggtheme,
+                            theme,
+                            ...)
+                  
+                  print(p)
+                  TRUE
+                },
                 # Item-level plots ----
 
                 .occPlot = function(itemPlotData, ggtheme, theme, ...) {

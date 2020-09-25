@@ -65,7 +65,7 @@ options:
 
     - name: nevalpoints
       type: Number
-      title: Number of Evaluation
+      title: Number of evaluation points
       default: 51
 
     - name: kernel
@@ -102,18 +102,10 @@ options:
 
     - type: String
       name: thetadist
+      title: Theta distribution
       #suffix: '('
       #prefix: ')'
       default: "norm, 0, 1"
-
-    - name: itemPlotTypes
-      title: Item Plot Types
-      type: List
-      options:
-        - title: Option Characteristic Curves
-          name: OCC
-        - title: Expected Item Information
-          name: EIS
 
     - name: itemPlotOCC
       title: Option Characteristic Curve
@@ -125,9 +117,19 @@ options:
       type: Bool
       default: FALSE
 
+    - name: itemPlotOCCDIF
+      title: Option Characteristic Curve | DIF
+      type: Bool
+      default: FALSE
+
+    - name: itemPlotEISDIF
+      title: Expected Item Score | DIF
+      type: Bool
+      default: FALSE
+
     - name: itemPlotSupplier
       type: Variables
-      title: Items to plot
+      title: Items
 
     - name: axistypeTest
       title: X-Axis
@@ -148,16 +150,6 @@ options:
         - title: Expected total score
           name:  score
       default: score
-
-
-    - name: itemPlotTypesDIF
-      title: Item Plot Types - DIF
-      type: List
-      options:
-        - title: Option Characteristic Curves
-          name: OCCDIF
-        - title: Expected Item Information
-          name: EISDIF
 
     - name: testPlotDensityDIF
       title: Density - DIF
@@ -186,6 +178,11 @@ options:
 
     - name: testPlotSD
       title: Standard Deviation
+      type: Bool
+      default: FALSE
+
+    - name: resTable
+      title: Polyserial Item-Total Correlation
       type: Bool
       default: FALSE
 
