@@ -11,7 +11,7 @@ items:
     - name: instructions
       title: Instructions
       type: Html
-      visible: True
+      visible: false
 
     - name:  resTable
       title: Polyserial Item-Total Correlation
@@ -59,7 +59,7 @@ items:
           width:  550
           height: 450
           renderFun: .occPlot
-          visible: (itemPlotOCC)
+          visible: (itemPlotOCCDIF)
           clearWith:
               - item
 
@@ -85,7 +85,7 @@ items:
           width:  550
           height: 450
           renderFun: .eisPlotDIF
-          visible: (itemPlotEIS)
+          visible: (itemPlotEISDIF)
           clearWith:
               - item
 

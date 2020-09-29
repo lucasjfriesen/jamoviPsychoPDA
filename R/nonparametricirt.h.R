@@ -290,7 +290,7 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="instructions",
                 title="Instructions",
-                visible=TRUE))
+                visible=FALSE))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="resTable",
@@ -340,7 +340,7 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     width=550,
                     height=450,
                     renderFun=".occPlot",
-                    visible="(itemPlotOCC)",
+                    visible="(itemPlotOCCDIF)",
                     clearWith=list(
                         "item"))))
             self$add(jmvcore::Array$new(
@@ -366,7 +366,7 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     width=550,
                     height=450,
                     renderFun=".eisPlotDIF",
-                    visible="(itemPlotEIS)",
+                    visible="(itemPlotEISDIF)",
                     clearWith=list(
                         "item"))))
             self$add(jmvcore::Array$new(

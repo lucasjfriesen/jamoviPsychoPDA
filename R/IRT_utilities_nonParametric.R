@@ -461,7 +461,10 @@ buildPairwiseDIF <- function(data, item, alpha, ggtheme, theme, ...){
          x = "",
          y = "") +
     facet_wrap(~ facet,
-               dir = "v")
+               dir = "v") +
+    ggtheme + theme(
+      plot.title = ggplot2::element_text(margin = ggplot2::margin(b = 5.5 * 1.2)),
+      plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5))
   
   return(p)
 }

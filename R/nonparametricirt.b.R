@@ -32,6 +32,7 @@ nonParametricIRTClass <-
           if (is.null(self$data) ||
               is.null(self$options$item))
           {
+            self$results$instructions$setVisible(visible = TRUE)
             return()
           } else {
             self$results$instructions$setVisible(visible = FALSE)
@@ -123,9 +124,9 @@ nonParametricIRTClass <-
                     )
                   )
                 }
-                if (self$options$resTable) {
-                  table$setVisible(visible = TRUE)
-                }
+            }
+            if (self$options$resTable) {
+              table$setVisible(visible = TRUE)
             }
 
             # Test level plots ----
@@ -271,7 +272,7 @@ nonParametricIRTClass <-
             }
             
             if (self$options$itemPlotEISDIF) {
-              if (self$results$eisPlotDataDIF$isNotFilled()) {
+              if (self$results$eisPlotsDIF$isNotFilled()) {
                 for (i in self$options$itemPlotSupplier) {
                   if (!all(self$options$itemPlotSupplier %in% self$options$item)) {
                     stop(
