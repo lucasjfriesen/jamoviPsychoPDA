@@ -17,10 +17,12 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             bandwidth = "Silverman",
             RankFun = "sum",
             thetadist = "norm, 0, 1",
+            OCCoption = "1",
             itemPlotOCC = FALSE,
             itemPlotEIS = FALSE,
             itemPlotOCCDIF = FALSE,
             itemPlotEISDIF = FALSE,
+            pairwisePlotsDIF = FALSE,
             itemPlotSupplier = NULL,
             axistypeTest = "score",
             axistypeItem = "score",
@@ -100,6 +102,10 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "thetadist",
                 thetadist,
                 default="norm, 0, 1")
+            private$..OCCoption <- jmvcore::OptionString$new(
+                "OCCoption",
+                OCCoption,
+                default="1")
             private$..itemPlotOCC <- jmvcore::OptionBool$new(
                 "itemPlotOCC",
                 itemPlotOCC,
@@ -115,6 +121,10 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             private$..itemPlotEISDIF <- jmvcore::OptionBool$new(
                 "itemPlotEISDIF",
                 itemPlotEISDIF,
+                default=FALSE)
+            private$..pairwisePlotsDIF <- jmvcore::OptionBool$new(
+                "pairwisePlotsDIF",
+                pairwisePlotsDIF,
                 default=FALSE)
             private$..itemPlotSupplier <- jmvcore::OptionVariables$new(
                 "itemPlotSupplier",
@@ -173,10 +183,12 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..bandwidth)
             self$.addOption(private$..RankFun)
             self$.addOption(private$..thetadist)
+            self$.addOption(private$..OCCoption)
             self$.addOption(private$..itemPlotOCC)
             self$.addOption(private$..itemPlotEIS)
             self$.addOption(private$..itemPlotOCCDIF)
             self$.addOption(private$..itemPlotEISDIF)
+            self$.addOption(private$..pairwisePlotsDIF)
             self$.addOption(private$..itemPlotSupplier)
             self$.addOption(private$..axistypeTest)
             self$.addOption(private$..axistypeItem)
@@ -200,10 +212,12 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         bandwidth = function() private$..bandwidth$value,
         RankFun = function() private$..RankFun$value,
         thetadist = function() private$..thetadist$value,
+        OCCoption = function() private$..OCCoption$value,
         itemPlotOCC = function() private$..itemPlotOCC$value,
         itemPlotEIS = function() private$..itemPlotEIS$value,
         itemPlotOCCDIF = function() private$..itemPlotOCCDIF$value,
         itemPlotEISDIF = function() private$..itemPlotEISDIF$value,
+        pairwisePlotsDIF = function() private$..pairwisePlotsDIF$value,
         itemPlotSupplier = function() private$..itemPlotSupplier$value,
         axistypeTest = function() private$..axistypeTest$value,
         axistypeItem = function() private$..axistypeItem$value,
@@ -226,10 +240,12 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..bandwidth = NA,
         ..RankFun = NA,
         ..thetadist = NA,
+        ..OCCoption = NA,
         ..itemPlotOCC = NA,
         ..itemPlotEIS = NA,
         ..itemPlotOCCDIF = NA,
         ..itemPlotEISDIF = NA,
+        ..pairwisePlotsDIF = NA,
         ..itemPlotSupplier = NA,
         ..axistypeTest = NA,
         ..axistypeItem = NA,
@@ -249,7 +265,10 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
         instructions = function() private$.items[["instructions"]],
         resTable = function() private$.items[["resTable"]],
         occPlots = function() private$.items[["occPlots"]],
+        occPlotsDIF = function() private$.items[["occPlotsDIF"]],
         eisPlots = function() private$.items[["eisPlots"]],
+        eisPlotsDIF = function() private$.items[["eisPlotsDIF"]],
+        pairwisePlotsDIF = function() private$.items[["pairwisePlotsDIF"]],
         testPlotDensity = function() private$.items[["testPlotDensity"]],
         testPlotExpected = function() private$.items[["testPlotExpected"]],
         testPlotSD = function() private$.items[["testPlotSD"]],
@@ -289,10 +308,31 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `name`="Correlation", 
                         `title`="Correlation", 
                         `type`="number", 
-                        `format`="zto"))))
+                        `format`="zto"),
+                    list(
+                        `name`="N", 
+                        `title`="N", 
+                        `type`="number"),
+                    list(
+                        `name`="naN", 
+                        `title`="N - NA", 
+                        `type`="number"))))
             self$add(jmvcore::Array$new(
                 options=options,
                 name="occPlots",
+                title="OCC Plots",
+                items="(itemPlotSupplier)",
+                template=jmvcore::Image$new(
+                    options=options,
+                    width=550,
+                    height=450,
+                    renderFun=".occPlot",
+                    visible="(itemPlotOCC)",
+                    clearWith=list(
+                        "item"))))
+            self$add(jmvcore::Array$new(
+                options=options,
+                name="occPlotsDIF",
                 title="OCC Plots",
                 items="(itemPlotSupplier)",
                 template=jmvcore::Image$new(
@@ -314,6 +354,32 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     height=450,
                     renderFun=".eisPlot",
                     visible="(itemPlotEIS)",
+                    clearWith=list(
+                        "item"))))
+            self$add(jmvcore::Array$new(
+                options=options,
+                name="eisPlotsDIF",
+                title="EIS Plots | DIF",
+                items="(itemPlotSupplier)",
+                template=jmvcore::Image$new(
+                    options=options,
+                    width=550,
+                    height=450,
+                    renderFun=".eisPlotDIF",
+                    visible="(itemPlotEIS)",
+                    clearWith=list(
+                        "item"))))
+            self$add(jmvcore::Array$new(
+                options=options,
+                name="pairwisePlotsDIF",
+                title="Pairwise EIS | DIF",
+                items="(itemPlotSupplier)",
+                template=jmvcore::Image$new(
+                    options=options,
+                    width=550,
+                    height=450,
+                    renderFun=".pairwisePlotsDIF",
+                    visible="(pairwisePlotsDIF)",
                     clearWith=list(
                         "item"))))
             self$add(jmvcore::Image$new(
@@ -412,10 +478,12 @@ nonParametricIRTBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param bandwidth .
 #' @param RankFun .
 #' @param thetadist .
+#' @param OCCoption .
 #' @param itemPlotOCC .
 #' @param itemPlotEIS .
 #' @param itemPlotOCCDIF .
 #' @param itemPlotEISDIF .
+#' @param pairwisePlotsDIF .
 #' @param itemPlotSupplier .
 #' @param axistypeTest .
 #' @param axistypeItem .
@@ -432,7 +500,10 @@ nonParametricIRTBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$resTable} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$occPlots} \tab \tab \tab \tab \tab an array of images \cr
+#'   \code{results$occPlotsDIF} \tab \tab \tab \tab \tab an array of images \cr
 #'   \code{results$eisPlots} \tab \tab \tab \tab \tab an array of images \cr
+#'   \code{results$eisPlotsDIF} \tab \tab \tab \tab \tab an array of images \cr
+#'   \code{results$pairwisePlotsDIF} \tab \tab \tab \tab \tab an array of images \cr
 #'   \code{results$testPlotDensity} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$testPlotExpected} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$testPlotSD} \tab \tab \tab \tab \tab an image \cr
@@ -461,10 +532,12 @@ nonParametricIRT <- function(
     bandwidth = "Silverman",
     RankFun = "sum",
     thetadist = "norm, 0, 1",
+    OCCoption = "1",
     itemPlotOCC = FALSE,
     itemPlotEIS = FALSE,
     itemPlotOCCDIF = FALSE,
     itemPlotEISDIF = FALSE,
+    pairwisePlotsDIF = FALSE,
     itemPlotSupplier,
     axistypeTest = "score",
     axistypeItem = "score",
@@ -504,10 +577,12 @@ nonParametricIRT <- function(
         bandwidth = bandwidth,
         RankFun = RankFun,
         thetadist = thetadist,
+        OCCoption = OCCoption,
         itemPlotOCC = itemPlotOCC,
         itemPlotEIS = itemPlotEIS,
         itemPlotOCCDIF = itemPlotOCCDIF,
         itemPlotEISDIF = itemPlotEISDIF,
+        pairwisePlotsDIF = pairwisePlotsDIF,
         itemPlotSupplier = itemPlotSupplier,
         axistypeTest = axistypeTest,
         axistypeItem = axistypeItem,

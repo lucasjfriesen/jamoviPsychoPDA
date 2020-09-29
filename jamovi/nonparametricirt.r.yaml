@@ -28,8 +28,29 @@ items:
           title: Correlation
           type: number
           format: zto
+        - name: N
+          title: N
+          type: number
+        - name: naN
+          title: N - NA
+          type: number
+
+
 
     - name: occPlots
+      title: OCC Plots
+      type: Array
+      items: (itemPlotSupplier)
+      template:
+          type: Image
+          width:  550
+          height: 450
+          renderFun: .occPlot
+          visible: (itemPlotOCC)
+          clearWith:
+              - item
+
+    - name: occPlotsDIF
       title: OCC Plots
       type: Array
       items: (itemPlotSupplier)
@@ -52,6 +73,32 @@ items:
           height: 450
           renderFun: .eisPlot
           visible: (itemPlotEIS)
+          clearWith:
+              - item
+
+    - name: eisPlotsDIF
+      title: EIS Plots | DIF
+      type: Array
+      items: (itemPlotSupplier)
+      template:
+          type: Image
+          width:  550
+          height: 450
+          renderFun: .eisPlotDIF
+          visible: (itemPlotEIS)
+          clearWith:
+              - item
+
+    - name: pairwisePlotsDIF
+      title: Pairwise EIS | DIF
+      type: Array
+      items: (itemPlotSupplier)
+      template:
+          type: Image
+          width:  550
+          height: 450
+          renderFun: .pairwisePlotsDIF
+          visible: (pairwisePlotsDIF)
           clearWith:
               - item
 

@@ -107,6 +107,11 @@ options:
       #prefix: ')'
       default: "norm, 0, 1"
 
+    - type: String
+      name: OCCoption
+      title: Option Characteristic Curve | Option
+      default: "1"
+
     - name: itemPlotOCC
       title: Option Characteristic Curve
       type: Bool
@@ -124,6 +129,11 @@ options:
 
     - name: itemPlotEISDIF
       title: Expected Item Score | DIF
+      type: Bool
+      default: FALSE
+
+    - name: pairwisePlotsDIF
+      title: Pairwise | DIF
       type: Bool
       default: FALSE
 
@@ -185,5 +195,7 @@ options:
       title: Polyserial Item-Total Correlation
       type: Bool
       default: FALSE
+
+
 
 ...

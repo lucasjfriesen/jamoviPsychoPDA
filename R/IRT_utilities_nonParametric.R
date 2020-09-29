@@ -215,20 +215,38 @@ return(p)
 }
 
 buildOCCDIF <- function (data, item, ggtheme, theme, ...) {
+
   IRFlines <- tidyr::pivot_longer(data.frame(data$OCC[which(data$OCC[, 1] == which(data$itemlabels == item)), ]),
                                   !c(X1, X2, X3),
                                   names_to = "evalPoint",
                                   values_to = "Probability")
   expectedScores <- rep(data$expectedscores, length.out = nrow(IRFlines))
   
-  IRFlines <- cbind(IRFlines, expectedScores)
+  IRFlines <- cbind(IRFlines, expectedScores, model = "Full")
+    
+  IRFlines <- data.frame(IRFlines)
   
-  colnames(IRFlines) = c("Item", "Option", "Key", "evalPoint", "Probability", "Expected Score")
+  for (group in data$groups){
+    newData <- data$DIF[[which(data$groups == group)]]
+    newData <- tidyr::pivot_longer(data.frame(newData$OCC[which(newData$OCC[, 1] == which(newData$itemlabels == item)), ]),
+                                    !c(X1, X2, X3),
+                                    names_to = "evalPoint",
+                                    values_to = "Probability")
+    expectedScores <- rep(data$expectedscores, length.out = nrow(newData))
+    
+    newData <- cbind(newData, expectedScores, model = group)
+    
+    IRFlines <- rbind(IRFlines, newData)
+  }
+  
+  colnames(IRFlines) = c("Item", "Option", "Key", "evalPoint", "Probability", "Expected Score", "Model")
+  
+  IRFlines <- IRFlines[IRFlines$Option == option,]
   
   p <- ggplot() +
-    geom_line(aes(x = IRFlines$`Expected Score`, y = IRFlines$Probability, linetype = as.factor(IRFlines$Option), 
-                  colour = as.factor(IRFlines$Key))) +
-    labs(Title = "Option Characteristic Curves",
+    geom_line(aes(x = IRFlines$`Expected Score`, y = IRFlines$Probability, colour = IRFlines$Model)) +
+    labs(title = "Option Characteristic Curves",
+         subtitle = paste0("Item: ", item, "    Option: ", option),
          x = "Expected Score",
          y = "Probability",
          linetype = "Option",
@@ -287,13 +305,12 @@ seData <- rbind(confhigh, conflow)
   
   p <- ggplot() +
     geom_line(aes(x = data$expectedscores, y = Estimate)) +
-    geom_line(aes(x = rep(data$expectedscores, length.out = nrow(seData)), y = seData$conf, colour = seData$level)) +
+    geom_ribbon(aes(x = data$expectedscores, ymin = conflow$conf, ymax = confhigh$conf), alpha = .5, fill = "grey70") +
     geom_point(aes(x = data$expectedscores, y = propevalpoints), size = .5, alpha = .5) +
-    labs(Title = paste("Item: ",data$itemlabels[item]),
+    labs(title = paste0("Item: ",data$itemlabels[item]),
          subtitle = "Expected Item Score (Item Characteristic Curve)",
          x = "Expected Score",
-         y = "Expected Item Score",
-         colour = "Conf. Interval") +
+         y = "Expected Item Score") +
     ggtheme + theme(
       plot.title = ggplot2::element_text(margin = ggplot2::margin(b = 5.5 * 1.2)),
       plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5))
@@ -329,23 +346,122 @@ buildEISDIF <- function(data, item, alpha, ggtheme, theme, ...){
   conflow<-data.frame(conf = sapply(Estimate-SE,function(x)max(x,minitem)), level = factor("low"))
   seData <- rbind(confhigh, conflow)
   
+
   
   for (i in 1:data$nevalpoints){
     binaryrespp<-respit[which(dbins==i)]
     propevalpoints[i]<-sum(binaryrespp)/length(binaryrespp)
   }
   
+  newData <-
+    data.frame(
+      expectedScores = t(data$expectedscores),
+      Estimate,
+      confhigh = confhigh$conf,
+      conflow = conflow$conf,
+      level = confhigh$level,
+      propevalpoints,
+      model = "Full"
+    )
+  
+  for (group in data$groups){
+    subdata <- data$DIF[[which(data$groups == group)]]
+    dbins<-cut(subdata$subjtheta,breaks=c(-999,subdata$evalpoints[-length(subdata$evalpoints)],999),labels=FALSE)
+    
+    Estimate0<-subdata$OCC[which(subdata$OCC[, 1] == which(subdata$itemlabels == item)),]
+    maxitem<-max(Estimate0[,3])
+    minitem<-min(Estimate0[,3])
+    Stderr0<-subdata$stderrs[which(subdata$OCC[, 1] == which(subdata$itemlabels == item)),]
+    resp0<-subdata$binaryresp[which(subdata$binaryresp[,1]== which(subdata$itemlabels == item)),]
+    
+    Estimate1<-apply(Estimate0[,-c(1:3)],2,function(x)x*Estimate0[,3])
+    Estimate<-apply(Estimate1,2,sum)
+    
+    Stderr1<-apply(Stderr0[,-c(1:3)],2,function(x)x*Stderr0[,3])
+    Stderr<-apply(Stderr1,2,sum)
+    
+    respit1<-apply(resp0[,-c(1:3)],2,function(x)x*resp0[,3])
+    respit<-apply(respit1,2,sum)
+    
+    propevalpoints<-numeric()
+    if (is.null(alpha)){
+      alpha = 0.05
+    }
+    SE<-qnorm(1-alpha/2)*Stderr
+    
+    
+    confhigh<-data.frame(conf = sapply(Estimate+SE,function(x)min(x,maxitem)), level = factor("high"))
+    conflow<-data.frame(conf = sapply(Estimate-SE,function(x)max(x,minitem)), level = factor("low"))
+    seData <- rbind(confhigh, conflow)
+    
+    
+    
+    for (i in 1:subdata$nevalpoints){
+      binaryrespp<-respit[which(dbins==i)]
+      propevalpoints[i]<-sum(binaryrespp)/length(binaryrespp)
+    }
+    
+    newData <-
+      rbind(newData, data.frame(
+        expectedScores = t(data$expectedscores),
+        Estimate,
+        confhigh = confhigh$conf,
+        conflow = conflow$conf,
+        level = confhigh$level,
+        propevalpoints,
+        model = group
+      ))
+  }
+  
   p <- ggplot() +
-    geom_line(aes(x = data$expectedscores, y = Estimate)) +
-    geom_line(aes(x = rep(data$expectedscores, length.out = nrow(seData)), y = seData$conf, colour = seData$level)) +
-    geom_point(aes(x = data$expectedscores, y = propevalpoints), size = .5, alpha = .5) +
-    labs(Title = paste("Item: ",data$itemlabels[item]),
+    geom_line(aes(x = newData$expectedScores, y = newData$Estimate, colour = newData$model)) +
+    geom_point(aes(x = newData$expectedScores, y = newData$propevalpoints, colour = newData$model), size = 1, alpha = .5) +
+    labs(Title = paste("Item: ", data$itemlabels[item]),
          subtitle = "Expected Item Score (Item Characteristic Curve)",
          x = "Expected Score",
-         y = "Expected Item Score",
-         colour = "Conf. Interval") +
+         y = "Expected Item Score") +
     ggtheme + theme(
       plot.title = ggplot2::element_text(margin = ggplot2::margin(b = 5.5 * 1.2)),
       plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5))
+  return(p)
+}
+
+buildPairwiseDIF <- function(data, item, alpha, ggtheme, theme, ...){
+  grps <- data$groups
+  ngrps <- length(grps)
+  
+  newData <- data.frame()
+  
+  for (i in 1:(ngrps - 1)) {
+    for (j in (i + 1):ngrps) {
+      grp1 <- data$DIF[[i]]
+      grp2 <- data$DIF[[j]]
+      
+      plotData <-
+        data.frame(
+          xvalue = apply(grp1$OCC[, -c(1:3)], 2, function(x)
+            sum(x * grp1$OCC[, 3])),
+          yvalue = apply(grp2$OCC[, -c(1:3)], 2, function(x)
+            sum(x * grp2$OCC[, 3])),
+          xgroup = grps[i],
+          ygroup = grps[j],
+          facet = paste0("x = ",grps[i], ", y = ", grps[j])
+        )
+      newData <- rbind(newData, plotData)
+      
+    }
+  }
+  
+  
+  p <- ggplot(data = newData, aes(x = xvalue, y = yvalue, colour = facet)) +
+    geom_line(size = 1.5) +
+    geom_hline(yintercept = (quantile(newData$yvalue, c(.05, .25, .5 , .75, .95))), lty = 2, colour = "blue") +
+    geom_vline(xintercept = (quantile(newData$xvalue, c(.05, .25, .5 , .75, .95))), lty = 2, colour = "blue") +
+    labs(title = item,
+         x = "",
+         y = "") +
+    facet_wrap(~ facet,
+               dir = "v")
+  
   return(p)
 }
