@@ -4,9 +4,9 @@ title: Non-Parametric IRT
 jrs:   '1.1'
 
 items:
-    - name: debug
-      title: debug results
-      type: Preformatted
+    #- name: debug
+    #  title: debug results
+    #  type: Preformatted
 
     - name: instructions
       title: Instructions
@@ -20,6 +20,16 @@ items:
       rows: (item)
       clearWith:
           - item
+          - group
+          - format
+          - SubRank
+          - miss
+          - NAweight
+          - nevalpoints
+          - kernel
+          - bandwidth
+          - RankFun
+          - thetadist
       columns:
         - name: Item
           title: Item
@@ -35,8 +45,6 @@ items:
           title: N - NA
           type: number
 
-
-
     - name: occPlots
       title: OCC Plots
       type: Array
@@ -49,6 +57,16 @@ items:
           visible: (itemPlotOCC)
           clearWith:
               - item
+              - group
+              - format
+              - SubRank
+              - miss
+              - NAweight
+              - nevalpoints
+              - kernel
+              - bandwidth
+              - RankFun
+              - thetadist
 
     - name: occPlotsDIF
       title: OCC Plots
@@ -62,6 +80,16 @@ items:
           visible: (itemPlotOCCDIF)
           clearWith:
               - item
+              - group
+              - format
+              - SubRank
+              - miss
+              - NAweight
+              - nevalpoints
+              - kernel
+              - bandwidth
+              - RankFun
+              - thetadist
 
     - name: eisPlots
       title: EIS Plots
@@ -75,6 +103,16 @@ items:
           visible: (itemPlotEIS)
           clearWith:
               - item
+              - group
+              - format
+              - SubRank
+              - miss
+              - NAweight
+              - nevalpoints
+              - kernel
+              - bandwidth
+              - RankFun
+              - thetadist
 
     - name: eisPlotsDIF
       title: EIS Plots | DIF
@@ -88,6 +126,16 @@ items:
           visible: (itemPlotEISDIF)
           clearWith:
               - item
+              - group
+              - format
+              - SubRank
+              - miss
+              - NAweight
+              - nevalpoints
+              - kernel
+              - bandwidth
+              - RankFun
+              - thetadist
 
     - name: pairwisePlotsDIF
       title: Pairwise EIS | DIF
@@ -101,6 +149,16 @@ items:
           visible: (pairwisePlotsDIF)
           clearWith:
               - item
+              - group
+              - format
+              - SubRank
+              - miss
+              - NAweight
+              - nevalpoints
+              - kernel
+              - bandwidth
+              - RankFun
+              - thetadist
 
     - name: testPlotDensity
       title: Density Plot
@@ -111,6 +169,17 @@ items:
       renderFun: .testPlotDensity
       clearWith:
           - item
+          - group
+          - format
+          - SubRank
+          - miss
+          - NAweight
+          - nevalpoints
+          - kernel
+          - bandwidth
+          - RankFun
+          - thetadist
+          - axisTypeTest
 
     - name: testPlotExpected
       title: Expected Plot
@@ -121,6 +190,17 @@ items:
       renderFun: .testPlotExpected
       clearWith:
           - item
+          - group
+          - format
+          - SubRank
+          - miss
+          - NAweight
+          - nevalpoints
+          - kernel
+          - bandwidth
+          - RankFun
+          - thetadist
+          - axisTypeTest
 
     - name: testPlotSD
       title: SD Plot
@@ -131,6 +211,17 @@ items:
       renderFun: .testPlotSD
       clearWith:
           - item
+          - group
+          - format
+          - SubRank
+          - miss
+          - NAweight
+          - nevalpoints
+          - kernel
+          - bandwidth
+          - RankFun
+          - thetadist
+          - axisTypeTest
 
     - name: testPlotDensityDIF
       title: Density Plot | DIF
@@ -141,6 +232,17 @@ items:
       renderFun: .testPlotDensityDIF
       clearWith:
           - item
+          - group
+          - format
+          - SubRank
+          - miss
+          - NAweight
+          - nevalpoints
+          - kernel
+          - bandwidth
+          - RankFun
+          - thetadist
+          - axisTypeTest
 
     - name: testPlotExpectedDIF
       title: Expected Plot | DIF
@@ -151,6 +253,17 @@ items:
       renderFun: .testPlotExpectedDIF
       clearWith:
           - item
+          - group
+          - format
+          - SubRank
+          - miss
+          - NAweight
+          - nevalpoints
+          - kernel
+          - bandwidth
+          - RankFun
+          - thetadist
+          - axisTypeTest
 
     - name: testPlotSDDIF
       title: SD Plot | DIF
@@ -161,5 +274,16 @@ items:
       renderFun: .testPlotSDDIF
       clearWith:
           - item
+          - group
+          - format
+          - SubRank
+          - miss
+          - NAweight
+          - nevalpoints
+          - kernel
+          - bandwidth
+          - RankFun
+          - thetadist
+          - axisTypeTest
 
 ...

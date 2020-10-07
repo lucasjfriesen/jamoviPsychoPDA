@@ -24,7 +24,7 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             itemPlotEISDIF = FALSE,
             pairwisePlotsDIF = FALSE,
             itemPlotSupplier = NULL,
-            axistypeTest = "score",
+            axisTypeTest = "score",
             axistypeItem = "score",
             testPlotDensityDIF = FALSE,
             testPlotExpectedDIF = FALSE,
@@ -129,9 +129,9 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             private$..itemPlotSupplier <- jmvcore::OptionVariables$new(
                 "itemPlotSupplier",
                 itemPlotSupplier)
-            private$..axistypeTest <- jmvcore::OptionList$new(
-                "axistypeTest",
-                axistypeTest,
+            private$..axisTypeTest <- jmvcore::OptionList$new(
+                "axisTypeTest",
+                axisTypeTest,
                 options=list(
                     "distribution",
                     "score"),
@@ -190,7 +190,7 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..itemPlotEISDIF)
             self$.addOption(private$..pairwisePlotsDIF)
             self$.addOption(private$..itemPlotSupplier)
-            self$.addOption(private$..axistypeTest)
+            self$.addOption(private$..axisTypeTest)
             self$.addOption(private$..axistypeItem)
             self$.addOption(private$..testPlotDensityDIF)
             self$.addOption(private$..testPlotExpectedDIF)
@@ -219,7 +219,7 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         itemPlotEISDIF = function() private$..itemPlotEISDIF$value,
         pairwisePlotsDIF = function() private$..pairwisePlotsDIF$value,
         itemPlotSupplier = function() private$..itemPlotSupplier$value,
-        axistypeTest = function() private$..axistypeTest$value,
+        axisTypeTest = function() private$..axisTypeTest$value,
         axistypeItem = function() private$..axistypeItem$value,
         testPlotDensityDIF = function() private$..testPlotDensityDIF$value,
         testPlotExpectedDIF = function() private$..testPlotExpectedDIF$value,
@@ -247,7 +247,7 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..itemPlotEISDIF = NA,
         ..pairwisePlotsDIF = NA,
         ..itemPlotSupplier = NA,
-        ..axistypeTest = NA,
+        ..axisTypeTest = NA,
         ..axistypeItem = NA,
         ..testPlotDensityDIF = NA,
         ..testPlotExpectedDIF = NA,
@@ -261,7 +261,6 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
 nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
-        debug = function() private$.items[["debug"]],
         instructions = function() private$.items[["instructions"]],
         resTable = function() private$.items[["resTable"]],
         occPlots = function() private$.items[["occPlots"]],
@@ -282,10 +281,6 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="Non-Parametric IRT")
-            self$add(jmvcore::Preformatted$new(
-                options=options,
-                name="debug",
-                title="debug results"))
             self$add(jmvcore::Html$new(
                 options=options,
                 name="instructions",
@@ -298,7 +293,17 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 visible=FALSE,
                 rows="(item)",
                 clearWith=list(
-                    "item"),
+                    "item",
+                    "group",
+                    "format",
+                    "SubRank",
+                    "miss",
+                    "NAweight",
+                    "nevalpoints",
+                    "kernel",
+                    "bandwidth",
+                    "RankFun",
+                    "thetadist"),
                 columns=list(
                     list(
                         `name`="Item", 
@@ -329,7 +334,17 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     renderFun=".occPlot",
                     visible="(itemPlotOCC)",
                     clearWith=list(
-                        "item"))))
+                        "item",
+                        "group",
+                        "format",
+                        "SubRank",
+                        "miss",
+                        "NAweight",
+                        "nevalpoints",
+                        "kernel",
+                        "bandwidth",
+                        "RankFun",
+                        "thetadist"))))
             self$add(jmvcore::Array$new(
                 options=options,
                 name="occPlotsDIF",
@@ -342,7 +357,17 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     renderFun=".occPlot",
                     visible="(itemPlotOCCDIF)",
                     clearWith=list(
-                        "item"))))
+                        "item",
+                        "group",
+                        "format",
+                        "SubRank",
+                        "miss",
+                        "NAweight",
+                        "nevalpoints",
+                        "kernel",
+                        "bandwidth",
+                        "RankFun",
+                        "thetadist"))))
             self$add(jmvcore::Array$new(
                 options=options,
                 name="eisPlots",
@@ -355,7 +380,17 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     renderFun=".eisPlot",
                     visible="(itemPlotEIS)",
                     clearWith=list(
-                        "item"))))
+                        "item",
+                        "group",
+                        "format",
+                        "SubRank",
+                        "miss",
+                        "NAweight",
+                        "nevalpoints",
+                        "kernel",
+                        "bandwidth",
+                        "RankFun",
+                        "thetadist"))))
             self$add(jmvcore::Array$new(
                 options=options,
                 name="eisPlotsDIF",
@@ -368,7 +403,17 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     renderFun=".eisPlotDIF",
                     visible="(itemPlotEISDIF)",
                     clearWith=list(
-                        "item"))))
+                        "item",
+                        "group",
+                        "format",
+                        "SubRank",
+                        "miss",
+                        "NAweight",
+                        "nevalpoints",
+                        "kernel",
+                        "bandwidth",
+                        "RankFun",
+                        "thetadist"))))
             self$add(jmvcore::Array$new(
                 options=options,
                 name="pairwisePlotsDIF",
@@ -381,7 +426,17 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     renderFun=".pairwisePlotsDIF",
                     visible="(pairwisePlotsDIF)",
                     clearWith=list(
-                        "item"))))
+                        "item",
+                        "group",
+                        "format",
+                        "SubRank",
+                        "miss",
+                        "NAweight",
+                        "nevalpoints",
+                        "kernel",
+                        "bandwidth",
+                        "RankFun",
+                        "thetadist"))))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="testPlotDensity",
@@ -391,7 +446,18 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 height=450,
                 renderFun=".testPlotDensity",
                 clearWith=list(
-                    "item")))
+                    "item",
+                    "group",
+                    "format",
+                    "SubRank",
+                    "miss",
+                    "NAweight",
+                    "nevalpoints",
+                    "kernel",
+                    "bandwidth",
+                    "RankFun",
+                    "thetadist",
+                    "axisTypeTest")))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="testPlotExpected",
@@ -401,7 +467,18 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 height=450,
                 renderFun=".testPlotExpected",
                 clearWith=list(
-                    "item")))
+                    "item",
+                    "group",
+                    "format",
+                    "SubRank",
+                    "miss",
+                    "NAweight",
+                    "nevalpoints",
+                    "kernel",
+                    "bandwidth",
+                    "RankFun",
+                    "thetadist",
+                    "axisTypeTest")))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="testPlotSD",
@@ -411,7 +488,18 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 height=450,
                 renderFun=".testPlotSD",
                 clearWith=list(
-                    "item")))
+                    "item",
+                    "group",
+                    "format",
+                    "SubRank",
+                    "miss",
+                    "NAweight",
+                    "nevalpoints",
+                    "kernel",
+                    "bandwidth",
+                    "RankFun",
+                    "thetadist",
+                    "axisTypeTest")))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="testPlotDensityDIF",
@@ -421,7 +509,18 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 height=450,
                 renderFun=".testPlotDensityDIF",
                 clearWith=list(
-                    "item")))
+                    "item",
+                    "group",
+                    "format",
+                    "SubRank",
+                    "miss",
+                    "NAweight",
+                    "nevalpoints",
+                    "kernel",
+                    "bandwidth",
+                    "RankFun",
+                    "thetadist",
+                    "axisTypeTest")))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="testPlotExpectedDIF",
@@ -431,7 +530,18 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 height=450,
                 renderFun=".testPlotExpectedDIF",
                 clearWith=list(
-                    "item")))
+                    "item",
+                    "group",
+                    "format",
+                    "SubRank",
+                    "miss",
+                    "NAweight",
+                    "nevalpoints",
+                    "kernel",
+                    "bandwidth",
+                    "RankFun",
+                    "thetadist",
+                    "axisTypeTest")))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="testPlotSDDIF",
@@ -441,7 +551,18 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 height=450,
                 renderFun=".testPlotSDDIF",
                 clearWith=list(
-                    "item")))}))
+                    "item",
+                    "group",
+                    "format",
+                    "SubRank",
+                    "miss",
+                    "NAweight",
+                    "nevalpoints",
+                    "kernel",
+                    "bandwidth",
+                    "RankFun",
+                    "thetadist",
+                    "axisTypeTest")))}))
 
 nonParametricIRTBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     "nonParametricIRTBase",
@@ -485,7 +606,7 @@ nonParametricIRTBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param itemPlotEISDIF .
 #' @param pairwisePlotsDIF .
 #' @param itemPlotSupplier .
-#' @param axistypeTest .
+#' @param axisTypeTest .
 #' @param axistypeItem .
 #' @param testPlotDensityDIF .
 #' @param testPlotExpectedDIF .
@@ -496,7 +617,6 @@ nonParametricIRTBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param resTable .
 #' @return A results object containing:
 #' \tabular{llllll}{
-#'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$resTable} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$occPlots} \tab \tab \tab \tab \tab an array of images \cr
@@ -539,7 +659,7 @@ nonParametricIRT <- function(
     itemPlotEISDIF = FALSE,
     pairwisePlotsDIF = FALSE,
     itemPlotSupplier,
-    axistypeTest = "score",
+    axisTypeTest = "score",
     axistypeItem = "score",
     testPlotDensityDIF = FALSE,
     testPlotExpectedDIF = FALSE,
@@ -584,7 +704,7 @@ nonParametricIRT <- function(
         itemPlotEISDIF = itemPlotEISDIF,
         pairwisePlotsDIF = pairwisePlotsDIF,
         itemPlotSupplier = itemPlotSupplier,
-        axistypeTest = axistypeTest,
+        axisTypeTest = axisTypeTest,
         axistypeItem = axistypeItem,
         testPlotDensityDIF = testPlotDensityDIF,
         testPlotExpectedDIF = testPlotExpectedDIF,

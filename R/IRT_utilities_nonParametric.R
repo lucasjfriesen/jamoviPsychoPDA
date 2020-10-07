@@ -7,23 +7,34 @@
 
 # SD ----
 
-buildSD <- function (data, ggtheme, theme, ...) 
-{
+buildSD <- function (data, ggtheme, theme, axistype, ...) {
+  
+  if (axistype == 'distribution') {
+    axis <- data$evalpoints
+    quants <- data$subjthetasummary
+    xlab <- paste("Quantiles of Distribution:", data$thetadist[1], ", Mean:", data$thetadist[2], ", SD:", data$thetadist[3])
+  }
+  else{
+    axis <- data$expectedscores
+    quants <- data$subjscoresummary
+    xlab <- "Expected Score"
+  }
+
 Testvar <- apply(data$OCC[,-c(1:3)],2,function(x)sum(x*data$OCC[,3]**2 - (x*data$OCC[,3])**2))
 
 Testsd<-sqrt(Testvar)
 
 p <- ggplot() +
-  geom_line(aes(x = data$expectedscores, y = Testsd)) +
-  geom_vline(xintercept = data$subjscoresummary, linetype = "dashed", colour = "blue") +
-  geom_text(mapping = aes(x = data$subjscoresummary,
+  geom_line(aes(x = axis, y = Testsd)) +
+  geom_vline(xintercept = quants, linetype = "dashed", colour = "blue") +
+  geom_text(mapping = aes(x = quants,
                           y = min(Testsd),
-                          label = labels(data$subjscoresummary),
+                          label = labels(quants),
                           hjust = -.1,
                           vjust = -1)
   ) +
   labs(title = "Test Standard Deviation",
-       x = "Expected Score",
+       x = xlab,
        y = "Standard Deviations") +
   ggtheme + theme(
     plot.title = ggplot2::element_text(margin = ggplot2::margin(b = 5.5 * 1.2)),
@@ -32,13 +43,21 @@ p <- ggplot() +
 return(p)
 }
 
-buildSDDIF <- function (data, ggtheme, theme, ...) 
-{
-  
+buildSDDIF <- function (data, ggtheme, theme, axistype, ...) {
   Testvar <- apply(data$OCC[,-c(1:3)],2,function(x)sum(x*data$OCC[,3]**2 - (x*data$OCC[,3])**2))
   Testsd <- sqrt(Testvar)
   newData <- as.data.frame(cbind(Testsd = Testsd, model = "Full"))
-  newData$expectedscores <- t(data$expectedscores)
+  
+  if (axistype == 'distribution') {
+    newData$axis <- data$evalpoints
+    quants <- data$subjthetasummary
+    xlab <- paste("Quantiles of Distribution:", data$thetadist[1], ", Mean:", data$thetadist[2], ", SD:", data$thetadist[3])
+  }
+  else{
+    newData$axis <- t(data$expectedscores)
+    quants <- data$subjscoresummary
+    xlab <- "Expected Score"
+  }
   
   for (group in data$groups){
     Testvar <- apply(data$DIF[[which(data$groups == group)]]$OCC[,-c(1:3)],
@@ -46,23 +65,30 @@ buildSDDIF <- function (data, ggtheme, theme, ...)
                      function(x)sum(x*data$DIF[[which(data$groups == group)]]$OCC[,3]**2 - (x*data$DIF[[which(data$groups == group)]]$OCC[,3])**2))
     Testsd <- sqrt(Testvar)
     Testsd <- data.frame(cbind(Testsd = Testsd, model = group))
-    Testsd$expectedscores <- t(data$expectedscores)
+    
+    if (axistype == 'distribution') {
+      Testsd$axis <- t(data$evalpoints)
+    }
+    else{
+      Testsd$axis <- t(data$expectedscores)
+    }
+    
     
     newData = rbind(newData, Testsd)
   }
   newData$Testsd <- as.numeric(newData$Testsd)
 
   p <- ggplot() +
-    geom_line(aes(x = newData$expectedscores, y = newData$Testsd, colour = newData$model)) +
-    geom_vline(xintercept = data$subjscoresummary, linetype = "dashed", colour = "blue") +
-    geom_text(mapping = aes(x = data$subjscoresummary,
+    geom_line(aes(x = newData$axis, y = newData$Testsd, colour = newData$model)) +
+    geom_vline(xintercept = quants, linetype = "dashed", colour = "blue") +
+    geom_text(mapping = aes(x = quants,
                             y = min(newData$Testsd),
-                            label = labels(data$subjscoresummary),
+                            label = labels(quants),
                             hjust = -.1,
                             vjust = -1)
     ) +
     labs(title = "Test Standard Deviation",
-         x = "Expected Score",
+         x = xlab,
          y = "Standard Deviations",
          colour = "Model") +
     ggtheme + theme(
@@ -74,21 +100,36 @@ buildSDDIF <- function (data, ggtheme, theme, ...)
 
 # Expected ----
 
-buildExpected <- function (data, ggtheme, theme, ...) 
+buildExpected <- function (data, ggtheme, theme, axistype, ...) 
 {
 
+  if (axistype == 'distribution') {
+    axis <- data$evalpoints
+    yaxis <- t(data$expectedscores)
+    quants <- data$subjthetasummary
+    xlab <- paste("Quantiles of Distribution:", data$thetadist[1], ", Mean:", data$thetadist[2], ", SD:", data$thetadist[3])
+    ylab <- "Expected Score"
+  }
+  else{
+    axis <- t(data$expectedscores)
+    yaxis <- axis <- data$evalpoints
+    quants <- data$subjscoresummary
+    xlab <- "Expected Score"
+    ylab <- paste("Quantiles of Distribution:", data$thetadist[1], ", Mean:", data$thetadist[2], ", SD:", data$thetadist[3])
+  }
+  
   p <- ggplot() +
-    geom_line(aes(x = data$evalpoints, y = data$expectedscores)) +
-    geom_vline(xintercept = data$subjthetasummary, linetype = "dashed", colour = "blue") +
-    geom_text(mapping = aes(x = data$subjthetasummary,
-                            y = min(data$expectedscores),
-                            label = labels(data$subjthetasummary),
+    geom_line(aes(x = axis, y = yaxis)) +
+    geom_vline(xintercept = quants, linetype = "dashed", colour = "blue") +
+    geom_text(mapping = aes(x = quants,
+                            y = min(yaxis),
+                            label = labels(quants),
                             hjust = -.1,
                             vjust = -1)
               ) +
     labs(title = "Expected Total Score",
-         x = paste("Quantiles of Distribution:", data$thetadist[1], ", Mean:", data$thetadist[2], ", SD:", data$thetadist[3]),
-         y = "Expected Score") +
+         x = xlab,
+         y = ylab) +
     ggtheme + theme(
       plot.title = ggplot2::element_text(margin = ggplot2::margin(b = 5.5 * 1.2)),
       plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5))
@@ -96,25 +137,54 @@ buildExpected <- function (data, ggtheme, theme, ...)
   return(p)
 }
 
-buildExpectedDIF <- function (data, ggtheme, theme, ...) 
+buildExpectedDIF <- function (data, ggtheme, theme, axistype, ...) 
 {
-  newData <- data.frame(evalpoints = data$evalpoints, expectedscores = t(data$expectedscores), model = "Full")
+  
+  if (axistype == 'distribution') {
+    quants <- data$subjthetasummary
+    xlab <- paste("Quantiles of Distribution:", data$thetadist[1], ", Mean:", data$thetadist[2], ", SD:", data$thetadist[3])
+    ylab <- "Expected Score"
+  } else{
+    quants <- data$subjscoresummary
+    xlab <- "Expected Score"
+    ylab <- paste("Quantiles of Distribution:", data$thetadist[1], ", Mean:", data$thetadist[2], ", SD:", data$thetadist[3])
+  }
+  
+  if (axistype == 'distribution') {
+    newData = data.frame(axis = data$evalpoints,
+                                        yaxis = t(data$expectedscores),
+                                        model = "Full")
+  } else{
+    newData = data.frame(axis = t(data$DIF$expectedscores),
+                                        yaxis = data$evalpoints,
+                                        model = "Full")
+  }
+  
   for (group in data$groups){
-    newData = rbind(newData, data.frame(evalpoints = data$evalpoints, expectedscores = t(data$DIF[[which(data$groups == group)]]$expectedscores), model = group))
+    if (axistype == 'distribution') {
+      newData = rbind(newData, data.frame(axis = data$evalpoints,
+                                          yaxis = t(data$DIF[[which(data$groups == group)]]$expectedscores),
+                                          model = group))
+    }
+    else{
+      newData = rbind(newData, data.frame(axis = t(data$DIF[[which(data$groups == group)]]$expectedscores),
+                                          yaxis = data$evalpoints,
+                                          model = group))
+    }
   }
 
   p <- ggplot() +
-    geom_line(aes(x = newData$evalpoints, y = newData$expectedscores, colour = newData$model)) +
-    geom_vline(xintercept = data$subjthetasummary, linetype = "dashed", colour = "blue") +
-    geom_text(mapping = aes(x = data$subjthetasummary,
-                            y = min(data$expectedscores),
-                            label = labels(data$subjthetasummary),
+    geom_line(aes(x = newData$axis, y = newData$yaxis, colour = newData$model)) +
+    geom_vline(xintercept = quants, linetype = "dashed", colour = "blue") +
+    geom_text(mapping = aes(x = quants,
+                            y = min(newData$yaxis),
+                            label = labels(quants),
                             hjust = -.1,
                             vjust = -1)
     ) +
-    labs(title = "Expected Total Score",
-         x = paste("Quantiles of Distribution:", data$thetadist[1], ", Mean:", data$thetadist[2], ", SD:", data$thetadist[3]),
-         y = "Expected Score",
+    labs(title = "Expected Total Score | DIF",
+         x = xlab,
+         y = ylab,
          colour = "Model") +
     ggtheme + theme(
       plot.title = ggplot2::element_text(margin = ggplot2::margin(b = 5.5 * 1.2)),
@@ -125,20 +195,32 @@ buildExpectedDIF <- function (data, ggtheme, theme, ...)
 
 # Density ----
 
-buildDensity <- function(data, ggtheme, theme, ...){
+buildDensity <- function(data, ggtheme, theme, axistype, ...){
 
+  if (axistype == 'distribution') {
+    axis <- data$subjtheta
+    quants <- data$subjthetasummary
+    xlab <- paste("Quantiles of Distribution:", data$thetadist[1], ", Mean:", data$thetadist[2], ", SD:", data$thetadist[3])
+    ylab <- "Density of Theta"
+  } else{
+    axis <- data$subjscore
+    quants <- data$subjscoresummary
+    xlab <- "Density of Scores"
+    ylab <- paste("Quantiles of Expected Scores:", data$thetadist[1], ", Mean:", data$thetadist[2], ", SD:", data$thetadist[3])
+  }
+  
   p <- ggplot() +
-    geom_density(aes(x = data$subjscore)) +
-    geom_vline(xintercept = data$subjscoresummary, linetype = "dashed", colour = "blue") + 
-    geom_text(aes(x = data$subjscoresummary,
+    geom_density(aes(x = axis)) +
+    geom_vline(xintercept = quants, linetype = "dashed", colour = "blue") + 
+    geom_text(aes(x = quants,
                             y = 0,
-                            label = labels(data$subjscoresummary),
+                            label = labels(quants),
                             hjust = -.1,
                             vjust = -1)
     ) +
     labs(title = "Observed Score Distribution",
-         x = "Density of Score",
-         y = "Scores") +
+         x = xlab,
+         y = ylab) +
     ggtheme + theme(
     plot.title = ggplot2::element_text(margin = ggplot2::margin(b = 5.5 * 1.2)),
     plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5)
@@ -147,20 +229,39 @@ buildDensity <- function(data, ggtheme, theme, ...){
   return(p)
 }
 
-buildDensityDIF <- function(data, ggtheme, theme, ...){
+buildDensityDIF <- function(data, ggtheme, theme, axistype, ...){
   
-  newData <- data.frame(cbind(subjscore = data$subjscore, model = "Full"))
-  for (group in data$groups){
-    newData = rbind(newData, cbind(subjscore = data$DIF[[which(data$groups == group)]]$subjscore, model = group))
+  if (axistype == 'distribution') {
+    
+    newData <- data.frame(cbind(axis = data$subjtheta, model = "Full"))
+    for (group in data$groups){
+      newData = rbind(newData, cbind(axis = data$DIF[[which(data$groups == group)]]$subjtheta, model = group))
+    }
+    
+    quants <- data$subjthetasummary
+    xlab <- paste("Quantiles of Distribution:", data$thetadist[1], ", Mean:", data$thetadist[2], ", SD:", data$thetadist[3])
+    ylab <- "Density of Scores"
+  } else{
+    
+    newData <- data.frame(cbind(axis = data$subjscore, model = "Full"))
+    for (group in data$groups){
+      newData = rbind(newData, cbind(axis = data$DIF[[which(data$groups == group)]]$subjscore, model = group))
+    }
+    
+    quants <- data$subjscoresummary
+    xlab <- "Density of Theta"
+    ylab <- paste("Quantiles of Expected Scores:", data$thetadist[1], ", Mean:", data$thetadist[2], ", SD:", data$thetadist[3])
   }
-  newData <- newData[newData$subjscore != 0,]
+  
+
+  newData <- newData[newData$axis != 0,]
   
   p <- ggplot() +
-    geom_density(aes(x = as.numeric(newData$subjscore), colour = newData$model)) +
-    geom_vline(xintercept = data$subjscoresummary, linetype = "dashed", colour = "blue") + 
-    geom_text(aes(x = data$subjscoresummary,
+    geom_density(aes(x = as.numeric(newData$axis), colour = newData$model)) +
+    geom_vline(xintercept = quants, linetype = "dashed", colour = "blue") + 
+    geom_text(aes(x = quants,
                   y = 0,
-                  label = labels(data$subjscoresummary),
+                  label = labels(quants),
                   hjust = -.1,
                   vjust = -1)
     ) +

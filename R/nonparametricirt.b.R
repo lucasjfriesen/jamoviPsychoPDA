@@ -100,34 +100,46 @@ nonParametricIRTClass <-
             # States ----
             
             # Frequency Table for items by option, Sample size, including NA
-            # OCC DIF | Text selection for option
-            # Pairwise expected Scores DIF
-            
+
             # Results table ----
             
-            resultState <- self$results$resTable$state
+            if (self$options$resTable) {
+              self$results$resTable$setVisible(visible = TRUE)
+            }
             
+            resultState <- self$results$resTable$state
+
             if (!is.null(resultState)) {
               # ... populate the table from the state
+
             } else {
                 # ... create the table and the state
                 resultState <- runResults()
                 table <- self$results$resTable
                 x <-
                   KernSmoothIRT:::print.ksIRT(resultState)
+                
+                # > x <- lapply(res, function(x){table(x)})
+                # > as.data.frame(x)
+                # x_ <- nrow(res) - unlist(lapply(x, function(x){sum(x)}))
+                # freqTable <- data.frame()
+                # for (col in item){
+                #   freqTable$col <- table(data$col)
+                # }
+                
                 for (i in 1:nrow(x)) {
                   table$setRow(
                     rowNo = i,
                     values = list(
                       Item = x$Item[i],
-                      Correlation = x$Correlation[i]
+                      Correlation = x$Correlation[i]#,
+                      # N = 
+                      # naN = 
                     )
                   )
                 }
             }
-            if (self$options$resTable) {
-              table$setVisible(visible = TRUE)
-            }
+
 
             # Test level plots ----
             # Expected ----
@@ -296,20 +308,13 @@ nonParametricIRTClass <-
         # Test-level plots ----
         
         .testPlotExpected = function(testPlotData, ggtheme, theme, ...) {
-          # if (is.null(self$data) | is.null(self$options$item))
-          # {
-          #   return()
-          # }
-          #
-          # if (is.null(testPlotData$state)) {
-          #   return(FALSE)
-          # }
-          
+
           plotData <- testPlotData$state
           p <-
             buildExpected(plotData,
                           ggtheme,
                           theme,
+                          axistype = self$options$axisTypeTest,
                           ...)
           
           print(p)
@@ -331,6 +336,7 @@ nonParametricIRTClass <-
             buildExpectedDIF(plotData,
                              ggtheme,
                              theme,
+                             axistype = self$options$axisTypeTest,
                              ...)
           
           print(p)
@@ -348,6 +354,7 @@ nonParametricIRTClass <-
             buildDensity(plotData,
                          ggtheme,
                          theme,
+                         axistype = self$options$axisTypeTest,
                          ...)
           
           print(p)
@@ -365,12 +372,12 @@ nonParametricIRTClass <-
             buildDensityDIF(plotData,
                             ggtheme,
                             theme,
+                            axistype = self$options$axisTypeTest,
                             ...)
           
           print(p)
           TRUE
         },
-        
         
         .testPlotSD = function(testPlotData, ggtheme, theme, ...) {
           #
@@ -384,6 +391,7 @@ nonParametricIRTClass <-
             buildSD(plotData,
                     ggtheme,
                     theme,
+                    axistype = self$options$axisTypeTest,
                     ...)
           
           print(p)
@@ -402,11 +410,13 @@ nonParametricIRTClass <-
             buildSDDIF(plotData,
                        ggtheme,
                        theme,
+                       axistype = self$options$axisTypeTest,
                        ...)
           
           print(p)
           TRUE
         },
+        
         # Item-level plots ----
         
         .occPlot = function(itemPlotData, ggtheme, theme, ...) {

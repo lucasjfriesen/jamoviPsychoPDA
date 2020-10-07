@@ -100,15 +100,15 @@ options:
           name:  mean
       default: sum
 
-    - type: String
-      name: thetadist
+    - name: thetadist
+      type: String
       title: Theta distribution
       #suffix: '('
       #prefix: ')'
       default: "norm, 0, 1"
 
-    - type: String
-      name: OCCoption
+    - name: OCCoption
+      type: String
       title: Option Characteristic Curve | Option
       default: "1"
 
@@ -141,7 +141,7 @@ options:
       type: Variables
       title: Items
 
-    - name: axistypeTest
+    - name: axisTypeTest
       title: X-Axis
       type: List
       options:
