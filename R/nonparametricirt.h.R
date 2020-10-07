@@ -291,7 +291,7 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 name="resTable",
                 title="Polyserial Item-Total Correlation",
                 visible=FALSE,
-                rows="(item)",
+                rows=0,
                 clearWith=list(
                     "item",
                     "group",
@@ -308,19 +308,21 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     list(
                         `name`="Item", 
                         `title`="Item", 
-                        `type`="text"),
+                        `type`="text", 
+                        `combineBelow`=TRUE),
                     list(
                         `name`="Correlation", 
                         `title`="Correlation", 
                         `type`="number", 
-                        `format`="zto"),
+                        `format`="zto", 
+                        `combineBelow`=TRUE),
+                    list(
+                        `name`="Option", 
+                        `title`="Option", 
+                        `type`="text"),
                     list(
                         `name`="N", 
                         `title`="N", 
-                        `type`="number"),
-                    list(
-                        `name`="naN", 
-                        `title`="N - NA", 
                         `type`="number"))))
             self$add(jmvcore::Array$new(
                 options=options,

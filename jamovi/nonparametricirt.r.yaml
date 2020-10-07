@@ -17,7 +17,7 @@ items:
       title: Polyserial Item-Total Correlation
       type:  Table
       visible: false
-      rows: (item)
+      rows: 0
       clearWith:
           - item
           - group
@@ -34,15 +34,17 @@ items:
         - name: Item
           title: Item
           type: text
+          combineBelow: true
         - name: Correlation
           title: Correlation
           type: number
           format: zto
+          combineBelow: true
+        - name: Option
+          title: Option
+          type: text
         - name: N
           title: N
-          type: number
-        - name: naN
-          title: N - NA
           type: number
 
     - name: occPlots

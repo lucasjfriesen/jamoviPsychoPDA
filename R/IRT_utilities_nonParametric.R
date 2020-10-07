@@ -67,7 +67,7 @@ buildSDDIF <- function (data, ggtheme, theme, axistype, ...) {
     Testsd <- data.frame(cbind(Testsd = Testsd, model = group))
     
     if (axistype == 'distribution') {
-      Testsd$axis <- t(data$evalpoints)
+      Testsd$axis <- data$evalpoints
     }
     else{
       Testsd$axis <- t(data$expectedscores)
@@ -112,7 +112,7 @@ buildExpected <- function (data, ggtheme, theme, axistype, ...)
   }
   else{
     axis <- t(data$expectedscores)
-    yaxis <- axis <- data$evalpoints
+    yaxis <- data$evalpoints
     quants <- data$subjscoresummary
     xlab <- "Expected Score"
     ylab <- paste("Quantiles of Distribution:", data$thetadist[1], ", Mean:", data$thetadist[2], ", SD:", data$thetadist[3])
@@ -279,8 +279,19 @@ buildDensityDIF <- function(data, ggtheme, theme, axistype, ...){
   
 # Item-level plots ----
   
-buildOCC <- function (data, item, ggtheme, theme, ...) {
-IRFlines <- tidyr::pivot_longer(data.frame(data$OCC[which(data$OCC[, 1] == which(data$itemlabels == item)), ]),
+buildOCC <- function (data, item, ggtheme, theme, axistype, ...) {
+  # if (axistype == "distribution"){ 
+  #   IRFlines <- tidyr::pivot_longer(data.frame(data$OCC[which(data$OCC[, 1] == which(data$itemlabels == item)), ]),
+  #                                   !c(X1, X2, X3),
+  #                                   names_to = "evalPoint",
+  #                                   values_to = "Probability")
+  #   expectedScores <- rep(data$expectedscores, length.out = nrow(IRFlines))
+  #   
+  #   IRFlines <- cbind(IRFlines, expectedScores)
+  #   
+  #   colnames(IRFlines) = c("Item", "Option", "Key", "evalPoint", "Probability", "Expected Score")
+    # } else {
+  IRFlines <- tidyr::pivot_longer(data.frame(data$OCC[which(data$OCC[, 1] == which(data$itemlabels == item)), ]),
                                   !c(X1, X2, X3),
                                   names_to = "evalPoint",
                                   values_to = "Probability")
@@ -289,6 +300,7 @@ IRFlines <- tidyr::pivot_longer(data.frame(data$OCC[which(data$OCC[, 1] == which
   IRFlines <- cbind(IRFlines, expectedScores)
   
   colnames(IRFlines) = c("Item", "Option", "Key", "evalPoint", "Probability", "Expected Score")
+    # }
   
 p <- ggplot() +
   geom_line(aes(x = IRFlines$`Expected Score`, y = IRFlines$Probability, linetype = as.factor(IRFlines$Option), 

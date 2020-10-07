@@ -127,16 +127,30 @@ nonParametricIRTClass <-
                 #   freqTable$col <- table(data$col)
                 # }
                 
-                for (i in 1:nrow(x)) {
-                  table$setRow(
-                    rowNo = i,
+                for (i in self$options$item) {
+                  freqTable <- table(data[,i], exclude = NULL)
+                  names(freqTable)[is.na(names(freqTable))] <- "MISSING"
+                  
+                  table$addRow(
+                    rowKey = i,
                     values = list(
-                      Item = x$Item[i],
-                      Correlation = x$Correlation[i]#,
-                      # N = 
-                      # naN = 
+                      Item = x[i, "Item"],
+                      Option = "Total",
+                      Correlation = x[i, "Correlation"],
+                      N = sum(freqTable)
                     )
                   )
+                  for (j in 1:length(freqTable)) {
+                    table$addRow(
+                      rowKey = i,
+                      values = list(
+                        Item = x[i, "Item"],
+                        Option = names(freqTable)[j],
+                        Correlation = x[i, "Correlation"],
+                        N = freqTable[j]
+                      )
+                    )
+                  }
                 }
             }
 
