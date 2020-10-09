@@ -61,9 +61,8 @@ analyses:
   - title: Non-Parametric IRT
     name: nonParametricIRT
     ns: psychoPDA
-    description: >
+    description: |
       Non-Parametric IRT as seen in [Gordana paper]
-
       v 0.1
     menuGroup: PPDA
     menuTitle: Non-Parametric IRT
