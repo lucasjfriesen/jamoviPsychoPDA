@@ -76,7 +76,7 @@ nonParametricIRTClass <-
             # Functions ----
             
             runResults <- function() {
-              results <-
+              modelResults <-
                 KernSmoothIRT::ksIRT(
                   responses = data,
                   key = key,
@@ -94,64 +94,55 @@ nonParametricIRTClass <-
                   thetadist = thetadist,
                   groups = groups
                 )
-              return(results)
+              return(modelResults)
+            }
+            
+            calculateResTable <- function(){
+              table <- self$results$resTable
+              x <-
+                KernSmoothIRT:::print.ksIRT(modelResults)
+              
+              for (i in 1:length(self$options$item)) {
+                freqTable <- table(data[,i], exclude = NULL)
+                names(freqTable)[is.na(names(freqTable))] <- "MISSING"
+                
+                table$addRow(
+                  rowKey = i,
+                  values = list(
+                    Item = self$options$item[i],
+                    Option = "Total",
+                    Correlation = x[i, "Correlation"],
+                    N = sum(freqTable)
+                  )
+                )
+                for (j in 1:length(freqTable)) {
+                  table$addRow(
+                    rowKey = i,
+                    values = list(
+                      Item = self$options$item[i],
+                      Option = names(freqTable)[j],
+                      Correlation = x[i, "Correlation"],
+                      N = freqTable[j]
+                    )
+                  )
+                }
+              }
             }
             
             # States ----
             
-            # Frequency Table for items by option, Sample size, including NA
 
             # Results table ----
             
-            if (self$options$resTable) {
-              self$results$resTable$setVisible(visible = TRUE)
-            }
-            
-            resultState <- self$results$resTable$state
-
-            if (!is.null(resultState)) {
-              # ... populate the table from the state
-
+            resState <- self$results$resTable$state
+            self$results$debug$setState(resState)
+            if (!is.null(resState)) {
+                # ... populate the table from the state
             } else {
                 # ... create the table and the state
-                resultState <- runResults()
-                table <- self$results$resTable
-                x <-
-                  KernSmoothIRT:::print.ksIRT(resultState)
-                
-                # > x <- lapply(res, function(x){table(x)})
-                # > as.data.frame(x)
-                # x_ <- nrow(res) - unlist(lapply(x, function(x){sum(x)}))
-                # freqTable <- data.frame()
-                # for (col in item){
-                #   freqTable$col <- table(data$col)
-                # }
-                
-                for (i in self$options$item) {
-                  freqTable <- table(data[,i], exclude = NULL)
-                  names(freqTable)[is.na(names(freqTable))] <- "MISSING"
-                  
-                  table$addRow(
-                    rowKey = i,
-                    values = list(
-                      Item = x[i, "Item"],
-                      Option = "Total",
-                      Correlation = x[i, "Correlation"],
-                      N = sum(freqTable)
-                    )
-                  )
-                  for (j in 1:length(freqTable)) {
-                    table$addRow(
-                      rowKey = i,
-                      values = list(
-                        Item = x[i, "Item"],
-                        Option = names(freqTable)[j],
-                        Correlation = x[i, "Correlation"],
-                        N = freqTable[j]
-                      )
-                    )
-                  }
-                }
+                modelResults <- runResults()
+                resState <- calculateResTable()
+                self$results$resTable$setState(resState)
             }
 
 
@@ -160,14 +151,14 @@ nonParametricIRTClass <-
             if (self$options$testPlotExpected) {
               if (self$results$testPlotExpected$isNotFilled()) {
                 expectedPlotResults <- self$results$testPlotExpected
-                expectedPlotResults$setState(resultState)
+                expectedPlotResults$setState(modelResults)
               }
             }
             
             if (self$options$testPlotExpectedDIF) {
               if (self$results$testPlotExpectedDIF$isNotFilled()) {
                 expectedPlotDIFResults <- self$results$testPlotExpectedDIF
-                expectedPlotDIFResults$setState(resultState)
+                expectedPlotDIFResults$setState(modelResults)
               }
             }
             
@@ -176,14 +167,14 @@ nonParametricIRTClass <-
             if (self$options$testPlotDensity) {
               if (self$results$testPlotDensity$isNotFilled()) {
                 densityPlotResults <- self$results$testPlotDensity
-                densityPlotResults$setState(resultState)
+                densityPlotResults$setState(modelResults)
               }
             }
             
             if (self$options$testPlotDensityDIF) {
               if (self$results$testPlotDensityDIF$isNotFilled()) {
                 densityPlotDIFResults <- self$results$testPlotDensityDIF
-                densityPlotDIFResults$setState(resultState)
+                densityPlotDIFResults$setState(modelResults)
               }
             }
             
@@ -193,14 +184,14 @@ nonParametricIRTClass <-
             if (self$options$testPlotSD) {
               if (self$results$testPlotSD$isNotFilled()) {
                 sdPlotResults <- self$results$testPlotSD
-                sdPlotResults$setState(resultState)
+                sdPlotResults$setState(modelResults)
               }
             }
             
             if (self$options$testPlotSDDIF) {
               if (self$results$testPlotSDDIF$isNotFilled()) {
                 sdPlotDIFResults <- self$results$testPlotSDDIF
-                sdPlotDIFResults$setState(resultState)
+                sdPlotDIFResults$setState(modelResults)
               }
             }
             
@@ -223,7 +214,7 @@ nonParametricIRTClass <-
                     pairwisePlotDataDIF <-
                       self$results$pairwisePlotsDIF$get(key = i)
                     pairwisePlotDataDIF$setState(list(
-                      resultState,
+                      modelResults,
                       item = i,
                       option = self$options$OCCoption
                     ))
@@ -247,7 +238,7 @@ nonParametricIRTClass <-
                   } else {
                     occPlotData <-
                       self$results$occPlots$get(key = i)
-                    occPlotData$setState(list(resultState, item = i))
+                    occPlotData$setState(list(modelResults, item = i))
                   }
                 }
               }
@@ -267,7 +258,7 @@ nonParametricIRTClass <-
                     occPlotDataDIF <-
                       self$results$occPlotsDIF$get(key = i)
                     occPlotDataDIF$setState(list(
-                      resultState,
+                      modelResults,
                       item = i,
                       option = self$options$OCCoption
                     ))
@@ -291,7 +282,7 @@ nonParametricIRTClass <-
                   } else {
                     eisPlotData <-
                       self$results$eisPlots$get(key = i)
-                    eisPlotData$setState(list(resultState, item = i))
+                    eisPlotData$setState(list(modelResults, item = i))
                   }
                 }
               }
@@ -311,7 +302,7 @@ nonParametricIRTClass <-
                   } else {
                     eisPlotDataDIF <-
                       self$results$eisPlotsDIF$get(key = i)
-                    eisPlotDataDIF$setState(list(resultState, item = i))
+                    eisPlotDataDIF$setState(list(modelResults, item = i))
                   }
                 }
               }

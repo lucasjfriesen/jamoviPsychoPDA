@@ -4,9 +4,9 @@ title: Non-Parametric IRT
 jrs:   '1.1'
 
 items:
-    #- name: debug
-    #  title: debug results
-    #  type: Preformatted
+    - name: debug
+      title: debug results
+      type: Preformatted
 
     - name: instructions
       title: Instructions
@@ -16,7 +16,7 @@ items:
     - name:  resTable
       title: Polyserial Item-Total Correlation
       type:  Table
-      visible: false
+      visible: (resTable)
       rows: 0
       clearWith:
           - item
@@ -46,121 +46,6 @@ items:
         - name: N
           title: N
           type: number
-
-    - name: occPlots
-      title: OCC Plots
-      type: Array
-      items: (itemPlotSupplier)
-      template:
-          type: Image
-          width:  550
-          height: 450
-          renderFun: .occPlot
-          visible: (itemPlotOCC)
-          clearWith:
-              - item
-              - group
-              - format
-              - SubRank
-              - miss
-              - NAweight
-              - nevalpoints
-              - kernel
-              - bandwidth
-              - RankFun
-              - thetadist
-
-    - name: occPlotsDIF
-      title: OCC Plots
-      type: Array
-      items: (itemPlotSupplier)
-      template:
-          type: Image
-          width:  550
-          height: 450
-          renderFun: .occPlot
-          visible: (itemPlotOCCDIF)
-          clearWith:
-              - item
-              - group
-              - format
-              - SubRank
-              - miss
-              - NAweight
-              - nevalpoints
-              - kernel
-              - bandwidth
-              - RankFun
-              - thetadist
-
-    - name: eisPlots
-      title: EIS Plots
-      type: Array
-      items: (itemPlotSupplier)
-      template:
-          type: Image
-          width:  550
-          height: 450
-          renderFun: .eisPlot
-          visible: (itemPlotEIS)
-          clearWith:
-              - item
-              - group
-              - format
-              - SubRank
-              - miss
-              - NAweight
-              - nevalpoints
-              - kernel
-              - bandwidth
-              - RankFun
-              - thetadist
-
-    - name: eisPlotsDIF
-      title: EIS Plots | DIF
-      type: Array
-      items: (itemPlotSupplier)
-      template:
-          type: Image
-          width:  550
-          height: 450
-          renderFun: .eisPlotDIF
-          visible: (itemPlotEISDIF)
-          clearWith:
-              - item
-              - group
-              - format
-              - SubRank
-              - miss
-              - NAweight
-              - nevalpoints
-              - kernel
-              - bandwidth
-              - RankFun
-              - thetadist
-
-    - name: pairwisePlotsDIF
-      title: Pairwise EIS | DIF
-      type: Array
-      items: (itemPlotSupplier)
-      template:
-          type: Image
-          width:  550
-          height: 450
-          renderFun: .pairwisePlotsDIF
-          visible: (pairwisePlotsDIF)
-          clearWith:
-              - item
-              - group
-              - format
-              - SubRank
-              - miss
-              - NAweight
-              - nevalpoints
-              - kernel
-              - bandwidth
-              - RankFun
-              - thetadist
 
     - name: testPlotDensity
       title: Density Plot
@@ -288,4 +173,119 @@ items:
           - thetadist
           - axisTypeTest
 
+
+    - name: occPlots
+      title: OCC Plots
+      type: Array
+      items: (itemPlotSupplier)
+      template:
+          type: Image
+          width:  550
+          height: 450
+          renderFun: .occPlot
+          visible: (itemPlotOCC)
+          clearWith:
+              - item
+              - group
+              - format
+              - SubRank
+              - miss
+              - NAweight
+              - nevalpoints
+              - kernel
+              - bandwidth
+              - RankFun
+              - thetadist
+
+    - name: occPlotsDIF
+      title: OCC Plots
+      type: Array
+      items: (itemPlotSupplier)
+      template:
+          type: Image
+          width:  550
+          height: 450
+          renderFun: .occPlot
+          visible: (itemPlotOCCDIF)
+          clearWith:
+              - item
+              - group
+              - format
+              - SubRank
+              - miss
+              - NAweight
+              - nevalpoints
+              - kernel
+              - bandwidth
+              - RankFun
+              - thetadist
+
+    - name: eisPlots
+      title: EIS Plots
+      type: Array
+      items: (itemPlotSupplier)
+      template:
+          type: Image
+          width:  550
+          height: 450
+          renderFun: .eisPlot
+          visible: (itemPlotEIS)
+          clearWith:
+              - item
+              - group
+              - format
+              - SubRank
+              - miss
+              - NAweight
+              - nevalpoints
+              - kernel
+              - bandwidth
+              - RankFun
+              - thetadist
+
+    - name: eisPlotsDIF
+      title: EIS Plots | DIF
+      type: Array
+      items: (itemPlotSupplier)
+      template:
+          type: Image
+          width:  550
+          height: 450
+          renderFun: .eisPlotDIF
+          visible: (itemPlotEISDIF)
+          clearWith:
+              - item
+              - group
+              - format
+              - SubRank
+              - miss
+              - NAweight
+              - nevalpoints
+              - kernel
+              - bandwidth
+              - RankFun
+              - thetadist
+
+    - name: pairwisePlotsDIF
+      title: Pairwise EIS | DIF
+      type: Array
+      items: (itemPlotSupplier)
+      template:
+          type: Image
+          width:  550
+          height: 450
+          renderFun: .pairwisePlotsDIF
+          visible: (pairwisePlotsDIF)
+          clearWith:
+              - item
+              - group
+              - format
+              - SubRank
+              - miss
+              - NAweight
+              - nevalpoints
+              - kernel
+              - bandwidth
+              - RankFun
+              - thetadist
 ...

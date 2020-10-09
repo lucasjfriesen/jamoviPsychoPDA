@@ -1,7 +1,7 @@
 ---
 title: Psychometrics & Post-Data Analysis
 name: psychoPDA
-version: 1.0.2
+version: 1.0.3
 jms: '1.0'
 authors:
   - Lucas Friesen
@@ -61,6 +61,10 @@ analyses:
   - title: Non-Parametric IRT
     name: nonParametricIRT
     ns: psychoPDA
+    description: >
+      Non-Parametric IRT as seen in [Gordana paper]
+
+      v 0.1
     menuGroup: PPDA
     menuTitle: Non-Parametric IRT
     menuSubgroup: Item Response Theory

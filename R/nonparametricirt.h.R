@@ -261,19 +261,20 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
 nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
+        debug = function() private$.items[["debug"]],
         instructions = function() private$.items[["instructions"]],
         resTable = function() private$.items[["resTable"]],
-        occPlots = function() private$.items[["occPlots"]],
-        occPlotsDIF = function() private$.items[["occPlotsDIF"]],
-        eisPlots = function() private$.items[["eisPlots"]],
-        eisPlotsDIF = function() private$.items[["eisPlotsDIF"]],
-        pairwisePlotsDIF = function() private$.items[["pairwisePlotsDIF"]],
         testPlotDensity = function() private$.items[["testPlotDensity"]],
         testPlotExpected = function() private$.items[["testPlotExpected"]],
         testPlotSD = function() private$.items[["testPlotSD"]],
         testPlotDensityDIF = function() private$.items[["testPlotDensityDIF"]],
         testPlotExpectedDIF = function() private$.items[["testPlotExpectedDIF"]],
-        testPlotSDDIF = function() private$.items[["testPlotSDDIF"]]),
+        testPlotSDDIF = function() private$.items[["testPlotSDDIF"]],
+        occPlots = function() private$.items[["occPlots"]],
+        occPlotsDIF = function() private$.items[["occPlotsDIF"]],
+        eisPlots = function() private$.items[["eisPlots"]],
+        eisPlotsDIF = function() private$.items[["eisPlotsDIF"]],
+        pairwisePlotsDIF = function() private$.items[["pairwisePlotsDIF"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -281,6 +282,10 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="",
                 title="Non-Parametric IRT")
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="debug",
+                title="debug results"))
             self$add(jmvcore::Html$new(
                 options=options,
                 name="instructions",
@@ -290,7 +295,7 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="resTable",
                 title="Polyserial Item-Total Correlation",
-                visible=FALSE,
+                visible="(resTable)",
                 rows=0,
                 clearWith=list(
                     "item",
@@ -324,121 +329,6 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `name`="N", 
                         `title`="N", 
                         `type`="number"))))
-            self$add(jmvcore::Array$new(
-                options=options,
-                name="occPlots",
-                title="OCC Plots",
-                items="(itemPlotSupplier)",
-                template=jmvcore::Image$new(
-                    options=options,
-                    width=550,
-                    height=450,
-                    renderFun=".occPlot",
-                    visible="(itemPlotOCC)",
-                    clearWith=list(
-                        "item",
-                        "group",
-                        "format",
-                        "SubRank",
-                        "miss",
-                        "NAweight",
-                        "nevalpoints",
-                        "kernel",
-                        "bandwidth",
-                        "RankFun",
-                        "thetadist"))))
-            self$add(jmvcore::Array$new(
-                options=options,
-                name="occPlotsDIF",
-                title="OCC Plots",
-                items="(itemPlotSupplier)",
-                template=jmvcore::Image$new(
-                    options=options,
-                    width=550,
-                    height=450,
-                    renderFun=".occPlot",
-                    visible="(itemPlotOCCDIF)",
-                    clearWith=list(
-                        "item",
-                        "group",
-                        "format",
-                        "SubRank",
-                        "miss",
-                        "NAweight",
-                        "nevalpoints",
-                        "kernel",
-                        "bandwidth",
-                        "RankFun",
-                        "thetadist"))))
-            self$add(jmvcore::Array$new(
-                options=options,
-                name="eisPlots",
-                title="EIS Plots",
-                items="(itemPlotSupplier)",
-                template=jmvcore::Image$new(
-                    options=options,
-                    width=550,
-                    height=450,
-                    renderFun=".eisPlot",
-                    visible="(itemPlotEIS)",
-                    clearWith=list(
-                        "item",
-                        "group",
-                        "format",
-                        "SubRank",
-                        "miss",
-                        "NAweight",
-                        "nevalpoints",
-                        "kernel",
-                        "bandwidth",
-                        "RankFun",
-                        "thetadist"))))
-            self$add(jmvcore::Array$new(
-                options=options,
-                name="eisPlotsDIF",
-                title="EIS Plots | DIF",
-                items="(itemPlotSupplier)",
-                template=jmvcore::Image$new(
-                    options=options,
-                    width=550,
-                    height=450,
-                    renderFun=".eisPlotDIF",
-                    visible="(itemPlotEISDIF)",
-                    clearWith=list(
-                        "item",
-                        "group",
-                        "format",
-                        "SubRank",
-                        "miss",
-                        "NAweight",
-                        "nevalpoints",
-                        "kernel",
-                        "bandwidth",
-                        "RankFun",
-                        "thetadist"))))
-            self$add(jmvcore::Array$new(
-                options=options,
-                name="pairwisePlotsDIF",
-                title="Pairwise EIS | DIF",
-                items="(itemPlotSupplier)",
-                template=jmvcore::Image$new(
-                    options=options,
-                    width=550,
-                    height=450,
-                    renderFun=".pairwisePlotsDIF",
-                    visible="(pairwisePlotsDIF)",
-                    clearWith=list(
-                        "item",
-                        "group",
-                        "format",
-                        "SubRank",
-                        "miss",
-                        "NAweight",
-                        "nevalpoints",
-                        "kernel",
-                        "bandwidth",
-                        "RankFun",
-                        "thetadist"))))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="testPlotDensity",
@@ -564,7 +454,122 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "bandwidth",
                     "RankFun",
                     "thetadist",
-                    "axisTypeTest")))}))
+                    "axisTypeTest")))
+            self$add(jmvcore::Array$new(
+                options=options,
+                name="occPlots",
+                title="OCC Plots",
+                items="(itemPlotSupplier)",
+                template=jmvcore::Image$new(
+                    options=options,
+                    width=550,
+                    height=450,
+                    renderFun=".occPlot",
+                    visible="(itemPlotOCC)",
+                    clearWith=list(
+                        "item",
+                        "group",
+                        "format",
+                        "SubRank",
+                        "miss",
+                        "NAweight",
+                        "nevalpoints",
+                        "kernel",
+                        "bandwidth",
+                        "RankFun",
+                        "thetadist"))))
+            self$add(jmvcore::Array$new(
+                options=options,
+                name="occPlotsDIF",
+                title="OCC Plots",
+                items="(itemPlotSupplier)",
+                template=jmvcore::Image$new(
+                    options=options,
+                    width=550,
+                    height=450,
+                    renderFun=".occPlot",
+                    visible="(itemPlotOCCDIF)",
+                    clearWith=list(
+                        "item",
+                        "group",
+                        "format",
+                        "SubRank",
+                        "miss",
+                        "NAweight",
+                        "nevalpoints",
+                        "kernel",
+                        "bandwidth",
+                        "RankFun",
+                        "thetadist"))))
+            self$add(jmvcore::Array$new(
+                options=options,
+                name="eisPlots",
+                title="EIS Plots",
+                items="(itemPlotSupplier)",
+                template=jmvcore::Image$new(
+                    options=options,
+                    width=550,
+                    height=450,
+                    renderFun=".eisPlot",
+                    visible="(itemPlotEIS)",
+                    clearWith=list(
+                        "item",
+                        "group",
+                        "format",
+                        "SubRank",
+                        "miss",
+                        "NAweight",
+                        "nevalpoints",
+                        "kernel",
+                        "bandwidth",
+                        "RankFun",
+                        "thetadist"))))
+            self$add(jmvcore::Array$new(
+                options=options,
+                name="eisPlotsDIF",
+                title="EIS Plots | DIF",
+                items="(itemPlotSupplier)",
+                template=jmvcore::Image$new(
+                    options=options,
+                    width=550,
+                    height=450,
+                    renderFun=".eisPlotDIF",
+                    visible="(itemPlotEISDIF)",
+                    clearWith=list(
+                        "item",
+                        "group",
+                        "format",
+                        "SubRank",
+                        "miss",
+                        "NAweight",
+                        "nevalpoints",
+                        "kernel",
+                        "bandwidth",
+                        "RankFun",
+                        "thetadist"))))
+            self$add(jmvcore::Array$new(
+                options=options,
+                name="pairwisePlotsDIF",
+                title="Pairwise EIS | DIF",
+                items="(itemPlotSupplier)",
+                template=jmvcore::Image$new(
+                    options=options,
+                    width=550,
+                    height=450,
+                    renderFun=".pairwisePlotsDIF",
+                    visible="(pairwisePlotsDIF)",
+                    clearWith=list(
+                        "item",
+                        "group",
+                        "format",
+                        "SubRank",
+                        "miss",
+                        "NAweight",
+                        "nevalpoints",
+                        "kernel",
+                        "bandwidth",
+                        "RankFun",
+                        "thetadist"))))}))
 
 nonParametricIRTBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     "nonParametricIRTBase",
@@ -619,19 +624,20 @@ nonParametricIRTBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param resTable .
 #' @return A results object containing:
 #' \tabular{llllll}{
+#'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$resTable} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$occPlots} \tab \tab \tab \tab \tab an array of images \cr
-#'   \code{results$occPlotsDIF} \tab \tab \tab \tab \tab an array of images \cr
-#'   \code{results$eisPlots} \tab \tab \tab \tab \tab an array of images \cr
-#'   \code{results$eisPlotsDIF} \tab \tab \tab \tab \tab an array of images \cr
-#'   \code{results$pairwisePlotsDIF} \tab \tab \tab \tab \tab an array of images \cr
 #'   \code{results$testPlotDensity} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$testPlotExpected} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$testPlotSD} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$testPlotDensityDIF} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$testPlotExpectedDIF} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$testPlotSDDIF} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$occPlots} \tab \tab \tab \tab \tab an array of images \cr
+#'   \code{results$occPlotsDIF} \tab \tab \tab \tab \tab an array of images \cr
+#'   \code{results$eisPlots} \tab \tab \tab \tab \tab an array of images \cr
+#'   \code{results$eisPlotsDIF} \tab \tab \tab \tab \tab an array of images \cr
+#'   \code{results$pairwisePlotsDIF} \tab \tab \tab \tab \tab an array of images \cr
 #' }
 #'
 #' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
