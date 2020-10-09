@@ -198,14 +198,14 @@ items:
               - thetadist
 
     - name: occPlotsDIF
-      title: OCC Plots
+      title: OCC Plots DIF
       type: Array
       items: (itemPlotSupplier)
       template:
           type: Image
           width:  550
           height: 450
-          renderFun: .occPlot
+          renderFun: .occPlotDIF
           visible: (itemPlotOCCDIF)
           clearWith:
               - item

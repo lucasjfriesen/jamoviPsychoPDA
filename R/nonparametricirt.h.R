@@ -481,13 +481,13 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$add(jmvcore::Array$new(
                 options=options,
                 name="occPlotsDIF",
-                title="OCC Plots",
+                title="OCC Plots DIF",
                 items="(itemPlotSupplier)",
                 template=jmvcore::Image$new(
                     options=options,
                     width=550,
                     height=450,
-                    renderFun=".occPlot",
+                    renderFun=".occPlotDIF",
                     visible="(itemPlotOCCDIF)",
                     clearWith=list(
                         "item",

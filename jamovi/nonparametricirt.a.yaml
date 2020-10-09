@@ -123,17 +123,17 @@ options:
       default: FALSE
 
     - name: itemPlotOCCDIF
-      title: Option Characteristic Curve | DIF
+      title: Option Characteristic Curve
       type: Bool
       default: FALSE
 
     - name: itemPlotEISDIF
-      title: Expected Item Score | DIF
+      title: Expected Item Score
       type: Bool
       default: FALSE
 
     - name: pairwisePlotsDIF
-      title: Pairwise | DIF
+      title: Pairwise
       type: Bool
       default: FALSE
 

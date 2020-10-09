@@ -453,7 +453,7 @@ nonParametricIRTClass <-
           option = itemPlotData$state[[3]]
           
           p <-
-            buildOCC(plotData,
+            buildOCCDIF(plotData,
                      item = item,
                      option = option,
                      ggtheme,

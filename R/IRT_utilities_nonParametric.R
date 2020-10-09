@@ -182,7 +182,8 @@ buildExpectedDIF <- function (data, ggtheme, theme, axistype, ...)
                             hjust = -.1,
                             vjust = -1)
     ) +
-    labs(title = "Expected Total Score | DIF",
+    labs(title = "Expected Total Score",
+         subtitle = "Differential Item Functioning",
          x = xlab,
          y = ylab,
          colour = "Model") +
@@ -266,6 +267,7 @@ buildDensityDIF <- function(data, ggtheme, theme, axistype, ...){
                   vjust = -1)
     ) +
     labs(title = "Observed Score Distribution",
+         subtitle = "Differential Item Functioning",
          x = "Density of Score",
          y = "Scores",
          colour = "Model") +
@@ -305,7 +307,8 @@ buildOCC <- function (data, item, ggtheme, theme, axistype, ...) {
 p <- ggplot() +
   geom_line(aes(x = IRFlines$`Expected Score`, y = IRFlines$Probability, linetype = as.factor(IRFlines$Option), 
                 colour = as.factor(IRFlines$Key))) +
-  labs(Title = "Option Characteristic Curves",
+  labs(title = "Option Characteristic Curves", 
+  subtitle = paste0("Item: ", item),
          x = "Expected Score",
          y = "Probability",
          linetype = "Option",
@@ -327,7 +330,7 @@ return(p)
 
 }
 
-buildOCCDIF <- function (data, item, ggtheme, theme, ...) {
+buildOCCDIF <- function (data, item, option, ggtheme, theme, ...) {
 
   IRFlines <- tidyr::pivot_longer(data.frame(data$OCC[which(data$OCC[, 1] == which(data$itemlabels == item)), ]),
                                   !c(X1, X2, X3),
@@ -420,8 +423,8 @@ seData <- rbind(confhigh, conflow)
     geom_line(aes(x = data$expectedscores, y = Estimate)) +
     geom_ribbon(aes(x = data$expectedscores, ymin = conflow$conf, ymax = confhigh$conf), alpha = .5, fill = "grey70") +
     geom_point(aes(x = data$expectedscores, y = propevalpoints), size = .5, alpha = .5) +
-    labs(title = paste0("Item: ",data$itemlabels[item]),
-         subtitle = "Expected Item Score (Item Characteristic Curve)",
+    labs(title = "Expected Item Score (Item Characteristic Curve)",
+         subtitle = paste0("Item: ", item),
          x = "Expected Score",
          y = "Expected Item Score") +
     ggtheme + theme(
@@ -529,8 +532,8 @@ buildEISDIF <- function(data, item, alpha, ggtheme, theme, ...){
   p <- ggplot() +
     geom_line(aes(x = newData$expectedScores, y = newData$Estimate, colour = newData$model)) +
     geom_point(aes(x = newData$expectedScores, y = newData$propevalpoints, colour = newData$model), size = 1, alpha = .5) +
-    labs(Title = paste("Item: ", data$itemlabels[item]),
-         subtitle = "Expected Item Score (Item Characteristic Curve)",
+    labs(title = "Expected Item Score (Item Characteristic Curve)",
+         subtitle = paste("Item: ", item),
          x = "Expected Score",
          y = "Expected Item Score") +
     ggtheme + theme(
@@ -570,7 +573,8 @@ buildPairwiseDIF <- function(data, item, alpha, ggtheme, theme, ...){
     geom_line(size = 1.5) +
     geom_hline(yintercept = (quantile(newData$yvalue, c(.05, .25, .5 , .75, .95))), lty = 2, colour = "blue") +
     geom_vline(xintercept = (quantile(newData$xvalue, c(.05, .25, .5 , .75, .95))), lty = 2, colour = "blue") +
-    labs(title = item,
+    labs(title = "Pairwise Differential Item Functioning",
+         subtitle = paste0("Item: ", item),
          x = "",
          y = "") +
     facet_wrap(~ facet,
