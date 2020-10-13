@@ -17,7 +17,6 @@ items:
       title: Polyserial Item-Total Correlation
       type:  Table
       visible: (resTable)
-      rows: 0
       clearWith:
           - item
           - group

@@ -13,10 +13,14 @@ options:
     - name: item
       title: Responses
       type: Variables
+      suggested: [continuous]
+      permitted: [numeric]
 
     - name: group
       title: Participant group
       type: Variable
+      suggested: [ordinal]
+      permitted: [factor]
 
 #    - name: key
 #      title: Response Key

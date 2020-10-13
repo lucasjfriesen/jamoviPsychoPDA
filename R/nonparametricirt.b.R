@@ -9,6 +9,43 @@ nonParametricIRTClass <-
       "nonParametricIRTClass",
       inherit = nonParametricIRTBase,
       private = list(
+        .postInit = function(){
+          state <- self$results$resTable$state[[1]]
+          freqTable <- self$results$resTable$state[[2]]
+  
+          if (!is.null(state)){
+            corrTable <- KernSmoothIRT:::print.ksIRT(state)
+            table <- self$results$resTable
+
+            data <- self$data
+            data <- data[2:nrow(data), self$options$item]
+            
+            for (i in 1:length(self$options$item)) {
+              names(freqTable)[is.na(names(freqTable))] <- "MISSING"
+              
+              table$addRow(
+                rowKey = i,
+                values = list(
+                  Item = self$options$item[i],
+                  Option = "Total",
+                  Correlation = corrTable[i, "Correlation"],
+                  N = sum(freqTable[[i]])
+                )
+              )
+              for (j in 1:length(freqTable[[i]])) {
+                table$addRow(
+                  rowKey = i,
+                  values = list(
+                    Item = self$options$item[i],
+                    Option = names(freqTable[[i]])[j],
+                    Correlation = corrTable[i, "Correlation"],
+                    N = freqTable[[i]][j]
+                  )
+                )
+              }
+            }
+          }
+        },
         .run = function() {
           if (is.null(self$data) || is.null(self$options$item)) {
             self$results$instructions$setContent(
@@ -98,12 +135,11 @@ nonParametricIRTClass <-
             }
             
             calculateResTable <- function(){
+              corrTable <- KernSmoothIRT:::print.ksIRT(modelResults)
               table <- self$results$resTable
-              x <-
-                KernSmoothIRT:::print.ksIRT(modelResults)
-              
+              freqTable <- list()
               for (i in 1:length(self$options$item)) {
-                freqTable <- table(data[,i], exclude = NULL)
+                freqTable[[i]] <- table(data[,i], exclude = NULL)
                 names(freqTable)[is.na(names(freqTable))] <- "MISSING"
                 
                 table$addRow(
@@ -111,23 +147,26 @@ nonParametricIRTClass <-
                   values = list(
                     Item = self$options$item[i],
                     Option = "Total",
-                    Correlation = x[i, "Correlation"],
-                    N = sum(freqTable)
+                    Correlation = corrTable[i, "Correlation"],
+                    N = sum(freqTable[[i]])
                   )
                 )
-                for (j in 1:length(freqTable)) {
+                for (j in 1:length(freqTable[[i]])) {
                   table$addRow(
                     rowKey = i,
                     values = list(
                       Item = self$options$item[i],
-                      Option = names(freqTable)[j],
-                      Correlation = x[i, "Correlation"],
-                      N = freqTable[j]
+                      Option = names(freqTable[[i]])[j],
+                      Correlation = corrTable[i, "Correlation"],
+                      N = freqTable[[i]][j]
                     )
                   )
                 }
               }
+              freqTable <<- freqTable
             }
+            
+            modelResults <- runResults()
             
             # States ----
             
@@ -135,14 +174,13 @@ nonParametricIRTClass <-
             # Results table ----
             
             resState <- self$results$resTable$state
-            self$results$debug$setState(resState)
+            # self$results$debug$setState(resState)
             if (!is.null(resState)) {
                 # ... populate the table from the state
             } else {
                 # ... create the table and the state
-                modelResults <- runResults()
                 resState <- calculateResTable()
-                self$results$resTable$setState(resState)
+                self$results$resTable$setState(list(modelResults, freqTable))
             }
 
 

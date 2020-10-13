@@ -42,10 +42,18 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
 
             private$..item <- jmvcore::OptionVariables$new(
                 "item",
-                item)
+                item,
+                suggested=list(
+                    "continuous"),
+                permitted=list(
+                    "numeric"))
             private$..group <- jmvcore::OptionVariable$new(
                 "group",
-                group)
+                group,
+                suggested=list(
+                    "ordinal"),
+                permitted=list(
+                    "factor"))
             private$..format <- jmvcore::OptionList$new(
                 "format",
                 format,
@@ -296,7 +304,6 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 name="resTable",
                 title="Polyserial Item-Total Correlation",
                 visible="(resTable)",
-                rows=0,
                 clearWith=list(
                     "item",
                     "group",
@@ -692,6 +699,7 @@ nonParametricIRT <- function(
             `if`( ! missing(SubRank), SubRank, NULL),
             `if`( ! missing(itemPlotSupplier), itemPlotSupplier, NULL))
 
+    for (v in group) if (v %in% names(data)) data[[v]] <- as.factor(data[[v]])
 
     options <- nonParametricIRTOptions$new(
         item = item,

@@ -282,34 +282,29 @@ buildDensityDIF <- function(data, ggtheme, theme, axistype, ...){
 # Item-level plots ----
   
 buildOCC <- function (data, item, ggtheme, theme, axistype, ...) {
-  # if (axistype == "distribution"){ 
-  #   IRFlines <- tidyr::pivot_longer(data.frame(data$OCC[which(data$OCC[, 1] == which(data$itemlabels == item)), ]),
-  #                                   !c(X1, X2, X3),
-  #                                   names_to = "evalPoint",
-  #                                   values_to = "Probability")
-  #   expectedScores <- rep(data$expectedscores, length.out = nrow(IRFlines))
-  #   
-  #   IRFlines <- cbind(IRFlines, expectedScores)
-  #   
-  #   colnames(IRFlines) = c("Item", "Option", "Key", "evalPoint", "Probability", "Expected Score")
-    # } else {
-  IRFlines <- tidyr::pivot_longer(data.frame(data$OCC[which(data$OCC[, 1] == which(data$itemlabels == item)), ]),
-                                  !c(X1, X2, X3),
-                                  names_to = "evalPoint",
-                                  values_to = "Probability")
-  expectedScores <- rep(data$expectedscores, length.out = nrow(IRFlines))
   
-  IRFlines <- cbind(IRFlines, expectedScores)
-  
-  colnames(IRFlines) = c("Item", "Option", "Key", "evalPoint", "Probability", "Expected Score")
-    # }
+    IRFlines <- tidyr::pivot_longer(data.frame(data$OCC[which(data$OCC[, 1] == which(data$itemlabels == item)), ]),
+                                    !c(X1, X2, X3),
+                                    names_to = "evalPoint",
+                                    values_to = "Probability")
+    expectedScores <- rep(data$expectedscores, length.out = nrow(IRFlines))
+    IRFlines$evalPoint <- rep(data$evalpoints, length.out = nrow(IRFlines))
+    IRFlines <- cbind(IRFlines, expectedScores)
+    
+    if (axistype == "distribution"){
+      colnames(IRFlines) = c("Item", "Option", "Key", "axis", "Probability", "Expected Score")
+      xlab <- paste("Quantiles of Distribution:", data$thetadist[1], ", Mean:", data$thetadist[2], ", SD:", data$thetadist[3])
+    } else {
+      colnames(IRFlines) = c("Item", "Option", "Key", "evalPoint", "Probability", "axis")
+      xlab = "Expected Score"
+    }
   
 p <- ggplot() +
-  geom_line(aes(x = IRFlines$`Expected Score`, y = IRFlines$Probability, linetype = as.factor(IRFlines$Option), 
+  geom_line(aes(x = IRFlines$axis, y = IRFlines$Probability, linetype = as.factor(IRFlines$Option), 
                 colour = as.factor(IRFlines$Key))) +
   labs(title = "Option Characteristic Curves", 
   subtitle = paste0("Item: ", item),
-         x = "Expected Score",
+         x = xlab,
          y = "Probability",
          linetype = "Option",
        colour = "Key") +
@@ -319,14 +314,7 @@ p <- ggplot() +
 return(p)
   
 
-  #     SE <- data$stderrs[which(data$OCC[, 1] == x), ]
- 
-  #       if (alpha) {
-  #         ME <- qnorm(1 - alpha/2) * SE[i, -c(1:3)]
-  #         confhigh <- sapply(IRFlines[i, -c(1:3)] + ME, 
-  #                            function(x) min(x, 1))
-  #         conflow <- sapply(IRFlines[i, -c(1:3)] - ME, 
-  #                           function(x) max(x, 0))
+
 
 }
 
@@ -337,25 +325,30 @@ buildOCCDIF <- function (data, item, option, ggtheme, theme, ...) {
                                   names_to = "evalPoint",
                                   values_to = "Probability")
   expectedScores <- rep(data$expectedscores, length.out = nrow(IRFlines))
-  
+  IRFlines$evalPoint <- rep(data$evalpoints, length.out = nrow(IRFlines))
   IRFlines <- cbind(IRFlines, expectedScores, model = "Full")
-    
-  IRFlines <- data.frame(IRFlines)
-  
-  for (group in data$groups){
+
+    for (group in data$groups){
     newData <- data$DIF[[which(data$groups == group)]]
     newData <- tidyr::pivot_longer(data.frame(newData$OCC[which(newData$OCC[, 1] == which(newData$itemlabels == item)), ]),
                                     !c(X1, X2, X3),
                                     names_to = "evalPoint",
                                     values_to = "Probability")
     expectedScores <- rep(data$expectedscores, length.out = nrow(newData))
-    
+    IRFlines$evalPoint <- rep(data$evalpoints, length.out = nrow(IRFlines))
     newData <- cbind(newData, expectedScores, model = group)
     
     IRFlines <- rbind(IRFlines, newData)
   }
   
-  colnames(IRFlines) = c("Item", "Option", "Key", "evalPoint", "Probability", "Expected Score", "Model")
+  if (axistype == "distribution"){
+    colnames(IRFlines) = c("Item", "Option", "Key", "axis", "Probability", "Expected Score", "Model")
+    xlab <- paste("Quantiles of Distribution:", data$thetadist[1], ", Mean:", data$thetadist[2], ", SD:", data$thetadist[3])
+  } else {
+    colnames(IRFlines) = c("Item", "Option", "Key", "evalPoint", "Probability", "axis", "Model")
+    xlab = "Expected Score"
+  }
+
   
   IRFlines <- IRFlines[IRFlines$Option == option,]
   
