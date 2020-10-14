@@ -77,7 +77,6 @@ children:
                     name: SubRank
                     maxItemCount: 1
                     isTarget: true
-
   - type: CollapseBox
     label: Test Plots
     margin: normal
@@ -116,7 +115,6 @@ children:
                     name: testPlotExpectedDIF
                   - type: CheckBox
                     name: testPlotSDDIF
-
   - type: CollapseBox
     label: Item Plots
     margin: normal
@@ -126,6 +124,8 @@ children:
         margin: large
         style: inline
         children:
+          - type: ComboBox
+            name: axisTypeItem
           - type: Label
             label: Full model
             children:
@@ -152,8 +152,6 @@ children:
         margin: large
         style: list
         children:
-          - type: ComboBox
-            name: axistypeItem
           - type: TextBox
             name: OCCoption
             format: string

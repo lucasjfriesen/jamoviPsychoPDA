@@ -281,7 +281,7 @@ buildDensityDIF <- function(data, ggtheme, theme, axistype, ...){
   
 # Item-level plots ----
   
-buildOCC <- function (data, item, ggtheme, theme, axistype, ...) {
+buildOCC <- function (data, item, ggtheme, theme, axisType, ...) {
   
     IRFlines <- tidyr::pivot_longer(data.frame(data$OCC[which(data$OCC[, 1] == which(data$itemlabels == item)), ]),
                                     !c(X1, X2, X3),
@@ -291,7 +291,7 @@ buildOCC <- function (data, item, ggtheme, theme, axistype, ...) {
     IRFlines$evalPoint <- rep(data$evalpoints, length.out = nrow(IRFlines))
     IRFlines <- cbind(IRFlines, expectedScores)
     
-    if (axistype == "distribution"){
+    if (axisType == "distribution"){
       colnames(IRFlines) = c("Item", "Option", "Key", "axis", "Probability", "Expected Score")
       xlab <- paste("Quantiles of Distribution:", data$thetadist[1], ", Mean:", data$thetadist[2], ", SD:", data$thetadist[3])
     } else {
@@ -318,7 +318,7 @@ return(p)
 
 }
 
-buildOCCDIF <- function (data, item, option, ggtheme, theme, ...) {
+buildOCCDIF <- function (data, item, axisType, option, ggtheme, theme, ...) {
 
   IRFlines <- tidyr::pivot_longer(data.frame(data$OCC[which(data$OCC[, 1] == which(data$itemlabels == item)), ]),
                                   !c(X1, X2, X3),
@@ -341,7 +341,7 @@ buildOCCDIF <- function (data, item, option, ggtheme, theme, ...) {
     IRFlines <- rbind(IRFlines, newData)
   }
   
-  if (axistype == "distribution"){
+  if (axisType == "distribution"){
     colnames(IRFlines) = c("Item", "Option", "Key", "axis", "Probability", "Expected Score", "Model")
     xlab <- paste("Quantiles of Distribution:", data$thetadist[1], ", Mean:", data$thetadist[2], ", SD:", data$thetadist[3])
   } else {
@@ -353,10 +353,10 @@ buildOCCDIF <- function (data, item, option, ggtheme, theme, ...) {
   IRFlines <- IRFlines[IRFlines$Option == option,]
   
   p <- ggplot() +
-    geom_line(aes(x = IRFlines$`Expected Score`, y = IRFlines$Probability, colour = IRFlines$Model)) +
+    geom_line(aes(x = IRFlines$axis, y = IRFlines$Probability, colour = IRFlines$Model)) +
     labs(title = "Option Characteristic Curves",
          subtitle = paste0("Item: ", item, "    Option: ", option),
-         x = "Expected Score",
+         x = xlab,
          y = "Probability",
          linetype = "Option",
          colour = "Key") +

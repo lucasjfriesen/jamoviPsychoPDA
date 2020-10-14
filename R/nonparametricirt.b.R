@@ -473,6 +473,7 @@ nonParametricIRTClass <-
           p <-
             buildOCC(plotData,
                      item = item,
+                     axisType = self$options$axisTypeItem,
                      ggtheme,
                      theme,
                      ...)
@@ -494,6 +495,7 @@ nonParametricIRTClass <-
             buildOCCDIF(plotData,
                      item = item,
                      option = option,
+                     axisType = self$options$axisTypeItem,
                      ggtheme,
                      theme,
                      ...)

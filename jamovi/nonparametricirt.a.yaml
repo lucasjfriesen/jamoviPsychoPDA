@@ -155,7 +155,7 @@ options:
           name:  score
       default: score
 
-    - name: axistypeItem
+    - name: axisTypeItem
       title: X-Axis
       type: List
       options:

@@ -25,7 +25,7 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             pairwisePlotsDIF = FALSE,
             itemPlotSupplier = NULL,
             axisTypeTest = "score",
-            axistypeItem = "score",
+            axisTypeItem = "score",
             testPlotDensityDIF = FALSE,
             testPlotExpectedDIF = FALSE,
             testPlotSDDIF = FALSE,
@@ -144,9 +144,9 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "distribution",
                     "score"),
                 default="score")
-            private$..axistypeItem <- jmvcore::OptionList$new(
-                "axistypeItem",
-                axistypeItem,
+            private$..axisTypeItem <- jmvcore::OptionList$new(
+                "axisTypeItem",
+                axisTypeItem,
                 options=list(
                     "distribution",
                     "score"),
@@ -199,7 +199,7 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..pairwisePlotsDIF)
             self$.addOption(private$..itemPlotSupplier)
             self$.addOption(private$..axisTypeTest)
-            self$.addOption(private$..axistypeItem)
+            self$.addOption(private$..axisTypeItem)
             self$.addOption(private$..testPlotDensityDIF)
             self$.addOption(private$..testPlotExpectedDIF)
             self$.addOption(private$..testPlotSDDIF)
@@ -228,7 +228,7 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         pairwisePlotsDIF = function() private$..pairwisePlotsDIF$value,
         itemPlotSupplier = function() private$..itemPlotSupplier$value,
         axisTypeTest = function() private$..axisTypeTest$value,
-        axistypeItem = function() private$..axistypeItem$value,
+        axisTypeItem = function() private$..axisTypeItem$value,
         testPlotDensityDIF = function() private$..testPlotDensityDIF$value,
         testPlotExpectedDIF = function() private$..testPlotExpectedDIF$value,
         testPlotSDDIF = function() private$..testPlotSDDIF$value,
@@ -256,7 +256,7 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..pairwisePlotsDIF = NA,
         ..itemPlotSupplier = NA,
         ..axisTypeTest = NA,
-        ..axistypeItem = NA,
+        ..axisTypeItem = NA,
         ..testPlotDensityDIF = NA,
         ..testPlotExpectedDIF = NA,
         ..testPlotSDDIF = NA,
@@ -621,7 +621,7 @@ nonParametricIRTBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param pairwisePlotsDIF .
 #' @param itemPlotSupplier .
 #' @param axisTypeTest .
-#' @param axistypeItem .
+#' @param axisTypeItem .
 #' @param testPlotDensityDIF .
 #' @param testPlotExpectedDIF .
 #' @param testPlotSDDIF .
@@ -675,7 +675,7 @@ nonParametricIRT <- function(
     pairwisePlotsDIF = FALSE,
     itemPlotSupplier,
     axisTypeTest = "score",
-    axistypeItem = "score",
+    axisTypeItem = "score",
     testPlotDensityDIF = FALSE,
     testPlotExpectedDIF = FALSE,
     testPlotSDDIF = FALSE,
@@ -721,7 +721,7 @@ nonParametricIRT <- function(
         pairwisePlotsDIF = pairwisePlotsDIF,
         itemPlotSupplier = itemPlotSupplier,
         axisTypeTest = axisTypeTest,
-        axistypeItem = axistypeItem,
+        axisTypeItem = axisTypeItem,
         testPlotDensityDIF = testPlotDensityDIF,
         testPlotExpectedDIF = testPlotExpectedDIF,
         testPlotSDDIF = testPlotSDDIF,
