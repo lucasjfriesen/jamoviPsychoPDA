@@ -13,9 +13,9 @@ options:
       title: Items
       type: Variables
 
-    - name: groups
-      title: Grouping Variable
-      type: Variable
+  #  - name: groups
+  #    title: Grouping Variable
+  #    type: Variable
 
     - name: alphaTable
       type: Bool

@@ -8,6 +8,16 @@ items:
       title: debug results
       type: Preformatted
 
+    - name: procedureNotes
+      title: Procedure Notes
+      type:  Table
+      visible: false
+      rows: 0
+      columns:
+        - name: bob
+          title: ""
+          type: text
+
     - name: instructions
       title: Instructions
       type: Html

@@ -30,7 +30,6 @@ glmDIFClass <- if (requireNamespace('jmvcore'))
             <li>Place the grouping variable in the 'Grouping Variable' slot.</li>
             </ol>
             <p>If you encounter any errors, or have questions, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/DIF_index.html' target = '_blank'>documentation</a></p>
-            <p>This is the first release of the module and is subject to change until a peer-reviewed article documenting its use has been published. Anticipated final version release date is late 2019.</a></p>
             </div>
             </body>
             </html>")

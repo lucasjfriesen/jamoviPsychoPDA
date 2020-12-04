@@ -13,13 +13,12 @@ items:
       visible: True
 
     - name: summaryTableAlpha
-      title: Ordinal Alpha
+      title: Ordinal Reliability
       type: Table
-      visible: (alphaTable)
       rows: 1
       clearWith:
           - items
-          - groups
+          #- groups
       columns:
         - name: raw_alpha
           title: raw_alpha

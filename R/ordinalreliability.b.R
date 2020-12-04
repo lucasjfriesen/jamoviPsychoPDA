@@ -27,11 +27,9 @@ ordinalReliabilityClass <-
                     </head>
                     <body>
                     <div class='instructions'>
-                    <p><b>This analysis is still in development. Please report any errors or requests <a href='https://github.com/lucasjfriesen/jamoviPsychoPDA/issues' target = '_blank'>here</a></b></p>
                     <p>Welcome to PsychoPDA's Ordinal Reliability analysis To get started:</p>
                     <ol>
                     <li>Input the 'Items'<br /><br /></li>
-                    <li>(Optional) Input a 'Grouping Variable'<br /><br /></li>
                     </ol>
                     <li>Select which reliability computations you would like to view<br /><br /></li>
                     <p>If you encounter any errors, or have questions, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/ordinalReliability.html' target = '_blank'>documentation</a>.</p>
@@ -51,7 +49,7 @@ ordinalReliabilityClass <-
                     # } else {
                       items = data[, self$options$items]
                     # }
-                    groups = data[, self$options$groups]
+                    # groups = data[, self$options$groups]
                     
                     ordinalRhos <- function(data) {
                         polychoricRho <- psych::polychoric(data)$rho

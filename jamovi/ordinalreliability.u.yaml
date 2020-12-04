@@ -14,13 +14,6 @@ children:
           - type: VariablesListBox
             name: items
             isTarget: true
-      - type: TargetLayoutBox
-        label: Grouping Variable
-        children:
-          - type: VariablesListBox
-            name: groups
-            maxItemCount: 1
-            isTarget: true
       - type: LayoutBox
         stretchFactor: 1
         margin: large

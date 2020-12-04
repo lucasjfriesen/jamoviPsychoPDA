@@ -7,7 +7,6 @@ ordinalReliabilityOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
     public = list(
         initialize = function(
             items = NULL,
-            groups = NULL,
             alphaTable = FALSE,
             thetaTable = FALSE,
             omegaTable = FALSE,
@@ -24,9 +23,6 @@ ordinalReliabilityOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             private$..items <- jmvcore::OptionVariables$new(
                 "items",
                 items)
-            private$..groups <- jmvcore::OptionVariable$new(
-                "groups",
-                groups)
             private$..alphaTable <- jmvcore::OptionBool$new(
                 "alphaTable",
                 alphaTable,
@@ -52,7 +48,6 @@ ordinalReliabilityOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 omegaPlot)
 
             self$.addOption(private$..items)
-            self$.addOption(private$..groups)
             self$.addOption(private$..alphaTable)
             self$.addOption(private$..thetaTable)
             self$.addOption(private$..omegaTable)
@@ -62,7 +57,6 @@ ordinalReliabilityOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         }),
     active = list(
         items = function() private$..items$value,
-        groups = function() private$..groups$value,
         alphaTable = function() private$..alphaTable$value,
         thetaTable = function() private$..thetaTable$value,
         omegaTable = function() private$..omegaTable$value,
@@ -71,7 +65,6 @@ ordinalReliabilityOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         omegaPlot = function() private$..omegaPlot$value),
     private = list(
         ..items = NA,
-        ..groups = NA,
         ..alphaTable = NA,
         ..thetaTable = NA,
         ..omegaTable = NA,
@@ -104,12 +97,10 @@ ordinalReliabilityResults <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$add(jmvcore::Table$new(
                 options=options,
                 name="summaryTableAlpha",
-                title="Ordinal Alpha",
-                visible="(alphaTable)",
+                title="Ordinal Reliability",
                 rows=1,
                 clearWith=list(
-                    "items",
-                    "groups"),
+                    "items"),
                 columns=list(
                     list(
                         `name`="raw_alpha", 
@@ -257,7 +248,6 @@ ordinalReliabilityBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' 
 #' @param data .
 #' @param items .
-#' @param groups .
 #' @param alphaTable .
 #' @param thetaTable .
 #' @param omegaTable .
@@ -285,7 +275,6 @@ ordinalReliabilityBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 ordinalReliability <- function(
     data,
     items,
-    groups,
     alphaTable = FALSE,
     thetaTable = FALSE,
     omegaTable = FALSE,
@@ -297,17 +286,14 @@ ordinalReliability <- function(
         stop('ordinalReliability requires jmvcore to be installed (restart may be required)')
 
     if ( ! missing(items)) items <- jmvcore::resolveQuo(jmvcore::enquo(items))
-    if ( ! missing(groups)) groups <- jmvcore::resolveQuo(jmvcore::enquo(groups))
     if (missing(data))
         data <- jmvcore::marshalData(
             parent.frame(),
-            `if`( ! missing(items), items, NULL),
-            `if`( ! missing(groups), groups, NULL))
+            `if`( ! missing(items), items, NULL))
 
 
     options <- ordinalReliabilityOptions$new(
         items = items,
-        groups = groups,
         alphaTable = alphaTable,
         thetaTable = thetaTable,
         omegaTable = omegaTable,

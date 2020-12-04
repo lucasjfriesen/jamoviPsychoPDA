@@ -34,7 +34,7 @@ options:
       title: Item Format
       type: List
       options:
-        - title: Multiple choice
+        - title: Binary
           name:  formatMC
         - title: Rating-scale
           name:  formatPartial
@@ -42,9 +42,9 @@ options:
           name:  formatNominal
       default: formatMC
 
-    - name: SubRank
-      title: Participant Rank
-      type: Variable
+  #  - name: SubRank
+#      title: Participant Rank
+#      type: Variable
 
     - name: miss
       title: Missing responses
@@ -67,49 +67,47 @@ options:
       max: 1
       default: 0
 
-    - name: nevalpoints
-      type: Number
-      title: Number of evaluation points
-      default: 51
+#    - name: nevalpoints
+#      type: Number
+#      title: Number of evaluation points
+#      default: 51
 
-    - name: kernel
-      title: Kernel Function
-      type: List
-      options:
-        - title: Gaussian
-          name:  gaussian
-        - title: Quadratic
-          name:  quadratic
-        - title: Uniform
-          name:  uniform
-      default: gaussian
+#    - name: kernel
+#      title: Kernel Function
+#      type: List
+#      options:
+#        - title: Gaussian
+#          name:  gaussian
+#        - title: Quadratic
+#          name:  quadratic
+#        - title: Uniform
+#          name:  uniform
+#      default: gaussian
 
-    - name: bandwidth
-      title: Bandwidth
-      type: List
-      options:
-        - title: Silverman
-          name:  Silverman
-        - title: Cross-validation
-          name:  CV
-      default: Silverman
+#    - name: bandwidth
+#      title: Bandwidth
+##      options:
+  #      - title: Silverman
+  #        name:  Silverman
+  #      - title: Cross-validation
+  #        name:  CV
+  #    default: Silverman
 
-    - name: RankFun
-      title: Rank Function
-      type: List
-      options:
-        - title: Sum
-          name:  sum
-        - title: Mean
-          name:  mean
-      default: sum
+  #  - name: RankFun
+  #    title: Rank Function
+  #    type: List
+  #    options:
+  #      - title: Sum
+  #        name:  sum
+  #      - title: Mean
+  #        name:  mean
+  #    default: sum
 
-    - name: thetadist
-      type: String
-      title: Theta distribution
-      #suffix: '('
-      #prefix: ')'
-      default: "norm, 0, 1"
+  #  - name: thetadist
+  ##    title: Theta distribution
+  #    #suffix: '('
+  #    #prefix: ')'
+  #    default: "norm, 0, 1"
 
     - name: OCCoption
       type: String
@@ -183,7 +181,7 @@ options:
     - name: testPlotDensity
       title: Density
       type: Bool
-      default: FALSE
+      default: TRUE
 
     - name: testPlotExpected
       title: Expected

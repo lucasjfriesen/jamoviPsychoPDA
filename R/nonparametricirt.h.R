@@ -9,14 +9,8 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             item = NULL,
             group = NULL,
             format = "formatMC",
-            SubRank = NULL,
             miss = "option",
             NAweight = 0,
-            nevalpoints = 51,
-            kernel = "gaussian",
-            bandwidth = "Silverman",
-            RankFun = "sum",
-            thetadist = "norm, 0, 1",
             OCCoption = "1",
             itemPlotOCC = FALSE,
             itemPlotEIS = FALSE,
@@ -29,7 +23,7 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             testPlotDensityDIF = FALSE,
             testPlotExpectedDIF = FALSE,
             testPlotSDDIF = FALSE,
-            testPlotDensity = FALSE,
+            testPlotDensity = TRUE,
             testPlotExpected = FALSE,
             testPlotSD = FALSE,
             resTable = FALSE, ...) {
@@ -62,9 +56,6 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "formatPartial",
                     "formatNominal"),
                 default="formatMC")
-            private$..SubRank <- jmvcore::OptionVariable$new(
-                "SubRank",
-                SubRank)
             private$..miss <- jmvcore::OptionList$new(
                 "miss",
                 miss,
@@ -80,36 +71,6 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 min=0,
                 max=1,
                 default=0)
-            private$..nevalpoints <- jmvcore::OptionNumber$new(
-                "nevalpoints",
-                nevalpoints,
-                default=51)
-            private$..kernel <- jmvcore::OptionList$new(
-                "kernel",
-                kernel,
-                options=list(
-                    "gaussian",
-                    "quadratic",
-                    "uniform"),
-                default="gaussian")
-            private$..bandwidth <- jmvcore::OptionList$new(
-                "bandwidth",
-                bandwidth,
-                options=list(
-                    "Silverman",
-                    "CV"),
-                default="Silverman")
-            private$..RankFun <- jmvcore::OptionList$new(
-                "RankFun",
-                RankFun,
-                options=list(
-                    "sum",
-                    "mean"),
-                default="sum")
-            private$..thetadist <- jmvcore::OptionString$new(
-                "thetadist",
-                thetadist,
-                default="norm, 0, 1")
             private$..OCCoption <- jmvcore::OptionString$new(
                 "OCCoption",
                 OCCoption,
@@ -166,7 +127,7 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             private$..testPlotDensity <- jmvcore::OptionBool$new(
                 "testPlotDensity",
                 testPlotDensity,
-                default=FALSE)
+                default=TRUE)
             private$..testPlotExpected <- jmvcore::OptionBool$new(
                 "testPlotExpected",
                 testPlotExpected,
@@ -183,14 +144,8 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..item)
             self$.addOption(private$..group)
             self$.addOption(private$..format)
-            self$.addOption(private$..SubRank)
             self$.addOption(private$..miss)
             self$.addOption(private$..NAweight)
-            self$.addOption(private$..nevalpoints)
-            self$.addOption(private$..kernel)
-            self$.addOption(private$..bandwidth)
-            self$.addOption(private$..RankFun)
-            self$.addOption(private$..thetadist)
             self$.addOption(private$..OCCoption)
             self$.addOption(private$..itemPlotOCC)
             self$.addOption(private$..itemPlotEIS)
@@ -212,14 +167,8 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         item = function() private$..item$value,
         group = function() private$..group$value,
         format = function() private$..format$value,
-        SubRank = function() private$..SubRank$value,
         miss = function() private$..miss$value,
         NAweight = function() private$..NAweight$value,
-        nevalpoints = function() private$..nevalpoints$value,
-        kernel = function() private$..kernel$value,
-        bandwidth = function() private$..bandwidth$value,
-        RankFun = function() private$..RankFun$value,
-        thetadist = function() private$..thetadist$value,
         OCCoption = function() private$..OCCoption$value,
         itemPlotOCC = function() private$..itemPlotOCC$value,
         itemPlotEIS = function() private$..itemPlotEIS$value,
@@ -240,14 +189,8 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..item = NA,
         ..group = NA,
         ..format = NA,
-        ..SubRank = NA,
         ..miss = NA,
         ..NAweight = NA,
-        ..nevalpoints = NA,
-        ..kernel = NA,
-        ..bandwidth = NA,
-        ..RankFun = NA,
-        ..thetadist = NA,
         ..OCCoption = NA,
         ..itemPlotOCC = NA,
         ..itemPlotEIS = NA,
@@ -270,6 +213,7 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
         debug = function() private$.items[["debug"]],
+        procedureNotes = function() private$.items[["procedureNotes"]],
         instructions = function() private$.items[["instructions"]],
         resTable = function() private$.items[["resTable"]],
         testPlotDensity = function() private$.items[["testPlotDensity"]],
@@ -294,6 +238,17 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="debug",
                 title="debug results"))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="procedureNotes",
+                title="Procedure Notes",
+                visible=FALSE,
+                rows=0,
+                columns=list(
+                    list(
+                        `name`="bob", 
+                        `title`="", 
+                        `type`="text"))))
             self$add(jmvcore::Html$new(
                 options=options,
                 name="instructions",
@@ -605,14 +560,8 @@ nonParametricIRTBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param item .
 #' @param group .
 #' @param format .
-#' @param SubRank .
 #' @param miss .
 #' @param NAweight .
-#' @param nevalpoints .
-#' @param kernel .
-#' @param bandwidth .
-#' @param RankFun .
-#' @param thetadist .
 #' @param OCCoption .
 #' @param itemPlotOCC .
 #' @param itemPlotEIS .
@@ -632,6 +581,7 @@ nonParametricIRTBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$debug} \tab \tab \tab \tab \tab a preformatted \cr
+#'   \code{results$procedureNotes} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$resTable} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$testPlotDensity} \tab \tab \tab \tab \tab an image \cr
@@ -649,9 +599,9 @@ nonParametricIRTBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'
 #' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
 #'
-#' \code{results$resTable$asDF}
+#' \code{results$procedureNotes$asDF}
 #'
-#' \code{as.data.frame(results$resTable)}
+#' \code{as.data.frame(results$procedureNotes)}
 #'
 #' @export
 nonParametricIRT <- function(
@@ -659,14 +609,8 @@ nonParametricIRT <- function(
     item,
     group,
     format = "formatMC",
-    SubRank,
     miss = "option",
     NAweight = 0,
-    nevalpoints = 51,
-    kernel = "gaussian",
-    bandwidth = "Silverman",
-    RankFun = "sum",
-    thetadist = "norm, 0, 1",
     OCCoption = "1",
     itemPlotOCC = FALSE,
     itemPlotEIS = FALSE,
@@ -679,7 +623,7 @@ nonParametricIRT <- function(
     testPlotDensityDIF = FALSE,
     testPlotExpectedDIF = FALSE,
     testPlotSDDIF = FALSE,
-    testPlotDensity = FALSE,
+    testPlotDensity = TRUE,
     testPlotExpected = FALSE,
     testPlotSD = FALSE,
     resTable = FALSE) {
@@ -689,14 +633,12 @@ nonParametricIRT <- function(
 
     if ( ! missing(item)) item <- jmvcore::resolveQuo(jmvcore::enquo(item))
     if ( ! missing(group)) group <- jmvcore::resolveQuo(jmvcore::enquo(group))
-    if ( ! missing(SubRank)) SubRank <- jmvcore::resolveQuo(jmvcore::enquo(SubRank))
     if ( ! missing(itemPlotSupplier)) itemPlotSupplier <- jmvcore::resolveQuo(jmvcore::enquo(itemPlotSupplier))
     if (missing(data))
         data <- jmvcore::marshalData(
             parent.frame(),
             `if`( ! missing(item), item, NULL),
             `if`( ! missing(group), group, NULL),
-            `if`( ! missing(SubRank), SubRank, NULL),
             `if`( ! missing(itemPlotSupplier), itemPlotSupplier, NULL))
 
     for (v in group) if (v %in% names(data)) data[[v]] <- as.factor(data[[v]])
@@ -705,14 +647,8 @@ nonParametricIRT <- function(
         item = item,
         group = group,
         format = format,
-        SubRank = SubRank,
         miss = miss,
         NAweight = NAweight,
-        nevalpoints = nevalpoints,
-        kernel = kernel,
-        bandwidth = bandwidth,
-        RankFun = RankFun,
-        thetadist = thetadist,
         OCCoption = OCCoption,
         itemPlotOCC = itemPlotOCC,
         itemPlotEIS = itemPlotEIS,
