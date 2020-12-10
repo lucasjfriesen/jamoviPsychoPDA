@@ -13,6 +13,7 @@ items:
       type:  Table
       visible: false
       rows: 0
+      refs: NIRT
       columns:
         - name: bob
           title: ""

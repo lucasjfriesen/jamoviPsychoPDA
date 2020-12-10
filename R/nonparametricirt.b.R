@@ -61,6 +61,7 @@ nonParametricIRTClass <-
             <li>[<em>Optional</em>] Indicate any further specifications.<br /><br /></li>
             </ol>
             <p>If you encounter any errors, or have questions, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/DIF_index.html' target = '_blank'>documentation</a></p>
+            <p>If this software is used in conducting published research, please do provide a citation using the information at the bottom of the analysis.</p>
             </div>
             </body>
             </html>"

@@ -9,6 +9,13 @@
         `title`="Psychometrics & Post-Data Analysis: Test ROC", 
         `publisher`="[jamovi module]. Retrieved from https://github.com/lucasjfriesen/jamoviPsychoPDA", 
         `url`="https://github.com/lucasjfriesen/jamoviPsychoPDA"), 
+    `NIRT`=list(
+        `type`="software", 
+        `author`="Friesen, L., Kroc, E., Zumbo, B. D.", 
+        `year`=2019, 
+        `title`="Psychometrics & Post-Data Analysis: Non-Parametric Item Response Theory", 
+        `publisher`="[jamovi module]. Retrieved from https://github.com/lucasjfriesen/jamoviPsychoPDA", 
+        `url`="https://github.com/lucasjfriesen/jamoviPsychoPDA"), 
     `binaryDIF`=list(
         `type`="software", 
         `author`="Friesen, L., Kroc, E., Zumbo, B. D.", 

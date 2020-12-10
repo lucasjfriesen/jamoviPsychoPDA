@@ -244,6 +244,7 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 title="Procedure Notes",
                 visible=FALSE,
                 rows=0,
+                refs="NIRT",
                 columns=list(
                     list(
                         `name`="bob", 

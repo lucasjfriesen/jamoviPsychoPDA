@@ -39,10 +39,11 @@ TestROCClass <- if (requireNamespace('jmvcore'))
             <p>Welcome to PsychoPDA's Test ROC analysis To get started:</p>
             <ol>
             <li>Place the responses in the 'Dependent Variable' slot<br /><br /></li>
-            <li>Place the classification in the 'Class Variable' slo.<br /><br /></li>
+            <li>Place the classification in the 'Class Variable' slot<br /><br /></li>
             <li>[<em>Optional</em>] Place a grouping variable in the 'Grouping Variable' slot<br /><br /></li>
             </ol>
             <p>If you encounter any errors, or have questions, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/measureDiagnostics_testROC_gettingStarted.html' target = '_blank'>documentation.</a></p>
+            <p>If this software is used in conducting published research, please do provide a citation using the information at the bottom of the analysis.</p>
             </div>
             </body>
             </html>"
@@ -412,7 +413,7 @@ TestROCClass <- if (requireNamespace('jmvcore'))
                 data = data.frame(lapply(data[, vars], as.numeric)),
                 classVar = as.character(classVar),
                 ref = NULL,
-                pos_class = self$options$positiveClass,
+                pos_class = pos_class,
                 conf.level = 0.95
               )
             }
