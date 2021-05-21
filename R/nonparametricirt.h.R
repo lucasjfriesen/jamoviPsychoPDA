@@ -23,7 +23,7 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             testPlotDensityDIF = FALSE,
             testPlotExpectedDIF = FALSE,
             testPlotSDDIF = FALSE,
-            testPlotDensity = TRUE,
+            testPlotDensity = FALSE,
             testPlotExpected = FALSE,
             testPlotSD = FALSE,
             resTable = FALSE, ...) {
@@ -127,7 +127,7 @@ nonParametricIRTOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             private$..testPlotDensity <- jmvcore::OptionBool$new(
                 "testPlotDensity",
                 testPlotDensity,
-                default=TRUE)
+                default=FALSE)
             private$..testPlotExpected <- jmvcore::OptionBool$new(
                 "testPlotExpected",
                 testPlotExpected,
@@ -486,7 +486,8 @@ nonParametricIRTResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         "kernel",
                         "bandwidth",
                         "RankFun",
-                        "thetadist"))))
+                        "thetadist",
+                        "axisTypeItem"))))
             self$add(jmvcore::Array$new(
                 options=options,
                 name="eisPlotsDIF",
@@ -624,7 +625,7 @@ nonParametricIRT <- function(
     testPlotDensityDIF = FALSE,
     testPlotExpectedDIF = FALSE,
     testPlotSDDIF = FALSE,
-    testPlotDensity = TRUE,
+    testPlotDensity = FALSE,
     testPlotExpected = FALSE,
     testPlotSD = FALSE,
     resTable = FALSE) {

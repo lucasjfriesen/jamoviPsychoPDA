@@ -252,6 +252,7 @@ items:
               - bandwidth
               - RankFun
               - thetadist
+              - axisTypeItem
 
     - name: eisPlotsDIF
       title: EIS Plots | DIF

@@ -57,7 +57,7 @@ nonParametricIRTClass <-
             <p>Welcome to PsychoPDA's Non-Parametric Item Response Theory analysis. To get started:</p>
             <ol>
             <li>Place items to be analyzed 'Items' slot.<br /><br /></li>
-            <li><b>The first row will be used as the key for each item.</b><br /><br /></li>
+            <li style='color:red'><b>The first row will be used as the key for each item.</b><br /><br /></li>
             <li>[<em>Optional</em>] Indicate any further specifications.<br /><br /></li>
             </ol>
             <p>If you encounter any errors, or have questions, please see the <a href='https://lucasjfriesen.github.io/jamoviPsychoPDA_docs/DIF_index.html' target = '_blank'>documentation</a></p>
