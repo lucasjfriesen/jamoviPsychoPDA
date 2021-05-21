@@ -181,7 +181,7 @@ options:
     - name: testPlotDensity
       title: Density
       type: Bool
-      default: TRUE
+      default: FALSE
 
     - name: testPlotExpected
       title: Expected
